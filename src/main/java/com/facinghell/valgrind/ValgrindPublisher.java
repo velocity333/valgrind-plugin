@@ -55,10 +55,8 @@ public class ValgrindPublisher extends Recorder
 		if ( !canContinue(build.getResult()) )
 			return true;		
 			
-		listener.getLogger().println("[Valgrind] collecting valgrind results");
-		listener.getLogger().println("[Valgrind] pattern:        " + valgrindPublisherConfig.getPattern());
-		listener.getLogger().println("[Valgrind] invalid reads:  " + valgrindPublisherConfig.isInvalidReads());
-		listener.getLogger().println("[Valgrind] invalid writes: " + valgrindPublisherConfig.isInvalidWrites());
+		ValgrindLogger.log(listener, "Analysing valgrind results");
+
 		
 		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
 		ValgrindReport valgrindReport;
@@ -67,6 +65,13 @@ public class ValgrindPublisher extends Recorder
 		
 		valgrindReport.print();
 		
+		ValgrindResult valgrindResult = new ValgrindResult();
+		valgrindResult.setReport( valgrindReport );
+		
+        ValgrindBuildAction buildAction = new ValgrindBuildAction(valgrindResult, valgrindPublisherConfig);
+        build.addAction(buildAction);
+
+        ValgrindLogger.log(listener, "Ending the valgrind analysis.");
 		
 		return true;
 	}

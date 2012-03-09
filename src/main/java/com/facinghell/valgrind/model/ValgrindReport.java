@@ -3,6 +3,8 @@ package com.facinghell.valgrind.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kohsuke.stapler.export.Exported;
+
 public class ValgrindReport
 {
 	private List<ValgrindInvalidReadError> invalidReadErrors;	
@@ -48,11 +50,13 @@ public class ValgrindReport
 		}		
 	}
 	
+	@Exported
 	public int getErrorCount()
 	{
 		return getInvalidReadErrorCount() + getInvalidWriteErrorCount() + getLeakErrorCount();
 	}
 	
+	@Exported
 	public int getInvalidReadErrorCount()
 	{
 		if ( invalidReadErrors != null )
@@ -61,6 +65,7 @@ public class ValgrindReport
 		return 0;
 	}
 	
+	@Exported
 	public int getInvalidWriteErrorCount()
 	{
 		if ( invalidWriteErrors != null )
@@ -69,6 +74,7 @@ public class ValgrindReport
 		return 0;
 	}
 	
+	@Exported
 	public int getLeakErrorCount()
 	{
 		if ( leakErrors != null )
