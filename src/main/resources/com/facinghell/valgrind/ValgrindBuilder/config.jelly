@@ -12,4 +12,8 @@
   <f:entry title="Name" field="name">
     <f:textbox />
   </f:entry>
+  
+  <f:entry title="Invalid Reads" field="invalidReads">
+    <f:checkbox />
+  </f:entry>  
 </j:jelly>

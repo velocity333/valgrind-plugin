@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+
+    <j:set var="config" value="${instance.valgrindPublisherConfig}"/>
+    
+    <j:if test="${config == null}">
+        <j:set var="config" value="${descriptor.config}"/>
+    </j:if>
+
+    <f:entry title="Pattern:">
+        <f:textbox name="valgrind.pattern" value="${config.pattern}"/>
+    </f:entry>
+
+    <f:entry>
+        <f:checkbox name="valgrind.invalidReads" checked="${config.invalidReads}"/>
+        <label>Invalid  Reads</label>
+    </f:entry>
+    
+    <f:entry>
+        <f:checkbox name="valgrind.invalidWrites" checked="${config.invalidWrites}"/>
+        <label>Invalid  Writes</label>
+    </f:entry>    
+</j:jelly>

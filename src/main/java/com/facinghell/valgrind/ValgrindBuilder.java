@@ -35,11 +35,13 @@ import java.io.IOException;
 public class ValgrindBuilder extends Builder {
 
     private final String name;
+    private final boolean invalidReads;
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
-    public ValgrindBuilder(String name) {
+    public ValgrindBuilder(String name, boolean invalidReads) {
         this.name = name;
+        this.invalidReads = invalidReads;
     }
 
     /**
