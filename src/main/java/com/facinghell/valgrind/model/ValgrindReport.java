@@ -27,6 +27,27 @@ public class ValgrindReport
 				System.out.println(error.toString());
 	}
 	
+	public void integrate( ValgrindReport valgrindReport )
+	{
+		if ( valgrindReport.invalidReadErrors != null )
+		{
+			for( ValgrindInvalidReadError error : valgrindReport.invalidReadErrors )
+				addInvalidReadError( error );
+		}
+		
+		if ( valgrindReport.invalidWriteErrors != null )
+		{
+			for( ValgrindInvalidWriteError error : valgrindReport.invalidWriteErrors )
+				addInvalidWriteError( error );
+		}
+		
+		if ( valgrindReport.leakErrors != null )
+		{
+			for( ValgrindLeakError error : valgrindReport.leakErrors )
+				addLeakError( error );
+		}		
+	}
+	
 	public int getErrorCount()
 	{
 		return getInvalidReadErrorCount() + getInvalidWriteErrorCount() + getLeakErrorCount();

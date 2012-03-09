@@ -1,5 +1,18 @@
 package com.facinghell.valgrind;
 
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.matrix.MatrixProject;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.FreeStyleProject;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+
 import java.io.IOException;
 
 import net.sf.json.JSONObject;
@@ -7,18 +20,8 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.facinghell.valgrind.config.ValgrindPublisherConfig;
-
-import hudson.Extension;
-import hudson.Launcher;
-import hudson.matrix.MatrixProject;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleProject;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
+import com.facinghell.valgrind.model.ValgrindReport;
+import com.facinghell.valgrind.parser.ValgrindParserResult;
 
 /**
  * 
@@ -39,15 +42,31 @@ public class ValgrindPublisher extends Recorder
 	{
 		return BuildStepMonitor.BUILD;
 	}
+	
+    protected boolean canContinue(final Result result) 
+    {
+        return result != Result.ABORTED && result != Result.FAILURE;
+    }
 
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
 			throws InterruptedException, IOException
 	{
+		if ( !canContinue(build.getResult()) )
+			return true;		
+			
 		listener.getLogger().println("[Valgrind] collecting valgrind results");
 		listener.getLogger().println("[Valgrind] pattern:        " + valgrindPublisherConfig.getPattern());
 		listener.getLogger().println("[Valgrind] invalid reads:  " + valgrindPublisherConfig.isInvalidReads());
 		listener.getLogger().println("[Valgrind] invalid writes: " + valgrindPublisherConfig.isInvalidWrites());
+		
+		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
+		ValgrindReport valgrindReport;
+		
+		valgrindReport = build.getWorkspace().act(parser);
+		
+		valgrindReport.print();
+		
 		
 		return true;
 	}
