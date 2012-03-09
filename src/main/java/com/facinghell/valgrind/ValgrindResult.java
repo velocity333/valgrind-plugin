@@ -1,5 +1,7 @@
 package com.facinghell.valgrind;
 
+import hudson.model.AbstractBuild;
+
 import java.io.Serializable;
 
 import com.facinghell.valgrind.model.ValgrindReport;
@@ -10,6 +12,18 @@ public class ValgrindResult implements Serializable
 	private static final long serialVersionUID = -5347879997716170059L;
 	
 	private ValgrindReport report;
+    private AbstractBuild<?, ?> owner;
+
+    public ValgrindResult( AbstractBuild<?, ?> build, ValgrindReport report )
+    {
+    	this.owner = build;
+    	this.report = report; 
+    }
+    
+	public AbstractBuild<?, ?> getOwner()
+	{
+		return owner;
+	}
 
 	public ValgrindReport getReport()
 	{
@@ -28,7 +42,6 @@ public class ValgrindResult implements Serializable
 	 */
 	public String getSummary()
 	{
-		System.err.println("create report summary");
 		return ValgrindSummary.createReportSummary(this);
 	}
 
@@ -39,7 +52,6 @@ public class ValgrindResult implements Serializable
 	 */
 	public String getDetails()
 	{
-		System.err.println("create report details");
 		return ValgrindSummary.createReportSummaryDetails(this);
 	}
 }

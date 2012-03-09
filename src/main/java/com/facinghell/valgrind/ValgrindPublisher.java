@@ -65,10 +65,9 @@ public class ValgrindPublisher extends Recorder
 		
 		valgrindReport.print();
 		
-		ValgrindResult valgrindResult = new ValgrindResult();
-		valgrindResult.setReport( valgrindReport );
+		ValgrindResult valgrindResult = new ValgrindResult( build, valgrindReport );
 		
-        ValgrindBuildAction buildAction = new ValgrindBuildAction(valgrindResult, valgrindPublisherConfig);
+        ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult, valgrindPublisherConfig);
         build.addAction(buildAction);
 
         ValgrindLogger.log(listener, "Ending the valgrind analysis.");
