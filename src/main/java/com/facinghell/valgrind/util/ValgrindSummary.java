@@ -51,7 +51,9 @@ public class ValgrindSummary
 		builder.append("</li><li>");
 		builder.append( Integer.toString( result.getReport().getInvalidWriteErrorCount() ) + " invalid write");
 		builder.append("</li><li>");
-		builder.append( Integer.toString( result.getReport().getLeakErrorCount() ) + " leaks");
+		builder.append( Integer.toString( result.getReport().getLeakDefinitelyLostErrorCount() ) + " leaks (definitely lost)");
+		builder.append("</li><li>");
+		builder.append( Integer.toString( result.getReport().getLeakPossiblyLostErrorCount() ) + " leaks (possibly lost)");		
 		builder.append("</li>");
 		return builder.toString();
 	}

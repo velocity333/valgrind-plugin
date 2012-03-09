@@ -3,6 +3,8 @@ package com.facinghell.valgrind.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ValgrindStacktrace
 {
 	private List<ValgrindStacktraceFrame> frames;
@@ -19,6 +21,16 @@ public class ValgrindStacktrace
 			s += frame.toString() + "\n\n";			
 		}
 		return s;
+	}
+	
+	public String getFileSummary()
+	{
+		List<String> files = new ArrayList<String>();
+		
+		for( ValgrindStacktraceFrame frame : frames )
+			files.add( frame.getFileName() + "(" + frame.getLineNumber() + ")" );			
+		
+		return StringUtils.join( files, ", " );
 	}
 	
 	public void addFrame( ValgrindStacktraceFrame frame )

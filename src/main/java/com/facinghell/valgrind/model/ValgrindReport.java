@@ -9,7 +9,8 @@ public class ValgrindReport
 {
 	private List<ValgrindInvalidReadError> invalidReadErrors;	
 	private List<ValgrindInvalidWriteError> invalidWriteErrors;
-	private List<ValgrindLeakError> leakErrors;
+	private List<ValgrindLeakError> leakDefinitelyLostErrors;
+	private List<ValgrindLeakError> leakPossiblyLostErrors;
 	
 	public void print()
 	{
@@ -23,10 +24,15 @@ public class ValgrindReport
 			for (ValgrindInvalidWriteError error : invalidWriteErrors)
 				System.out.println(error.toString());
 
-		System.out.println("leaks: ");
-		if (leakErrors != null)
-			for (ValgrindLeakError error : leakErrors)
+		System.out.println("leaks (definitely lost): ");
+		if (leakDefinitelyLostErrors != null)
+			for (ValgrindLeakError error : leakDefinitelyLostErrors)
 				System.out.println(error.toString());
+		
+		System.out.println("leaks (possibly lost): ");
+		if (leakPossiblyLostErrors != null)
+			for (ValgrindLeakError error : leakPossiblyLostErrors)
+				System.out.println(error.toString());		
 	}
 	
 	public void integrate( ValgrindReport valgrindReport )
@@ -43,17 +49,27 @@ public class ValgrindReport
 				addInvalidWriteError( error );
 		}
 		
-		if ( valgrindReport.leakErrors != null )
+		if ( valgrindReport.leakDefinitelyLostErrors != null )
 		{
-			for( ValgrindLeakError error : valgrindReport.leakErrors )
-				addLeakError( error );
-		}		
+			for( ValgrindLeakError error : valgrindReport.leakDefinitelyLostErrors )
+				addLeakDefinitelyLostError( error );
+		}
+		
+		if ( valgrindReport.leakPossiblyLostErrors != null )
+		{
+			for( ValgrindLeakError error : valgrindReport.leakPossiblyLostErrors )
+				addLeakPossiblyLostError( error );
+		}
 	}
 	
 	@Exported
 	public int getErrorCount()
 	{
-		return getInvalidReadErrorCount() + getInvalidWriteErrorCount() + getLeakErrorCount();
+		return 
+		getInvalidReadErrorCount() + 
+		getInvalidWriteErrorCount() + 
+		getLeakDefinitelyLostErrorCount() + 
+		getLeakPossiblyLostErrorCount();
 	}
 	
 	@Exported
@@ -75,10 +91,19 @@ public class ValgrindReport
 	}
 	
 	@Exported
-	public int getLeakErrorCount()
+	public int getLeakDefinitelyLostErrorCount()
 	{
-		if ( leakErrors != null )
-			return leakErrors.size();
+		if ( leakDefinitelyLostErrors != null )
+			return leakDefinitelyLostErrors.size();
+		
+		return 0;
+	}
+	
+	@Exported
+	public int getLeakPossiblyLostErrorCount()
+	{
+		if ( leakPossiblyLostErrors != null )
+			return leakPossiblyLostErrors.size();
 		
 		return 0;
 	}	
@@ -99,12 +124,20 @@ public class ValgrindReport
 		invalidWriteErrors.add( invalidWriteError );
 	}
 	
-	public void addLeakError( ValgrindLeakError leakError )
+	public void addLeakDefinitelyLostError( ValgrindLeakError leakError )
 	{
-		if ( leakErrors == null )
-			leakErrors = new ArrayList<ValgrindLeakError>();
+		if ( leakDefinitelyLostErrors == null )
+			leakDefinitelyLostErrors = new ArrayList<ValgrindLeakError>();
 		
-		leakErrors.add( leakError );
+		leakDefinitelyLostErrors.add( leakError );
+	}
+	
+	public void addLeakPossiblyLostError( ValgrindLeakError leakError )
+	{
+		if ( leakPossiblyLostErrors == null )
+			leakPossiblyLostErrors = new ArrayList<ValgrindLeakError>();
+		
+		leakPossiblyLostErrors.add( leakError );
 	}
 
 	public List<ValgrindInvalidReadError> getInvalidReadErrors()
@@ -127,13 +160,23 @@ public class ValgrindReport
 		this.invalidWriteErrors = invalidWriteErrors;
 	}
 
-	public List<ValgrindLeakError> getLeakErrors()
+	public List<ValgrindLeakError> getLeakDefinitelyLostErrors()
 	{
-		return leakErrors;
+		return leakDefinitelyLostErrors;
 	}
 
-	public void setLeakErrors(List<ValgrindLeakError> leakErrors)
+	public void setLeakDefinitelyLostErrors(List<ValgrindLeakError> leakDefinitelyLostErrors)
 	{
-		this.leakErrors = leakErrors;
+		this.leakDefinitelyLostErrors = leakDefinitelyLostErrors;
+	}
+
+	public List<ValgrindLeakError> getLeakPossiblyLostErrors()
+	{
+		return leakPossiblyLostErrors;
+	}
+
+	public void setLeakPossiblyLostErrors(List<ValgrindLeakError> leakPossiblyLostErrors)
+	{
+		this.leakPossiblyLostErrors = leakPossiblyLostErrors;
 	}	
 }

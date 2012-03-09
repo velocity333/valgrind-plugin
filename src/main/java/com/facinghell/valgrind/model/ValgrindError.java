@@ -12,7 +12,7 @@ public class ValgrindError
 		"kind: " + kind + "\n" +
 		"text: " + description + "\n" +
 		"stack: " + stacktrace.toString();
-	}
+	}	
 	
 	public ValgrindStacktrace getStacktrace()
 	{

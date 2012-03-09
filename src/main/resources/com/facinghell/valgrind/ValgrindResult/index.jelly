@@ -5,7 +5,156 @@
 	<l:layout norefresh="true">
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-			 <h1>Valgrind Result</h1>
+				 <h1>Valgrind Result</h1>
+			
+			   <h2>Invalid Reads</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				  <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header">Error</td>
+				      <td class="pane-header">Files</td>
+				    </tr>
+				    
+				    <tbody>
+				
+		        <j:forEach var="elt" items="${it.report.invalidReadErrors}">    
+		            <tr>
+		            
+		              <td class="pane">
+									42
+		              </td>
+		              
+		              <td class="pane">
+									${elt.description}
+		              </td>	   
+		              
+		              <td class="pane">
+									${elt.stacktrace.fileSummary}
+		              </td>
+		              
+		            </tr>
+		        </j:forEach>
+				
+				    </tbody>    
+				  </table>
+				  
+				  
+			   <h2>Invalid Writes</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				  <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header">Error</td>
+				      <td class="pane-header">Files</td>
+				    </tr>
+				    
+				    <tbody>
+				
+		        <j:forEach var="elt" items="${it.report.invalidWriteErrors}">    
+		            <tr>
+		            
+		              <td class="pane">
+									42
+		              </td>
+		              
+		              <td class="pane">
+									${elt.description}
+		              </td>
+		              
+		              <td class="pane">
+									${elt.stacktrace.fileSummary}
+		              </td>		              
+		            </tr>
+		        </j:forEach>
+				
+				    </tbody>    
+				  </table>				  
+				  
+				  
+			   <h2>Leaks (definitely lost)</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				  <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header">Error</td>
+				      <td class="pane-header">Bytes</td>
+				      <td class="pane-header">Blocks</td>
+				      <td class="pane-header">Files</td>
+				    </tr>
+				    
+				    <tbody>
+				
+		        <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
+		            <tr>
+		            
+		              <td class="pane">
+									42
+		              </td>
+		              
+		              <td class="pane">
+									${elt.description}
+		              </td>
+		              
+		              <td class="pane">
+									${elt.leakedBytes}
+		              </td>
+		              
+		              <td class="pane">
+									${elt.leakedBlocks}
+		              </td>		              		              
+		              
+		              <td class="pane">
+									${elt.stacktrace.fileSummary}
+		              </td>	
+		            </tr>
+		        </j:forEach>
+				
+				    </tbody>    
+				  </table>				  				  
+				  
+				  
+				  
+			   <h2>Leaks (possibly lost)</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				  <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header">Error</td>
+				      <td class="pane-header">Bytes</td>
+				      <td class="pane-header">Blocks</td>
+				      <td class="pane-header">Files</td>
+				    </tr>
+				    
+				    <tbody>
+				
+		        <j:forEach var="elt" items="${it.report.leakPossiblyLostErrors}">    
+		            <tr>
+		            
+		              <td class="pane">
+									42
+		              </td>
+		              
+		              <td class="pane">
+									${elt.description}
+		              </td>
+		              
+		              <td class="pane">
+									${elt.leakedBytes}
+		              </td>
+		              
+		              <td class="pane">
+									${elt.leakedBlocks}
+		              </td>		              		              
+		              
+		              <td class="pane">
+									${elt.stacktrace.fileSummary}
+		              </td>	
+		            </tr>
+		        </j:forEach>
+				
+				    </tbody>    
+				  </table>							  
 		</l:main-panel>
 	</l:layout>
 </j:jelly>
