@@ -8,9 +8,9 @@ import java.io.IOException;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import util.AbstractValgrindBuildAction;
 
 import com.facinghell.valgrind.config.ValgrindPublisherConfig;
+import com.facinghell.valgrind.util.AbstractValgrindBuildAction;
 
 public class ValgrindBuildAction extends AbstractValgrindBuildAction
 {

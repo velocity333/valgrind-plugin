@@ -1,4 +1,4 @@
-package com.facinghell.valgrind.parser;
+package com.facinghell.valgrind.util;
 
 import com.facinghell.valgrind.ValgrindResult;
 

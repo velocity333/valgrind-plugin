@@ -5,7 +5,7 @@ import hudson.model.AbstractBuild;
 import java.io.Serializable;
 
 import com.facinghell.valgrind.model.ValgrindReport;
-import com.facinghell.valgrind.parser.ValgrindSummary;
+import com.facinghell.valgrind.util.ValgrindSummary;
 
 public class ValgrindResult implements Serializable
 {	

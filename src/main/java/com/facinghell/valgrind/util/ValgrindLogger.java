@@ -1,4 +1,4 @@
-package com.facinghell.valgrind;
+package com.facinghell.valgrind.util;
 
 import hudson.model.BuildListener;
 

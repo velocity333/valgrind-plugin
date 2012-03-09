@@ -22,6 +22,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import com.facinghell.valgrind.config.ValgrindPublisherConfig;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.parser.ValgrindParserResult;
+import com.facinghell.valgrind.util.ValgrindLogger;
 
 /**
  * 

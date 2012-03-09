@@ -11,8 +11,8 @@ import java.io.IOException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 
-import com.facinghell.valgrind.ValgrindLogger;
 import com.facinghell.valgrind.model.ValgrindReport;
+import com.facinghell.valgrind.util.ValgrindLogger;
 
 public class ValgrindParserResult implements FilePath.FileCallable<ValgrindReport>
 {
