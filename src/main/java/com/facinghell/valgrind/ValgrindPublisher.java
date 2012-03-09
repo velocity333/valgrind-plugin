@@ -25,7 +25,7 @@ import hudson.tasks.Recorder;
  * @author Johannes Ohlemacher
  *
  */
-public class ValgrindPublisher extends Publisher
+public class ValgrindPublisher extends Recorder
 {
 	private ValgrindPublisherConfig valgrindPublisherConfig;
 	
@@ -48,6 +48,7 @@ public class ValgrindPublisher extends Publisher
 		listener.getLogger().println("[Valgrind] pattern:        " + valgrindPublisherConfig.getPattern());
 		listener.getLogger().println("[Valgrind] invalid reads:  " + valgrindPublisherConfig.isInvalidReads());
 		listener.getLogger().println("[Valgrind] invalid writes: " + valgrindPublisherConfig.isInvalidWrites());
+		
 		return true;
 	}
 	
