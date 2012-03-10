@@ -8,6 +8,8 @@ public class ValgrindStacktraceFrame
 	private Integer lineNumber;
 	private String functionName;
 	
+	private String sourceCode;
+	
 	public String toString()
 	{
 		return 
@@ -57,6 +59,16 @@ public class ValgrindStacktraceFrame
 	public void setFunctionName(String functionName)
 	{
 		this.functionName = functionName;
+	}
+
+	public String getSourceCode()
+	{
+		return sourceCode;
+	}
+
+	public void setSourceCode(String sourceCode)
+	{
+		this.sourceCode = sourceCode;
 	}
 
 }

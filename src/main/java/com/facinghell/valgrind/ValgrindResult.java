@@ -2,8 +2,13 @@ package com.facinghell.valgrind;
 
 import hudson.model.AbstractBuild;
 
+import java.io.IOException;
 import java.io.Serializable;
 
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.util.ValgrindSummary;
 
@@ -54,4 +59,25 @@ public class ValgrindResult implements Serializable
 	{
 		return ValgrindSummary.createReportSummaryDetails(this);
 	}
+	
+	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
+			throws IOException
+	{
+		System.err.println("getDynamic called, link: " + link);
+		
+		if ( !link.startsWith("id=") )
+			return null;
+
+		String id = link.substring(3);
+		
+		System.err.println("id: " + id);
+		
+		ValgrindError error = report.findErrorById(id);
+		if ( error == null )
+			return null;
+		
+		ValgrindDetail detail = new ValgrindDetail( owner, error.getStacktrace() );
+		return detail;
+	}
+
 }

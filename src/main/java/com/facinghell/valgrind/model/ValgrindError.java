@@ -2,6 +2,8 @@ package com.facinghell.valgrind.model;
 
 public class ValgrindError
 {
+	private String origin;
+	private String uniqueId;	
 	private ValgrindErrorKind kind;
 	private ValgrindStacktrace stacktrace;
 	private String description;
@@ -38,5 +40,25 @@ public class ValgrindError
 	{
 		this.kind = kind;
 	}
-	
+
+	public String getOrigin()
+	{
+		return origin;
+	}
+
+	public void setOrigin(String origin)
+	{
+		this.origin = origin;
+	}
+
+	public String getUniqueId()
+	{
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId)
+	{
+		this.uniqueId = uniqueId;
+	}
+
 }

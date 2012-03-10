@@ -11,7 +11,7 @@
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 				  <table class="pane sortable" id="files">
 				    <tr>
-				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header" style="width:2em">Origin</td>
 				      <td class="pane-header">Error</td>
 				      <td class="pane-header">Files</td>
 				    </tr>
@@ -22,7 +22,7 @@
 		            <tr>
 		            
 		              <td class="pane">
-									42
+									${elt.origin}
 		              </td>
 		              
 		              <td class="pane">
@@ -44,7 +44,7 @@
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 				  <table class="pane sortable" id="files">
 				    <tr>
-				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header" style="width:2em">Origin</td>
 				      <td class="pane-header">Error</td>
 				      <td class="pane-header">Files</td>
 				    </tr>
@@ -55,7 +55,7 @@
 		            <tr>
 		            
 		              <td class="pane">
-									42
+									${elt.origin}
 		              </td>
 		              
 		              <td class="pane">
@@ -76,6 +76,7 @@
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 				  <table class="pane sortable" id="files">
 				    <tr>
+				      <td class="pane-header" style="width:2em">Origin</td>
 				      <td class="pane-header" style="width:2em">Id</td>
 				      <td class="pane-header">Error</td>
 				      <td class="pane-header">Bytes</td>
@@ -85,30 +86,16 @@
 				    
 				    <tbody>
 				
-		        <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
-		            <tr>
-		            
-		              <td class="pane">
-									42
-		              </td>
-		              
-		              <td class="pane">
-									${elt.description}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.leakedBytes}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.leakedBlocks}
-		              </td>		              		              
-		              
-		              <td class="pane">
-									${elt.stacktrace.fileSummary}
-		              </td>	
-		            </tr>
-		        </j:forEach>
+			        <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
+			            <tr>		            
+			              <td class="pane">${elt.origin}</td>		              
+			              <td class="pane">${elt.uniqueId}</td>		              
+			              <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
+			              <td class="pane">${elt.leakedBytes}</td>
+			              <td class="pane">${elt.leakedBlocks}</td>		              		              
+			              <td class="pane">${elt.stacktrace.fileSummary}</td>	
+			            </tr>
+			        </j:forEach>
 				
 				    </tbody>    
 				  </table>				  				  
@@ -119,7 +106,7 @@
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 				  <table class="pane sortable" id="files">
 				    <tr>
-				      <td class="pane-header" style="width:2em">Id</td>
+				      <td class="pane-header" style="width:2em">Origin</td>
 				      <td class="pane-header">Error</td>
 				      <td class="pane-header">Bytes</td>
 				      <td class="pane-header">Blocks</td>
@@ -132,11 +119,11 @@
 		            <tr>
 		            
 		              <td class="pane">
-									42
+									${elt.origin}
 		              </td>
 		              
 		              <td class="pane">
-									${elt.description}
+		              <a href="source.test">${elt.description}</a>
 		              </td>
 		              
 		              <td class="pane">

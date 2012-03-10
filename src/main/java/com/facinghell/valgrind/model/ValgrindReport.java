@@ -17,26 +17,62 @@ public class ValgrindReport
 		if ( valgrindReport.invalidReadErrors != null )
 		{
 			for( ValgrindInvalidReadError error : valgrindReport.invalidReadErrors )
+			{
 				addInvalidReadError( error );
+			}
 		}
 		
 		if ( valgrindReport.invalidWriteErrors != null )
 		{
 			for( ValgrindInvalidWriteError error : valgrindReport.invalidWriteErrors )
+			{
 				addInvalidWriteError( error );
+			}
 		}
 		
 		if ( valgrindReport.leakDefinitelyLostErrors != null )
 		{
 			for( ValgrindLeakError error : valgrindReport.leakDefinitelyLostErrors )
+			{
 				addLeakDefinitelyLostError( error );
+			}
 		}
 		
 		if ( valgrindReport.leakPossiblyLostErrors != null )
 		{
 			for( ValgrindLeakError error : valgrindReport.leakPossiblyLostErrors )
+			{
 				addLeakPossiblyLostError( error );
+			}
 		}
+	}
+	
+	public ValgrindError findErrorById( String id )
+	{
+		for ( ValgrindError error : getAllErrors() )
+			if ( error.getUniqueId().equals( id ) )
+				return error;
+		
+		return null;
+	}
+	
+	public List<ValgrindError> getAllErrors()
+	{
+		List<ValgrindError> errors = new ArrayList<ValgrindError>();
+		
+		if ( invalidReadErrors != null )
+			errors.addAll( invalidReadErrors );
+		
+		if ( invalidWriteErrors != null )
+			errors.addAll( invalidWriteErrors );
+		
+		if ( leakPossiblyLostErrors != null )
+			errors.addAll( leakPossiblyLostErrors );
+		
+		if ( leakDefinitelyLostErrors != null )
+			errors.addAll( leakDefinitelyLostErrors );
+		
+		return errors;
 	}
 	
 	@Exported

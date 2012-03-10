@@ -21,9 +21,12 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.facinghell.valgrind.config.ValgrindPublisherConfig;
+import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindReport;
+import com.facinghell.valgrind.model.ValgrindStacktraceFrame;
 import com.facinghell.valgrind.parser.ValgrindParserResult;
 import com.facinghell.valgrind.util.ValgrindLogger;
+import com.facinghell.valgrind.util.ValgrindSource;
 
 /**
  * 
@@ -69,7 +72,9 @@ public class ValgrindPublisher extends Recorder
 		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
 		ValgrindReport valgrindReport;
 
-		valgrindReport = build.getWorkspace().act(parser);
+		valgrindReport = build.getWorkspace().act(parser);		
+		
+		ValgrindSource.updateSourceCode( build, valgrindReport );
 
 		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);
 
