@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
@@ -54,7 +53,7 @@ public class ValgrindXmlParser implements Serializable
 	    	}
 	    	catch( IllegalArgumentException e )
 	    	{
-	    		System.err.println(e);
+	    		//TODO: handle unknown error kind
 	    		continue;	    		
 	    	}	    	
 	    	
@@ -111,13 +110,8 @@ public class ValgrindXmlParser implements Serializable
 	{
 		ValgrindStacktrace stacktrace = new ValgrindStacktrace();
 		
-		Element element = (Element)object;
-		System.err.println( "stack name: " + element.getName() );
-		
 		for( Object frame : errorStackFramePath.selectNodes( object ) )
-		{
 			stacktrace.addFrame( parseStacktraceFrame(frame) );			
-		}
 		
 		return stacktrace;
 	}

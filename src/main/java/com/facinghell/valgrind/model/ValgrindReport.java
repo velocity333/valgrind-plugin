@@ -12,29 +12,6 @@ public class ValgrindReport
 	private List<ValgrindLeakError> leakDefinitelyLostErrors;
 	private List<ValgrindLeakError> leakPossiblyLostErrors;
 	
-	public void print()
-	{
-		System.out.println("invalid reads: ");
-		if (invalidReadErrors != null)
-			for (ValgrindInvalidReadError error : invalidReadErrors)
-				System.out.println(error.toString());
-
-		System.out.println("invalid writes: ");
-		if (invalidWriteErrors != null)
-			for (ValgrindInvalidWriteError error : invalidWriteErrors)
-				System.out.println(error.toString());
-
-		System.out.println("leaks (definitely lost): ");
-		if (leakDefinitelyLostErrors != null)
-			for (ValgrindLeakError error : leakDefinitelyLostErrors)
-				System.out.println(error.toString());
-		
-		System.out.println("leaks (possibly lost): ");
-		if (leakPossiblyLostErrors != null)
-			for (ValgrindLeakError error : leakPossiblyLostErrors)
-				System.out.println(error.toString());		
-	}
-	
 	public void integrate( ValgrindReport valgrindReport )
 	{
 		if ( valgrindReport.invalidReadErrors != null )

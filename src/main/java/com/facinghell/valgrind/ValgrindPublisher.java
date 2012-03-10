@@ -3,6 +3,7 @@ package com.facinghell.valgrind;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixProject;
+import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
@@ -27,61 +28,66 @@ import com.facinghell.valgrind.util.ValgrindLogger;
 /**
  * 
  * @author Johannes Ohlemacher
- *
+ * 
  */
 public class ValgrindPublisher extends Recorder
 {
 	private ValgrindPublisherConfig valgrindPublisherConfig;
-	
+
 	@Override
 	public ValgrindPublisherDescriptor getDescriptor()
 	{
 		return DESCRIPTOR;
 	}
 
+	@Override
+	public Action getProjectAction(AbstractProject<?, ?> project)
+	{
+		System.err.println("getProjectAction");
+		return new ValgrindProjectAction(project);
+	}
+
 	public BuildStepMonitor getRequiredMonitorService()
 	{
 		return BuildStepMonitor.BUILD;
 	}
-	
-    protected boolean canContinue(final Result result) 
-    {
-        return result != Result.ABORTED && result != Result.FAILURE;
-    }
+
+	protected boolean canContinue(final Result result)
+	{
+		return result != Result.ABORTED && result != Result.FAILURE;
+	}
 
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
 			throws InterruptedException, IOException
 	{
-		if ( !canContinue(build.getResult()) )
-			return true;		
-			
+		if (!canContinue(build.getResult()))
+			return true;
+
 		ValgrindLogger.log(listener, "Analysing valgrind results");
 
-		
 		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
 		ValgrindReport valgrindReport;
-		
-		valgrindReport = build.getWorkspace().act(parser);
-		
-		valgrindReport.print();
-		
-		ValgrindResult valgrindResult = new ValgrindResult( build, valgrindReport );
-		
-        ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult, valgrindPublisherConfig);
-        build.addAction(buildAction);
 
-        ValgrindLogger.log(listener, "Ending the valgrind analysis.");
-		
+		valgrindReport = build.getWorkspace().act(parser);
+
+		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);
+
+		ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult,
+				valgrindPublisherConfig);
+		build.addAction(buildAction);
+
+		ValgrindLogger.log(listener, "Ending the valgrind analysis.");
+
 		return true;
 	}
-	
+
 	public ValgrindPublisherConfig getValgrindPublisherConfig()
 	{
 		return valgrindPublisherConfig;
 	}
-	
-	public void setValgrindPublisherConfig( ValgrindPublisherConfig valgrindPublisherConfig )
+
+	public void setValgrindPublisherConfig(ValgrindPublisherConfig valgrindPublisherConfig)
 	{
 		this.valgrindPublisherConfig = valgrindPublisherConfig;
 	}
@@ -111,15 +117,17 @@ public class ValgrindPublisher extends Recorder
 			return "Publish Valgrind results";
 		}
 
-        @Override
-        public Publisher newInstance(StaplerRequest req, JSONObject formData)
-                throws hudson.model.Descriptor.FormException {
+		@Override
+		public Publisher newInstance(StaplerRequest req, JSONObject formData)
+				throws hudson.model.Descriptor.FormException
+		{
 
-            ValgrindPublisher valgrindPublisher = new ValgrindPublisher();
-            ValgrindPublisherConfig valgrindPublisherConfig = req.bindJSON(ValgrindPublisherConfig.class, formData);
-            valgrindPublisher.setValgrindPublisherConfig( valgrindPublisherConfig );
-            
-            return valgrindPublisher;
-        }
+			ValgrindPublisher valgrindPublisher = new ValgrindPublisher();
+			ValgrindPublisherConfig valgrindPublisherConfig = req.bindJSON(ValgrindPublisherConfig.class,
+					formData);
+			valgrindPublisher.setValgrindPublisherConfig(valgrindPublisherConfig);
+
+			return valgrindPublisher;
+		}
 	}
 }
