@@ -63,21 +63,16 @@ public class ValgrindResult implements Serializable
 	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
 			throws IOException
 	{
-		System.err.println("getDynamic called, link: " + link);
-		
 		if ( !link.startsWith("id=") )
 			return null;
 
-		String id = link.substring(3);
-		
-		System.err.println("id: " + id);
-		
+		String id = link.substring(3);	
+
 		ValgrindError error = report.findErrorById(id);
 		if ( error == null )
-			return null;
-		
-		ValgrindDetail detail = new ValgrindDetail( owner, error.getStacktrace() );
-		return detail;
+			return null;	
+ 
+		return new ValgrindDetail( owner, error );
 	}
 
 }

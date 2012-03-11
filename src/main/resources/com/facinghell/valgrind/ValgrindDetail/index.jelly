@@ -5,30 +5,42 @@
 	<l:layout norefresh="true">
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-				 <h1>Valgrind Stacktrace:</h1>
+			<h1>Valgrind Error Details</h1>
 			
-      		   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				  <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Line</td>
-				      <td class="pane-header">File</td>
-				    </tr>
-				    
-				    <tbody>
-				
-		        <j:forEach var="frame" items="${it.stacktrace.frames}">    
-		            <tr>
-		              <td class="pane">${frame.lineNumber}</td>		              
-		              <td class="pane">${frame.fileName}</td>	   
-		            </tr>
-		            <tr>
-		              <td class="pane" colspan="2">${frame.sourceCode}</td>		              
-		            </tr>
-		        </j:forEach>
-				
-				    </tbody>    
-				  </table>
-										  
+			<table class="pane" id="files">          
+		    <tr>
+		      <td class="pane-header" style="width:2em">Origin</td>
+		      <td class="pane">${it.error.origin}</td>
+		    </tr>
+		    <tr>
+		      <td class="pane-header" style="width:2em">Text</td>
+		      <td class="pane">${it.error.description}</td>
+		    </tr>
+		    </table>			
+			
+			<h2>Stacktrace</h2>						
+		    <st:header name="Content-Type" value="text/html;charset=UTF-8" />				
+	        <j:forEach var="frame" items="${it.error.stacktrace.frames}">
+	            <table class="pane sortable" id="files">	          
+			    <tr>
+			      <td class="pane-header" style="width:2em">Object</td>
+			      <td class="pane">${frame.objectName}</td>
+			    </tr>
+			    <tr>
+			      <td class="pane-header" style="width:2em">Function</td>
+			      <td class="pane">${frame.functionName}</td>
+			    </tr>			    			    
+			    <tr>
+			      <td class="pane-header" style="width:2em">File</td>
+			      <td class="pane">${frame.directoryName}/${frame.fileName}:${frame.lineNumber}</td>
+			    </tr>			    
+			    <tr>
+			      <td class="pane-header" style="width:2em">Code</td>
+			      <td class="pane">${frame.sourceCode}</td>
+			    </tr>
+			    </table>
+			    <br/>
+	        </j:forEach>						  
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

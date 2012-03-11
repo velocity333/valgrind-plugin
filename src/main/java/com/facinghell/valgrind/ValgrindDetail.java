@@ -2,32 +2,31 @@ package com.facinghell.valgrind;
 
 import hudson.model.AbstractBuild;
 
-import com.facinghell.valgrind.model.ValgrindStacktrace;
+import com.facinghell.valgrind.model.ValgrindError;
 
 public class ValgrindDetail
 {
-	private ValgrindStacktrace stacktrace;
+	private ValgrindError error;
 	final private AbstractBuild<?, ?> owner;
 	
-	ValgrindDetail( AbstractBuild<?, ?> owner, ValgrindStacktrace strackrace )
+	ValgrindDetail( AbstractBuild<?, ?> owner, ValgrindError error )
 	{
 		this.owner = owner;
-		this.stacktrace = strackrace;
+		this.error = error;
 	}
 
-	public ValgrindStacktrace getStacktrace()
+	public ValgrindError getError()
 	{
-		return stacktrace;
+		return error;
 	}
 
-	public void setStacktrace(ValgrindStacktrace stacktrace)
+	public void setError(ValgrindError error)
 	{
-		this.stacktrace = stacktrace;
+		this.error = error;
 	}
 
 	public AbstractBuild<?, ?> getOwner()
 	{
 		return owner;
 	}
-
 }
