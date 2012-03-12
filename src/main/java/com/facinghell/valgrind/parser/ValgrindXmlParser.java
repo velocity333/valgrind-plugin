@@ -41,7 +41,7 @@ public class ValgrindXmlParser implements Serializable
 	    {
 	    	try
 	    	{
-	    		valgrindReport.addError( parseError(object) );	    		
+	    		valgrindReport.addError( parseError(object) );
 	    	}
 	    	catch( Exception e )
 	    	{	    	

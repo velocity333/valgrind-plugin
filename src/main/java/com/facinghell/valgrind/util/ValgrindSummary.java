@@ -20,42 +20,23 @@ public class ValgrindSummary
 		if (errorCount == 0)
 		{
 			summary.append("no errors");
-		} else
+		} 
+		else
 		{
 			summary.append("<a href=\"valgrindResult\">");
 
 			if (errorCount == 1)
-				summary.append("one error");
+				summary.append("one error, ");
 			else
-				summary.append(Integer.toString(errorCount) + " errors");
+				summary.append(Integer.toString(errorCount) + " errors, ");
 
-			summary.append("</a>:");
+			summary.append(result.getReport().getDefinitelyLeakedBytes());
+			summary.append(" bytes definitely lost");
+			
+			summary.append("</a>");
 		}
 
 		return summary.toString();
 	}
-
-	/**
-	 * Creates an HTML Valgrind detailed summary.
-	 * 
-	 * @param result
-	 *            the valgrind result object
-	 * @return the HTML fragment representing the valgrind report details
-	 *         summary
-	 */
-	public static String createReportSummaryDetails(ValgrindResult result)
-	{
-		StringBuilder builder = new StringBuilder();
-		builder.append("<li>");
-		builder.append( Integer.toString( result.getReport().getInvalidReadErrorCount() ) + " invalid reads");
-		builder.append("</li><li>");
-		builder.append( Integer.toString( result.getReport().getInvalidWriteErrorCount() ) + " invalid write");
-		builder.append("</li><li>");
-		builder.append( Integer.toString( result.getReport().getLeakDefinitelyLostErrorCount() ) + " leaks (definitely lost)");
-		builder.append("</li><li>");
-		builder.append( Integer.toString( result.getReport().getLeakPossiblyLostErrorCount() ) + " leaks (possibly lost)");		
-		builder.append("</li>");
-		return builder.toString();
-	}
-
+	
 }

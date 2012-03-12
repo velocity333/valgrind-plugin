@@ -5,37 +5,56 @@
 	<l:layout norefresh="true">
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-				 <h1>Valgrind Result</h1>			
+			   <h1>Valgrind Result</h1>
+			   		
+			   <h2>Executables</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+			   <table class="pane sortable" id="files">
+			    <tbody>	
+			    	<tr>		            
+			          <td class="pane-header" style="width:2em">Executable</td>
+			          <td class="pane-header" style="width:2em">Invalid reads/writes</td>
+			          <td class="pane-header" style="width:2em">Leaked def. (errors/bytes)</td>
+			          <td class="pane-header" style="width:2em">Leaked pos. (errors/bytes)</td>
+			          <td class="pane-header" style="width:2em">Uninitialized value</td>
+			          <td class="pane-header">Uninitialized cond.</td>			          
+			        </tr>			        
+			    <j:forEach var="exe" items="${it.report.examinedExecutables}">    
+			        <tr>		            
+			          <td class="pane">${exe.name}</td>
+			          <td class="pane">${exe.invalidReadErrorCount}/${exe.invalidWriteErrorCount}</td>
+			          <td class="pane">${exe.leakedDefinitelyErrorCount}/${exe.leakedDefinitelyByteCount}</td>
+			          <td class="pane">${exe.leakedPossiblyErrorCount}/${exe.leakedPossiblyByteCount}</td>
+			          <td class="pane">${exe.uninitValueErrorCount}</td>
+			          <td class="pane">${exe.uninitCondErrorCount}</td>			          
+			        </tr>
+			    </j:forEach>			
+			    </tbody>    
+			   </table>			   		
 	
-				   <h2>Errors</h2>
-				   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				   <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Executable</td>
-				      <td class="pane-header" style="width:2em">Kind</td>
-				      <td class="pane-header" style="width:2em">Id</td>
-				      <td class="pane-header">Error</td>
-				      <td class="pane-header">Bytes</td>
-				      <td class="pane-header">Blocks</td>
-				      <td class="pane-header">Files</td>
-				    </tr>			    
-				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.allErrors}">    
-				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.kind}</td>		              
-				          <td class="pane">${elt.uniqueId}</td>		              
-				          <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
-				          <td class="pane">${elt.leakedBytes}</td>
-				          <td class="pane">${elt.leakedBlocks}</td>		              		              
-				          <td class="pane">${elt.stacktrace.fileSummary}</td>	
-				        </tr>
-				    </j:forEach>			
-				    </tbody>    
-				   </table>	
-				  
-			   
-						  
+			   <h2>Error List</h2>
+			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+			   <table class="pane sortable" id="files">
+			    <tr>
+			      <td class="pane-header" style="width:2em">Executable</td>
+			      <td class="pane-header" style="width:2em">Kind</td>
+			      <td class="pane-header">Error</td>
+			      <td class="pane-header">Bytes</td>
+			      <td class="pane-header">Blocks</td>
+			    </tr>			    
+			    <tbody>			
+			    <j:forEach var="elt" items="${it.report.allErrors}">    
+			        <tr>		            
+			          <td class="pane">${elt.executable}</td>
+			          <td class="pane">${elt.kind}</td>
+			          <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
+			          <td class="pane">${elt.leakedBytes}</td>
+			          <td class="pane">${elt.leakedBlocks}</td>
+			        </tr>
+			    </j:forEach>			
+			    </tbody>    
+			   </table>	
+			   				   		  
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

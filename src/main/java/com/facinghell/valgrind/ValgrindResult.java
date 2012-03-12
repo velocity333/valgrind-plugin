@@ -49,16 +49,6 @@ public class ValgrindResult implements Serializable
 	{
 		return ValgrindSummary.createReportSummary(this);
 	}
-
-	/**
-	 * Renders the detailed summary Valgrind report for the build result.
-	 * 
-	 * @return the HTML fragment of the summary Valgrind report
-	 */
-	public String getDetails()
-	{
-		return ValgrindSummary.createReportSummaryDetails(this);
-	}
 	
 	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
 			throws IOException
