@@ -11,6 +11,8 @@ public class ValgrindError implements Serializable
 	private ValgrindErrorKind kind;
 	private ValgrindStacktrace stacktrace;
 	private String description;
+	private Integer leakedBytes;
+	private Integer leakedBlocks;
 	
 	public String toString()
 	{
@@ -64,5 +66,21 @@ public class ValgrindError implements Serializable
 	{
 		this.executable = executable;
 	}
+	
+	public Integer getLeakedBytes() {
+		return leakedBytes;
+	}
+
+	public void setLeakedBytes(Integer leakedBytes) {
+		this.leakedBytes = leakedBytes;
+	}
+
+	public Integer getLeakedBlocks() {
+		return leakedBlocks;
+	}
+
+	public void setLeakedBlocks(Integer leakedBlocks) {
+		this.leakedBlocks = leakedBlocks;
+	}	
 
 }

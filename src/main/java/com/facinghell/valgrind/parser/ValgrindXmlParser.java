@@ -9,10 +9,8 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
+import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindErrorKind;
-import com.facinghell.valgrind.model.ValgrindInvalidReadError;
-import com.facinghell.valgrind.model.ValgrindInvalidWriteError;
-import com.facinghell.valgrind.model.ValgrindLeakError;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.model.ValgrindStacktrace;
 import com.facinghell.valgrind.model.ValgrindStacktraceFrame;
@@ -21,15 +19,8 @@ public class ValgrindXmlParser implements Serializable
 {
 	private static final long serialVersionUID = -3804982443628621529L;
 	private XPath errorPath = XPath.newInstance("/valgrindoutput/error");
-	private XPath errorKindPath = XPath.newInstance("kind");
 	private XPath errorStackPath = XPath.newInstance("stack");
 	private XPath errorStackFramePath = XPath.newInstance("frame");
-	private XPath errorText = XPath.newInstance("what");
-	private XPath errorUniqueId = XPath.newInstance("unique");
-	private XPath leakText = XPath.newInstance("xwhat/text");
-	private XPath executable = XPath.newInstance("/valgrindoutput/args/argv/exe");
-	private XPath leakedBytes = XPath.newInstance("xwhat/leakedbytes");
-	private XPath leakedBlocks = XPath.newInstance("xwhat/leakedblocks");
 	private XPath functionNamePath = XPath.newInstance("fn");
 	private XPath directoryNamePath = XPath.newInstance("dir");
 	private XPath fileNamePath = XPath.newInstance("file");
@@ -48,69 +39,31 @@ public class ValgrindXmlParser implements Serializable
     
 	    for( Object object : errorPath.selectNodes( doc ) )
 	    {
-	    	ValgrindErrorKind kind;
 	    	try
 	    	{
-	    		kind = ValgrindErrorKind.valueOf( errorKindPath.valueOf(object) );	    	
+	    		valgrindReport.addError( parseError(object) );	    		
 	    	}
-	    	catch( IllegalArgumentException e )
-	    	{
-	    		//TODO: handle unknown error kind
-	    		continue;	    		
-	    	}	    	
-	    	
-	    	switch(kind)
-	    	{
-	    	case InvalidRead:
-	    		valgrindReport.addInvalidReadError( parseInvalidReadError(object) );
-	    		break;
-	    	case InvalidWrite:
-	    		valgrindReport.addInvalidWriteError( parseInvalidWriteError(object) );
-	    		break;
-	    	case Leak_DefinitelyLost:
-	    		valgrindReport.addLeakDefinitelyLostError( parseLeakError(object) );
-	    		break;	 	    		
-	    	case Leak_PossiblyLost:
-	    		valgrindReport.addLeakPossiblyLostError( parseLeakError(object) );
-	    		break;	    		
-	    	}	    	
+	    	catch( Exception e )
+	    	{	    	
+	    	}	    		    	
 	    }	
 
 		return valgrindReport;
-	}
-	
-	private ValgrindInvalidReadError parseInvalidReadError( Object object ) throws JDOMException
-	{
-		ValgrindInvalidReadError error = new ValgrindInvalidReadError();
-		error.setKind( ValgrindErrorKind.valueOf(errorKindPath.valueOf(object)) );
-		error.setDescription( (errorText.valueOf(object)) );	
-		error.setStacktrace( parseStack( errorStackPath.selectSingleNode(object)));
-		error.setUniqueId( errorUniqueId.valueOf(object) );
-		error.setExecutable( executable.valueOf( object ) );
-		return error;		
-	}
+	}	
 
-	private ValgrindInvalidWriteError parseInvalidWriteError( Object object ) throws JDOMException
+	private ValgrindError parseError( Object object ) throws JDOMException
 	{
-		ValgrindInvalidWriteError error = new ValgrindInvalidWriteError();
-		error.setKind( ValgrindErrorKind.valueOf(errorKindPath.valueOf(object)) );
-		error.setDescription( (errorText.valueOf(object)) );
+		ValgrindError error = new ValgrindError();		
+		error.setKind( ValgrindErrorKind.valueOf( stringOf(object, "kind") ) );		
+		error.setUniqueId( stringOf(object, "unique") );
+		error.setExecutable( stringOf(object, "/valgrindoutput/args/argv/exe") );		
+		error.setLeakedBytes( integerOf(object, "xwhat/leakedbytes") );
+		error.setLeakedBlocks( integerOf(object, "xwhat/leakedblocks") );		
+		error.setDescription( stringOf(object, "what") );
+		if ( error.getDescription() == null || error.getDescription().equals("") )
+			error.setDescription( stringOf(object, "xwhat/text") );
+		
 		error.setStacktrace( parseStack( errorStackPath.selectSingleNode(object)));
-		error.setUniqueId( errorUniqueId.valueOf(object) );
-		error.setExecutable( executable.valueOf( object ) );
-		return error;		
-	}
-	
-	private ValgrindLeakError parseLeakError( Object object ) throws JDOMException
-	{
-		ValgrindLeakError error = new ValgrindLeakError();		
-		error.setKind( ValgrindErrorKind.valueOf(errorKindPath.valueOf(object)) );
-		error.setDescription( leakText.valueOf(object) );
-		error.setStacktrace( parseStack( errorStackPath.selectSingleNode(object)));
-		error.setLeakedBytes( Integer.valueOf(leakedBytes.valueOf(object)) );
-		error.setLeakedBlocks( Integer.valueOf(leakedBlocks.valueOf(object)) );
-		error.setUniqueId( errorUniqueId.valueOf(object) );
-		error.setExecutable( executable.valueOf( object ) );
 		return error;	
 	}
 	
@@ -122,6 +75,35 @@ public class ValgrindXmlParser implements Serializable
 			stacktrace.addFrame( parseStacktraceFrame(frame) );			
 		
 		return stacktrace;
+	}
+	
+	private String stringOf( Object object, String path )
+	{		
+		try
+		{
+			XPath xpath = XPath.newInstance(path);
+			return xpath.valueOf( object ).trim();
+		}
+		catch( JDOMException e )
+		{
+			return null;
+		}				
+	}
+	
+	private Integer integerOf( Object object, String path )
+	{
+		String s = stringOf( object, path );
+		if ( s == null )
+			return null;
+		
+		try
+		{
+			return Integer.valueOf( s );			
+		}
+		catch( NumberFormatException e )
+		{
+			return null;
+		}		
 	}
 	
 	private ValgrindStacktraceFrame parseStacktraceFrame( Object object ) throws JDOMException

@@ -10,44 +10,17 @@ public class ValgrindReport implements Serializable
 {
 	private static final long serialVersionUID = -9036045639715893780L;
 	
-	private List<ValgrindInvalidReadError> invalidReadErrors;	
-	private List<ValgrindInvalidWriteError> invalidWriteErrors;
-	private List<ValgrindLeakError> leakDefinitelyLostErrors;
-	private List<ValgrindLeakError> leakPossiblyLostErrors;
+	private List<ValgrindError> errors;	
 	
 	public void integrate( ValgrindReport valgrindReport )
 	{
-		if ( valgrindReport.invalidReadErrors != null )
+		if ( valgrindReport.errors != null )
 		{
-			for( ValgrindInvalidReadError error : valgrindReport.invalidReadErrors )
+			for( ValgrindError error : valgrindReport.errors )
 			{
-				addInvalidReadError( error );
+				addError( error );
 			}
-		}
-		
-		if ( valgrindReport.invalidWriteErrors != null )
-		{
-			for( ValgrindInvalidWriteError error : valgrindReport.invalidWriteErrors )
-			{
-				addInvalidWriteError( error );
-			}
-		}
-		
-		if ( valgrindReport.leakDefinitelyLostErrors != null )
-		{
-			for( ValgrindLeakError error : valgrindReport.leakDefinitelyLostErrors )
-			{
-				addLeakDefinitelyLostError( error );
-			}
-		}
-		
-		if ( valgrindReport.leakPossiblyLostErrors != null )
-		{
-			for( ValgrindLeakError error : valgrindReport.leakPossiblyLostErrors )
-			{
-				addLeakPossiblyLostError( error );
-			}
-		}
+		}		
 	}
 	
 	public ValgrindError findErrorById( String id )
@@ -61,138 +34,79 @@ public class ValgrindReport implements Serializable
 	
 	public List<ValgrindError> getAllErrors()
 	{
-		List<ValgrindError> errors = new ArrayList<ValgrindError>();
-		
-		if ( invalidReadErrors != null )
-			errors.addAll( invalidReadErrors );
-		
-		if ( invalidWriteErrors != null )
-			errors.addAll( invalidWriteErrors );
-		
-		if ( leakPossiblyLostErrors != null )
-			errors.addAll( leakPossiblyLostErrors );
-		
-		if ( leakDefinitelyLostErrors != null )
-			errors.addAll( leakDefinitelyLostErrors );
-		
 		return errors;
 	}
 	
 	@Exported
 	public int getErrorCount()
 	{
-		return 
-		getInvalidReadErrorCount() + 
-		getInvalidWriteErrorCount() + 
-		getLeakDefinitelyLostErrorCount() + 
-		getLeakPossiblyLostErrorCount();
+		if ( errors == null )
+			return 0;
+		
+		return errors.size();
 	}
 	
 	@Exported
 	public int getInvalidReadErrorCount()
 	{
-		if ( invalidReadErrors != null )
-			return invalidReadErrors.size();
-		
-		return 0;
+		return getInvalidReadErrors().size();
 	}
 	
 	@Exported
 	public int getInvalidWriteErrorCount()
 	{
-		if ( invalidWriteErrors != null )
-			return invalidWriteErrors.size();
-		
-		return 0;
+		return getInvalidWriteErrors().size();
 	}
 	
 	@Exported
 	public int getLeakDefinitelyLostErrorCount()
 	{
-		if ( leakDefinitelyLostErrors != null )
-			return leakDefinitelyLostErrors.size();
-		
-		return 0;
+		return getLeakDefinitelyLostErrors().size();
 	}
 	
 	@Exported
 	public int getLeakPossiblyLostErrorCount()
 	{
-		if ( leakPossiblyLostErrors != null )
-			return leakPossiblyLostErrors.size();
-		
-		return 0;
+		return getLeakPossiblyLostErrors().size();
 	}	
 	
-	public void addInvalidReadError( ValgrindInvalidReadError invalidReadError )
+	public void addError( ValgrindError error )
 	{
-		if ( invalidReadErrors == null )
-			invalidReadErrors = new ArrayList<ValgrindInvalidReadError>();
+		if ( errors == null )
+			errors = new ArrayList<ValgrindError>();
 		
-		invalidReadErrors.add( invalidReadError );
+		errors.add( error );
 	}
 	
-	public void addInvalidWriteError( ValgrindInvalidWriteError invalidWriteError )
+
+	public List<ValgrindError> getInvalidReadErrors()
 	{
-		if ( invalidWriteErrors == null )
-			invalidWriteErrors = new ArrayList<ValgrindInvalidWriteError>();
-		
-		invalidWriteErrors.add( invalidWriteError );
+		return getErrorsByKind(ValgrindErrorKind.InvalidRead);
+	}
+
+	public List<ValgrindError> getInvalidWriteErrors()
+	{
+		return getErrorsByKind(ValgrindErrorKind.InvalidWrite);
+	}
+
+	public List<ValgrindError> getLeakDefinitelyLostErrors()
+	{
+		return getErrorsByKind(ValgrindErrorKind.Leak_DefinitelyLost);
+	}
+
+	public List<ValgrindError> getLeakPossiblyLostErrors()
+	{
+		return getErrorsByKind(ValgrindErrorKind.Leak_PossiblyLost);
 	}
 	
-	public void addLeakDefinitelyLostError( ValgrindLeakError leakError )
-	{
-		if ( leakDefinitelyLostErrors == null )
-			leakDefinitelyLostErrors = new ArrayList<ValgrindLeakError>();
+	public List<ValgrindError> getErrorsByKind( ValgrindErrorKind valgrindErrorKind )
+	{		
+		List<ValgrindError> result = new ArrayList<ValgrindError>();
 		
-		leakDefinitelyLostErrors.add( leakError );
-	}
-	
-	public void addLeakPossiblyLostError( ValgrindLeakError leakError )
-	{
-		if ( leakPossiblyLostErrors == null )
-			leakPossiblyLostErrors = new ArrayList<ValgrindLeakError>();
+		for ( ValgrindError error: errors )
+			if ( error.getKind().equals( valgrindErrorKind ) )
+				result.add( error );
 		
-		leakPossiblyLostErrors.add( leakError );
+		return result;		
 	}
-
-	public List<ValgrindInvalidReadError> getInvalidReadErrors()
-	{
-		return invalidReadErrors;
-	}
-
-	public void setInvalidReadErrors(List<ValgrindInvalidReadError> invalidReadErrors)
-	{
-		this.invalidReadErrors = invalidReadErrors;
-	}
-
-	public List<ValgrindInvalidWriteError> getInvalidWriteErrors()
-	{
-		return invalidWriteErrors;
-	}
-
-	public void setInvalidWriteErrors(List<ValgrindInvalidWriteError> invalidWriteErrors)
-	{
-		this.invalidWriteErrors = invalidWriteErrors;
-	}
-
-	public List<ValgrindLeakError> getLeakDefinitelyLostErrors()
-	{
-		return leakDefinitelyLostErrors;
-	}
-
-	public void setLeakDefinitelyLostErrors(List<ValgrindLeakError> leakDefinitelyLostErrors)
-	{
-		this.leakDefinitelyLostErrors = leakDefinitelyLostErrors;
-	}
-
-	public List<ValgrindLeakError> getLeakPossiblyLostErrors()
-	{
-		return leakPossiblyLostErrors;
-	}
-
-	public void setLeakPossiblyLostErrors(List<ValgrindLeakError> leakPossiblyLostErrors)
-	{
-		this.leakPossiblyLostErrors = leakPossiblyLostErrors;
-	}	
 }
