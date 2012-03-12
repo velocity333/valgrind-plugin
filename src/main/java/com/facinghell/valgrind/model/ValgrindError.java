@@ -1,7 +1,11 @@
 package com.facinghell.valgrind.model;
 
-public class ValgrindError
+import java.io.Serializable;
+
+public class ValgrindError implements Serializable
 {
+	private static final long serialVersionUID = -4098320931813875741L;
+	
 	private String origin;
 	private String uniqueId;	
 	private ValgrindErrorKind kind;

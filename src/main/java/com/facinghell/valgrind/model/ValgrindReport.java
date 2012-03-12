@@ -1,12 +1,15 @@
 package com.facinghell.valgrind.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.export.Exported;
 
-public class ValgrindReport
+public class ValgrindReport implements Serializable
 {
+	private static final long serialVersionUID = -9036045639715893780L;
+	
 	private List<ValgrindInvalidReadError> invalidReadErrors;	
 	private List<ValgrindInvalidWriteError> invalidWriteErrors;
 	private List<ValgrindLeakError> leakDefinitelyLostErrors;

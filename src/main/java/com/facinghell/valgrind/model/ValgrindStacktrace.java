@@ -1,12 +1,15 @@
 package com.facinghell.valgrind.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-public class ValgrindStacktrace
+public class ValgrindStacktrace implements Serializable
 {
+	private static final long serialVersionUID = 3165729611300651095L;
+	
 	private List<ValgrindStacktraceFrame> frames;
 	
 	public String toString()

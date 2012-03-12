@@ -1,7 +1,11 @@
 package com.facinghell.valgrind.model;
 
-public class ValgrindLeakError extends ValgrindError
+import java.io.Serializable;
+
+public class ValgrindLeakError extends ValgrindError implements Serializable
 {
+	private static final long serialVersionUID = 1564109517892278778L;
+	
 	private Integer leakedBytes;
 	private Integer leakedBlocks;
 	
@@ -21,5 +25,4 @@ public class ValgrindLeakError extends ValgrindError
 	{
 		this.leakedBlocks = leakedBlocks;
 	}
-
 }
