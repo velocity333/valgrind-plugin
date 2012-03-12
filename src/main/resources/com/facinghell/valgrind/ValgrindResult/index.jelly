@@ -9,139 +9,93 @@
 			
 			   <h2>Invalid Reads</h2>
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				  <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Origin</td>
-				      <td class="pane-header">Error</td>
-				      <td class="pane-header">Files</td>
-				    </tr>
-				    
-				    <tbody>
-				
+			   <table class="pane sortable" id="files">
+			    <tr>
+			      <td class="pane-header" style="width:2em">Executable</td>
+			      <td class="pane-header">Error</td>
+			      <td class="pane-header">Files</td>
+			    </tr>				    
+			    <tbody>				
 		        <j:forEach var="elt" items="${it.report.invalidReadErrors}">    
-		            <tr>
-		            
-		              <td class="pane">
-									${elt.origin}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.description}
-		              </td>	   
-		              
-		              <td class="pane">
-									${elt.stacktrace.fileSummary}
-		              </td>
-		              
+		            <tr>			            
+		              <td class="pane">${elt.executable}</td>
+		              <td class="pane">${elt.description}</td>
+		              <td class="pane">${elt.stacktrace.fileSummary}</td>		              
 		            </tr>
-		        </j:forEach>
-				
-				    </tbody>    
-				  </table>
-				  
-				  
+		        </j:forEach>				
+			    </tbody>    
+			   </table>
+			   				  
 			   <h2>Invalid Writes</h2>
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				  <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Origin</td>
-				      <td class="pane-header">Error</td>
-				      <td class="pane-header">Files</td>
-				    </tr>
-				    
-				    <tbody>
-				
+			   <table class="pane sortable" id="files">
+			    <tr>
+			      <td class="pane-header" style="width:2em">Executable</td>
+			      <td class="pane-header">Error</td>
+			      <td class="pane-header">Files</td>
+			    </tr>				    
+			    <tbody>				
 		        <j:forEach var="elt" items="${it.report.invalidWriteErrors}">    
-		            <tr>
-		            
-		              <td class="pane">
-									${elt.origin}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.description}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.stacktrace.fileSummary}
-		              </td>		              
+		            <tr>			            
+		              <td class="pane">${elt.executable}</td>
+		              <td class="pane">${elt.description}</td>
+		              <td class="pane">${elt.stacktrace.fileSummary}</td>		              
 		            </tr>
-		        </j:forEach>
-				
-				    </tbody>    
-				  </table>				  
-				  
+		        </j:forEach>				
+			    </tbody>    
+			   </table>		
 				  
 			   <h2>Leaks (definitely lost)</h2>
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				  <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Origin</td>
-				      <td class="pane-header" style="width:2em">Id</td>
-				      <td class="pane-header">Error</td>
-				      <td class="pane-header">Bytes</td>
-				      <td class="pane-header">Blocks</td>
-				      <td class="pane-header">Files</td>
-				    </tr>
-				    
-				    <tbody>
-				
-			        <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
-			            <tr>		            
-			              <td class="pane">${elt.origin}</td>		              
-			              <td class="pane">${elt.uniqueId}</td>		              
-			              <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
-			              <td class="pane">${elt.leakedBytes}</td>
-			              <td class="pane">${elt.leakedBlocks}</td>		              		              
-			              <td class="pane">${elt.stacktrace.fileSummary}</td>	
-			            </tr>
-			        </j:forEach>
-				
-				    </tbody>    
-				  </table>				  				  
-				  
-				  
+			   <table class="pane sortable" id="files">
+			    <tr>
+			      <td class="pane-header" style="width:2em">Executable</td>
+			      <td class="pane-header" style="width:2em">Id</td>
+			      <td class="pane-header">Error</td>
+			      <td class="pane-header">Bytes</td>
+			      <td class="pane-header">Blocks</td>
+			      <td class="pane-header">Files</td>
+			    </tr>			    
+			    <tbody>			
+		        <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
+		            <tr>		            
+		              <td class="pane">${elt.executable}</td>		              
+		              <td class="pane">${elt.uniqueId}</td>		              
+		              <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
+		              <td class="pane">${elt.leakedBytes}</td>
+		              <td class="pane">${elt.leakedBlocks}</td>		              		              
+		              <td class="pane">${elt.stacktrace.fileSummary}</td>	
+		            </tr>
+		        </j:forEach>			
+			    </tbody>    
+			   </table>	
 				  
 			   <h2>Leaks (possibly lost)</h2>
 			   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				  <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">Origin</td>
-				      <td class="pane-header">Error</td>
-				      <td class="pane-header">Bytes</td>
-				      <td class="pane-header">Blocks</td>
-				      <td class="pane-header">Files</td>
-				    </tr>
-				    
-				    <tbody>
-				
+			   <table class="pane sortable" id="files">
+			    <tr>
+			      <td class="pane-header" style="width:2em">Executable</td>
+			      <td class="pane-header" style="width:2em">Id</td>
+			      <td class="pane-header">Error</td>
+			      <td class="pane-header">Bytes</td>
+			      <td class="pane-header">Blocks</td>
+			      <td class="pane-header">Files</td>
+			    </tr>			    
+			    <tbody>			
 		        <j:forEach var="elt" items="${it.report.leakPossiblyLostErrors}">    
-		            <tr>
-		            
-		              <td class="pane">
-									${elt.origin}
-		              </td>
-		              
-		              <td class="pane">
-		              <a href="source.test">${elt.description}</a>
-		              </td>
-		              
-		              <td class="pane">
-									${elt.leakedBytes}
-		              </td>
-		              
-		              <td class="pane">
-									${elt.leakedBlocks}
-		              </td>		              		              
-		              
-		              <td class="pane">
-									${elt.stacktrace.fileSummary}
-		              </td>	
+		            <tr>		            
+		              <td class="pane">${elt.executable}</td>		              
+		              <td class="pane">${elt.uniqueId}</td>		              
+		              <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
+		              <td class="pane">${elt.leakedBytes}</td>
+		              <td class="pane">${elt.leakedBlocks}</td>		              		              
+		              <td class="pane">${elt.stacktrace.fileSummary}</td>	
 		            </tr>
-		        </j:forEach>
-				
-				    </tbody>    
-				  </table>							  
+		        </j:forEach>			
+			    </tbody>    
+			   </table>	
+			   
+						  
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

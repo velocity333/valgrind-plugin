@@ -9,8 +9,8 @@
 			
 			<table class="pane" id="files">          
 		    <tr>
-		      <td class="pane-header" style="width:2em">Origin</td>
-		      <td class="pane">${it.error.origin}</td>
+		      <td class="pane-header" style="width:2em">Executable</td>
+		      <td class="pane">${it.error.executable}</td>
 		    </tr>
 		    <tr>
 		      <td class="pane-header" style="width:2em">Text</td>

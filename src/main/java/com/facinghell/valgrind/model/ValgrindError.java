@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class ValgrindError implements Serializable
 {
-	private static final long serialVersionUID = -4098320931813875741L;
+	private static final long serialVersionUID = 6470943829358084900L;
 	
-	private String origin;
+	private String executable;
 	private String uniqueId;	
 	private ValgrindErrorKind kind;
 	private ValgrindStacktrace stacktrace;
@@ -45,16 +45,6 @@ public class ValgrindError implements Serializable
 		this.kind = kind;
 	}
 
-	public String getOrigin()
-	{
-		return origin;
-	}
-
-	public void setOrigin(String origin)
-	{
-		this.origin = origin;
-	}
-
 	public String getUniqueId()
 	{
 		return uniqueId;
@@ -63,6 +53,16 @@ public class ValgrindError implements Serializable
 	public void setUniqueId(String uniqueId)
 	{
 		this.uniqueId = uniqueId;
+	}
+
+	public String getExecutable()
+	{
+		return executable;
+	}
+
+	public void setExecutable(String executable)
+	{
+		this.executable = executable;
 	}
 
 }
