@@ -1,5 +1,6 @@
 package com.facinghell.valgrind.model;
 
+import java.io.File;
 import java.io.Serializable;
 
 import com.facinghell.valgrind.util.ValgrindUtil;
@@ -72,6 +73,9 @@ public class ValgrindError implements Serializable
 	public void setExecutable(String executable)
 	{
 		this.executable = ValgrindUtil.trimToNull( executable );
+		
+		if ( this.executable != null )
+			this.executable = new File(this.executable).getName();
 	}
 	
 	public Integer getLeakedBytes() {
