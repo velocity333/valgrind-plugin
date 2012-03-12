@@ -27,8 +27,6 @@ public abstract class ValgrindSource
 	private static final int GENERATED_HTML_SOURCE_FOOTER_SIZE = 9;
 	private static final String ERROR_LINE_COLOR = "#FCAF3E";
 	private static final String SOURCE_NOT_AVAIABLE_MESSAGE = "<b>Source code not available</b>";
-	private static final String NO_LINE_MESSAGE = "<b>No line number</b>";
-	private static final String NO_FILE_MESSAGE = "<b>No file name</b>";
 	private static final int prefixLines = 10;
 	private static final int suffixLines = 5;
 	
@@ -36,13 +34,13 @@ public abstract class ValgrindSource
 	{
 		if ( frame.getLineNumber() == null || frame.getLineNumber().intValue() == 0 )
 		{
-			frame.setSourceCode( NO_LINE_MESSAGE );
+			frame.setSourceCode( SOURCE_NOT_AVAIABLE_MESSAGE );
 			return;
 		}
 		
 		if ( frame.getFileName() == null || frame.getFileName().isEmpty() )
 		{
-			frame.setSourceCode( NO_FILE_MESSAGE );
+			frame.setSourceCode( SOURCE_NOT_AVAIABLE_MESSAGE );
 			return;
 		}		
 		

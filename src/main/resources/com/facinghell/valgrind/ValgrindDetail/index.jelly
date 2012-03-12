@@ -31,8 +31,8 @@
 			      <td class="pane">${frame.functionName}</td>
 			    </tr>			    			    
 			    <tr>
-			      <td class="pane-header" style="width:2em">File</td>
-			      <td class="pane">${frame.directoryName}/${frame.fileName}:${frame.lineNumber}</td>
+			      <td class="pane-header" style="width:2em">File/Line</td>
+			      <td class="pane">${frame.filePathAndLine}</td>
 			    </tr>			    
 			    <tr>
 			      <td class="pane-header" style="width:2em">Code</td>

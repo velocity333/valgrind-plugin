@@ -76,8 +76,7 @@ public class ValgrindReport implements Serializable
 			errors = new ArrayList<ValgrindError>();
 		
 		errors.add( error );
-	}
-	
+	}	
 
 	public List<ValgrindError> getInvalidReadErrors()
 	{

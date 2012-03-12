@@ -2,6 +2,8 @@ package com.facinghell.valgrind.model;
 
 import java.io.Serializable;
 
+import com.facinghell.valgrind.util.ValgrindUtil;
+
 public class ValgrindError implements Serializable
 {
 	private static final long serialVersionUID = 6470943829358084900L;
@@ -26,22 +28,27 @@ public class ValgrindError implements Serializable
 	{
 		return stacktrace;
 	}
+	
 	public void setStacktrace(ValgrindStacktrace stacktrace)
 	{
 		this.stacktrace = stacktrace;
 	}
+	
 	public String getDescription()
 	{
 		return description;
 	}
+	
 	public void setDescription(String description)
 	{
-		this.description = description;
+		this.description = ValgrindUtil.trimToNull( description );		
 	}
+	
 	public ValgrindErrorKind getKind()
 	{
 		return kind;
 	}
+	
 	public void setKind(ValgrindErrorKind kind)
 	{
 		this.kind = kind;
@@ -54,7 +61,7 @@ public class ValgrindError implements Serializable
 
 	public void setUniqueId(String uniqueId)
 	{
-		this.uniqueId = uniqueId;
+		this.uniqueId = ValgrindUtil.trimToNull( uniqueId );
 	}
 
 	public String getExecutable()
@@ -64,7 +71,7 @@ public class ValgrindError implements Serializable
 
 	public void setExecutable(String executable)
 	{
-		this.executable = executable;
+		this.executable = ValgrindUtil.trimToNull( executable );
 	}
 	
 	public Integer getLeakedBytes() {
@@ -82,5 +89,4 @@ public class ValgrindError implements Serializable
 	public void setLeakedBlocks(Integer leakedBlocks) {
 		this.leakedBlocks = leakedBlocks;
 	}	
-
 }

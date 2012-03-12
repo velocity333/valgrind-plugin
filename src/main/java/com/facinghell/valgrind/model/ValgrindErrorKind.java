@@ -6,4 +6,6 @@ public enum ValgrindErrorKind
 	InvalidWrite,
 	Leak_DefinitelyLost,
 	Leak_PossiblyLost,
+	UninitCondition,
+	UninitValue,
 }
