@@ -28,7 +28,7 @@ public abstract class AbstractValgrindProjectAction extends Actionable implement
 
 	public String getIconFileName()
 	{
-		return "/plugin/valgrind/icons/valgrind-24.png";
+		return "/plugin/valgrind/icons/valgrind-48.png";
 	}
 
 	public String getSearchUrl()
