@@ -48,26 +48,26 @@ public class ValgrindReport implements Serializable
 	
 	@Exported
 	public int getInvalidReadErrorCount()
-	{
-		return getInvalidReadErrors().size();
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.InvalidRead);
 	}
 	
 	@Exported
 	public int getInvalidWriteErrorCount()
 	{
-		return getInvalidWriteErrors().size();
+		return getErrorCountByKind(ValgrindErrorKind.InvalidWrite);
 	}
 	
 	@Exported
 	public int getLeakDefinitelyLostErrorCount()
 	{
-		return getLeakDefinitelyLostErrors().size();
+		return getErrorCountByKind(ValgrindErrorKind.Leak_DefinitelyLost);
 	}
 	
 	@Exported
 	public int getLeakPossiblyLostErrorCount()
 	{
-		return getLeakPossiblyLostErrors().size();
+		return getErrorCountByKind(ValgrindErrorKind.Leak_PossiblyLost);
 	}	
 	
 	public void addError( ValgrindError error )
@@ -98,8 +98,24 @@ public class ValgrindReport implements Serializable
 		return getErrorsByKind(ValgrindErrorKind.Leak_PossiblyLost);
 	}
 	
+	public int getErrorCountByKind( ValgrindErrorKind valgrindErrorKind )
+	{
+		if ( errors == null )
+			return 0;
+		
+		int count = 0;
+		for ( ValgrindError error: errors )
+			if ( error.getKind().equals( valgrindErrorKind ) )
+				count++;
+		
+		return count;
+	}
+	
 	public List<ValgrindError> getErrorsByKind( ValgrindErrorKind valgrindErrorKind )
 	{		
+		if ( errors == null )
+			return null;
+		
 		List<ValgrindError> result = new ArrayList<ValgrindError>();
 		
 		for ( ValgrindError error: errors )
