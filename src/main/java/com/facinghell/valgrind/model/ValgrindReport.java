@@ -46,10 +46,10 @@ public class ValgrindReport implements Serializable
 		}		
 	}
 	
-	public ValgrindError findErrorById( String id )
+	public ValgrindError findError( String executable, String id )
 	{
 		for ( ValgrindError error : getAllErrors() )
-			if ( error.getUniqueId().equals( id ) )
+			if ( error.getUniqueId().equals( id ) && error.getExecutable().equals( executable ) )
 				return error;
 		
 		return null;

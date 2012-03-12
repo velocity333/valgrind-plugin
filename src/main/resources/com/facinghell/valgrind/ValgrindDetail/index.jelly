@@ -21,7 +21,7 @@
 			<h2>Stacktrace</h2>						
 		    <st:header name="Content-Type" value="text/html;charset=UTF-8" />				
 	        <j:forEach var="frame" items="${it.error.stacktrace.frames}">
-	            <table class="pane sortable" id="files">	          
+	            <table class="pane" id="files">	          
 			    <tr>
 			      <td class="pane-header" style="width:2em">Object</td>
 			      <td class="pane">${frame.objectName}</td>

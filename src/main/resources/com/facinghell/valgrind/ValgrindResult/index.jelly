@@ -38,8 +38,8 @@
 			    <tr>
 			      <td class="pane-header" style="width:2em">Executable</td>
 			      <td class="pane-header" style="width:2em">Kind</td>
-			      <td class="pane-header">Error</td>
-			      <td class="pane-header">Bytes</td>
+			      <td class="pane-header" style="width:2em">Error</td>
+			      <td class="pane-header" style="width:2em">Bytes</td>
 			      <td class="pane-header">Blocks</td>
 			    </tr>			    
 			    <tbody>			
@@ -47,7 +47,7 @@
 			        <tr>		            
 			          <td class="pane">${elt.executable}</td>
 			          <td class="pane">${elt.kind}</td>
-			          <td class="pane"><a href="id=${elt.uniqueId}">${elt.description}</a></td>
+			          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 			          <td class="pane">${elt.leakedBytes}</td>
 			          <td class="pane">${elt.leakedBlocks}</td>
 			        </tr>

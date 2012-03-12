@@ -50,15 +50,28 @@ public class ValgrindResult implements Serializable
 		return ValgrindSummary.createReportSummary(this);
 	}
 	
+	/**
+	 * 
+	 * @param link expected to be in format "id=<executable name>,<unique error id>"
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
 	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
 			throws IOException
 	{
 		if ( !link.startsWith("id=") )
 			return null;
+		
+		int sep = link.indexOf(",");		
+		if ( sep < 3 )
+			return null;
 
-		String id = link.substring(3);	
+		String executable = link.substring(3, sep);
+		String id = link.substring( sep + 1 );
 
-		ValgrindError error = report.findErrorById(id);
+		ValgrindError error = report.findError(executable, id);
 		if ( error == null )
 			return null;	
  
