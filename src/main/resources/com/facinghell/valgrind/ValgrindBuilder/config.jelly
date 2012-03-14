@@ -9,11 +9,20 @@
     Creates a text field that shows the value of the "name" property.
     When submitted, it will be passed to the corresponding constructor parameter.
   -->
-  <f:entry title="Name" field="name">
+  <f:entry title="Working Directory" field="workingDirectory">
     <f:textbox />
   </f:entry>
   
-  <f:entry title="Invalid Reads" field="invalidReads">
-    <f:checkbox />
+  <f:entry title="Pattern" field="includePattern">
+    <f:textbox />
+  </f:entry>
+  
+  <f:entry title="Output Directory" field="outputDirectory">
+    <f:textbox />
+  </f:entry>
+  
+  <f:entry title="File Ending" field="outputFileEnding">
+    <f:textbox />
   </f:entry>  
+  
 </j:jelly>

@@ -1,20 +1,29 @@
 package com.facinghell.valgrind;
 
-import hudson.Launcher;
 import hudson.Extension;
-import hudson.util.FormValidation;
-import hudson.model.AbstractBuild;
+import hudson.FilePath;
+import hudson.Launcher;
 import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
-import net.sf.json.JSONObject;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.QueryParameter;
+import hudson.tasks.Builder;
+import hudson.util.FormValidation;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
-import java.io.IOException;
+
+import net.sf.json.JSONObject;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+
+import com.facinghell.valgrind.util.ValgrindLogger;
 
 /**
  * Sample {@link Builder}.
@@ -35,42 +44,82 @@ import java.io.IOException;
  */
 public class ValgrindBuilder extends Builder
 {
-
-	private final String name;
-	private final boolean invalidReads;
+	private final String workingDirectory;
+	private final String includePattern;
+	private final String outputDirectory;
+	private final String outputFileEnding;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public ValgrindBuilder(String name, boolean invalidReads)
+	public ValgrindBuilder(String workingDirectory, String includePattern, String outputDirectory,
+			String outputFileEnding)
 	{
-		this.name = name;
-		this.invalidReads = invalidReads;
+		this.workingDirectory = workingDirectory;
+		this.includePattern = includePattern;
+		this.outputDirectory = outputDirectory;
+		this.outputFileEnding = outputFileEnding;
 	}
 
-	/**
-	 * We'll use this from the <tt>config.jelly</tt>.
-	 */
-	public String getName()
+	@SuppressWarnings("rawtypes")
+	private int callValgrind(AbstractBuild build, Launcher launcher, BuildListener listener, FilePath file)
+			throws IOException, InterruptedException
 	{
-		return name;
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try
+		{
+			FilePath workDir = build.getWorkspace().child(workingDirectory);
+			if (!workDir.exists() || !workDir.isDirectory())
+				workDir.mkdirs();
+
+			FilePath outDir = build.getWorkspace().child(outputDirectory);
+			if (!outDir.exists() || !outDir.isDirectory())
+				outDir.mkdirs();
+
+			List<String> cmds = new ArrayList<String>();
+			cmds.add("valgrind");
+			cmds.add("--tool=memcheck");
+			cmds.add("--leak-check=full");
+			cmds.add("--show-reachable=yes");
+			cmds.add("--xml=yes");
+			cmds.add("--xml-file=" + outDir.child(file.getName() + outputFileEnding).getRemote());
+			cmds.add(file.getRemote());
+
+			Launcher.ProcStarter starter = launcher.launch();
+			starter = starter.pwd(workDir);
+			starter = starter.stdout(os);
+			starter = starter.stderr(os);
+			starter = starter.cmds(cmds);
+
+			return starter.join();
+		} finally
+		{
+			ValgrindLogger.log(listener, os.toString());
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean perform(AbstractBuild build, Launcher launcher,
-			BuildListener listener)
-	{			
-		// This is where you 'build' the project.
-		// Since this is a dummy, we just say 'hello world' and call that a
-		// build.
+	public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener)
+	{
+		try
+		{
+			FilePath[] files = build.getWorkspace().list(includePattern);
 
-		// This also shows how you can consult the global configuration of the
-		// builder
-		if (getDescriptor().useFrench())
-			listener.getLogger().println("Bonjour, " + name + "!");
-		else
-			listener.getLogger().println("Hello, " + name + "!");
+			ValgrindLogger.log(listener, "binaries to examine: " + files);
+
+			for (FilePath file : files)
+			{
+				int exitCode = callValgrind(build, launcher, listener, file);
+				if (exitCode != 0)
+					return false;
+			}
+		} catch (Exception e)
+		{
+			ValgrindLogger.log(listener, "ERROR: " + e.getMessage());
+			return false;
+		}
+
 		return true;
 	}
 
@@ -95,8 +144,7 @@ public class ValgrindBuilder extends Builder
 	@Extension
 	// This indicates to Jenkins that this is an implementation of an extension
 	// point.
-	public static final class DescriptorImpl extends
-			BuildStepDescriptor<Builder>
+	public static final class DescriptorImpl extends BuildStepDescriptor<Builder>
 	{
 		/**
 		 * To persist global configuration information, simply store it in a
@@ -115,8 +163,7 @@ public class ValgrindBuilder extends Builder
 		 * @return Indicates the outcome of the validation. This is sent to the
 		 *         browser.
 		 */
-		public FormValidation doCheckName(@QueryParameter String value)
-				throws IOException, ServletException
+		public FormValidation doCheckName(@QueryParameter String value) throws IOException, ServletException
 		{
 			if (value.length() == 0)
 				return FormValidation.error("Please set a name");
@@ -142,8 +189,7 @@ public class ValgrindBuilder extends Builder
 		}
 
 		@Override
-		public boolean configure(StaplerRequest req, JSONObject formData)
-				throws FormException
+		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException
 		{
 			// To persist global configuration information,
 			// set that to properties and call save().
@@ -163,5 +209,25 @@ public class ValgrindBuilder extends Builder
 		{
 			return useFrench;
 		}
+	}
+
+	public String getWorkingDirectory()
+	{
+		return workingDirectory;
+	}
+
+	public String getIncludePattern()
+	{
+		return includePattern;
+	}
+
+	public String getOutputDirectory()
+	{
+		return outputDirectory;
+	}
+
+	public String getOutputFileEnding()
+	{
+		return outputFileEnding;
 	}
 }

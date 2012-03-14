@@ -12,12 +12,17 @@
     </f:entry>
 
     <f:entry>
+    	<table width="100%">
+    	<tr>
+    	<td>
         <f:checkbox name="valgrind.invalidReads" checked="${config.invalidReads}"/>
         <label>Invalid  Reads</label>
-    </f:entry>
-    
-    <f:entry>
+        </td>
+        <td>
         <f:checkbox name="valgrind.invalidWrites" checked="${config.invalidWrites}"/>
         <label>Invalid  Writes</label>
+        </td>
+        </tr>
+        </table>
     </f:entry>    
 </j:jelly>
