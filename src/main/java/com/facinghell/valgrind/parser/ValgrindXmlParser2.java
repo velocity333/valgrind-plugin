@@ -17,8 +17,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-
-
 import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindErrorKind;
 import com.facinghell.valgrind.model.ValgrindReport;
@@ -42,9 +40,10 @@ public class ValgrindXmlParser2 implements Serializable
 		
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = builder.parse(file);
-
-		NodeList errorList = (NodeList) xpath.evaluate("/valgrindoutput/error", document, XPathConstants.NODESET);
 		
+		Object object = xpath.evaluate("/valgrindoutput/error", document, XPathConstants.NODESET);
+
+		NodeList errorList = (NodeList) object;		
     
 	    for( int i = 0; i < errorList.getLength(); ++i )
 	    {
