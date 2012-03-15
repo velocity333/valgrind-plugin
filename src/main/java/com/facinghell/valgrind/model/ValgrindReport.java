@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.stapler.export.Exported;
-
 public class ValgrindReport implements Serializable
 {
 	private static final long serialVersionUID = -9036045639715893780L;
