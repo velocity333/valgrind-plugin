@@ -23,7 +23,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+import com.ctc.wstx.util.StringUtil;
 import com.facinghell.valgrind.util.ValgrindLogger;
+import com.facinghell.valgrind.util.ValgrindUtil;
 
 /**
  * Sample {@link Builder}.
@@ -104,9 +106,9 @@ public class ValgrindBuilder extends Builder
 	{
 		try
 		{
-			FilePath[] files = build.getWorkspace().list(includePattern);
+			FilePath[] files = build.getWorkspace().child(workingDirectory).list(includePattern);
 
-			ValgrindLogger.log(listener, "binaries to examine: " + files);
+			ValgrindLogger.log( listener, "executable files: " + ValgrindUtil.join(files, ", "));
 
 			for (FilePath file : files)
 			{
@@ -114,7 +116,8 @@ public class ValgrindBuilder extends Builder
 				if (exitCode != 0)
 					return false;
 			}
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			ValgrindLogger.log(listener, "ERROR: " + e.getMessage());
 			return false;
