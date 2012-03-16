@@ -46,7 +46,7 @@ public abstract class ValgrindSource
 		
 		try
 		{
-			FilePath filePath = build.getWorkspace().child(frame.getFileName());
+			FilePath filePath = build.getWorkspace().child(frame.getFilePath());
 			if ( !filePath.exists() )
 			{
 				frame.setSourceCode( SOURCE_NOT_AVAIABLE_MESSAGE );
