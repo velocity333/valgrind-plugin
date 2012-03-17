@@ -24,7 +24,6 @@ import com.facinghell.valgrind.config.ValgrindPublisherConfig;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.parser.ValgrindParserResult;
 import com.facinghell.valgrind.util.ValgrindLogger;
-import com.facinghell.valgrind.util.ValgrindSource;
 
 /**
  * 
@@ -70,9 +69,7 @@ public class ValgrindPublisher extends Recorder
 		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
 		ValgrindReport valgrindReport;
 
-		valgrindReport = build.getWorkspace().act(parser);		
-		
-		ValgrindSource.updateSourceCode( build, valgrindReport );
+		valgrindReport = build.getWorkspace().act(parser);
 
 		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);
 

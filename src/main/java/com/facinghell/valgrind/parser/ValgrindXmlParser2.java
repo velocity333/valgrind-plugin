@@ -27,11 +27,12 @@ public class ValgrindXmlParser2 implements Serializable
 {
 	private static final long serialVersionUID = -3804982443628621529L;
 	
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = XPathFactory.newInstance().newXPath(); 
+	private XPath xpath = XPathFactory.newInstance().newXPath();
+	private ValgrindSourceCache sourceCache;
 	
-	public ValgrindXmlParser2()
+	public ValgrindXmlParser2( ValgrindSourceCache sourceCache )
 	{
+		this.sourceCache = sourceCache;
 	}	
 
 	public ValgrindReport parse( final File file ) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException
@@ -135,7 +136,7 @@ public class ValgrindXmlParser2 implements Serializable
 		frame.setFileName( stringOf(object, "file") );
 		frame.setObjectName( stringOf(object, "obj") );
 		frame.setFunctionName( stringOf(object, "fn") );
-		
+				
 		String lineNumberString = stringOf(object, "line");
 		
 		if ( lineNumberString != null )
@@ -143,23 +144,12 @@ public class ValgrindXmlParser2 implements Serializable
 			lineNumberString = lineNumberString.trim();
 			
 			if ( !lineNumberString.isEmpty() )
-				frame.setLineNumber( Integer.valueOf(lineNumberString) );			
+			{
+				frame.setLineNumber( Integer.valueOf(lineNumberString) );
+				frame.setSourceCode( sourceCache.get( frame.getFilePath(), frame.getLineNumber().intValue() ) );
+			}
 		}
 		
 		return frame;		
-	}
-	
-	public static void main(String[] args) 
-	{
-		try 
-		{
-			ValgrindReport report = new ValgrindXmlParser2().parse( new File("vg.xml") );
-			
-			System.out.println("error count:" + report.getErrorCount() );
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		} 
 	}
 }
