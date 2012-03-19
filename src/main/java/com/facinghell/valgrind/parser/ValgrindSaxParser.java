@@ -165,32 +165,8 @@ public class ValgrindSaxParser implements Serializable
 			}
 			
 			if ( qName.equalsIgnoreCase("kind")  && currentError != null )
-			{				
-				String s = data.toString();
-				
-				if ( s.equals("Leak_DefinitelyLost") )
-					currentError.setKind( ValgrindErrorKind.Leak_DefinitelyLost );
-				
-				if ( s.equals("Leak_PossiblyLost") )
-					currentError.setKind( ValgrindErrorKind.Leak_PossiblyLost );
-				
-				if ( s.equals("InvalidRead") )
-					currentError.setKind( ValgrindErrorKind.InvalidRead );
-				
-				if ( s.equals("InvalidWrite") )
-					currentError.setKind( ValgrindErrorKind.InvalidWrite );
-				
-				if ( s.equals("UninitCondition") )
-					currentError.setKind( ValgrindErrorKind.UninitCondition );
-				
-				if ( s.equals("UninitValue") )					
-					currentError.setKind( ValgrindErrorKind.UninitValue );
-				
-				if ( s.equals("Leak_StillReachable") )
-					currentError.setKind( ValgrindErrorKind.Leak_StillReachable );
-				
-				if ( s.equals("Leak_IndirectlyLost") )
-					currentError.setKind( ValgrindErrorKind.Leak_IndirectlyLost );				
+			{		
+				currentError.setKind( ValgrindErrorKind.valueOf( data.toString() ) );							
 			}
 			
 			if ( qName.equalsIgnoreCase("what")  && currentError != null )
