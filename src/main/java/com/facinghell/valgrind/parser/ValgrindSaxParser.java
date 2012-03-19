@@ -14,7 +14,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindErrorKind;
-import com.facinghell.valgrind.model.ValgrindExaminedExecutable;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.model.ValgrindStacktrace;
 import com.facinghell.valgrind.model.ValgrindStacktraceFrame;
@@ -32,124 +31,69 @@ public class ValgrindSaxParser implements Serializable
 		private ValgrindStacktrace currentStacktrace;
 		private ValgrindStacktraceFrame currentStacktraceFrame;
 		private StringBuilder data;
-		private String currentExecutable = null;
-		private boolean xwhat = false;
-		private boolean args = false;
-		private boolean argv = false;
+		private String currentExecutable = null;		
+		private String path = "";
 		
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException
 		{
-			if ( qName.equalsIgnoreCase("valgrindoutput") )
-			{
+			path += "/" + qName;
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput") )
 				currentReport = new ValgrindReport();
-			}
 			
-			if ( qName.equalsIgnoreCase("error") )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 				currentError = new ValgrindError();
-			}
 			
-			if ( qName.equalsIgnoreCase("unique") && currentError != null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
 				data = new StringBuilder();
-			}
 			
-			if ( qName.equalsIgnoreCase("kind")  && currentError != null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/kind") )
 				data = new StringBuilder();
-			}
 			
-			if ( qName.equalsIgnoreCase("what")  && currentError != null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/what") )
 				data = new StringBuilder();
-			}
 			
-			if ( qName.equalsIgnoreCase("xwhat")  && currentError != null )
-			{
-				xwhat = true;
-			}
-			
-			if ( qName.equalsIgnoreCase("args")  && currentReport != null )
-			{
-				args = true;
-			}
-			
-			if ( qName.equalsIgnoreCase("argv")  && currentReport != null )
-			{
-				argv = true;
-			}
-			
-			if ( qName.equalsIgnoreCase("exe")  && args && argv )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
 				data = new StringBuilder();
-			}
 			
-			if ( qName.equalsIgnoreCase("text")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/text") )
 				data = new StringBuilder();				
-			}
 			
-			if ( qName.equalsIgnoreCase("leakedbytes")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/leakedbytes") )
 				data = new StringBuilder();				
-			}
 			
-			if ( qName.equalsIgnoreCase("leakedblocks")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/leakedblocks") )
 				data = new StringBuilder();				
-			}
 			
-			if ( qName.equalsIgnoreCase("stack") && currentError != null && currentError.getStacktrace() == null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") && currentError.getStacktrace() == null )
 				currentStacktrace = new ValgrindStacktrace();
+			
+			if ( currentStacktrace != null )
+			{
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") )
+					currentStacktraceFrame = new ValgrindStacktraceFrame();
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj")  )
+					data = new StringBuilder();
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") )
+					data = new StringBuilder();
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") )
+					data = new StringBuilder();
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") )
+					data = new StringBuilder();
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") )
+					data = new StringBuilder();
 			}
-			
-			if ( qName.equalsIgnoreCase("frame") && currentStacktrace != null )
-			{
-				currentStacktraceFrame = new ValgrindStacktraceFrame();
-			}		
-			
-			if ( qName.equalsIgnoreCase("obj")  && currentStacktraceFrame != null )
-			{
-				data = new StringBuilder();
-			}
-			
-			if ( qName.equalsIgnoreCase("fn")  && currentStacktraceFrame != null )
-			{
-				data = new StringBuilder();
-			}
-			
-			if ( qName.equalsIgnoreCase("dir")  && currentStacktraceFrame != null )
-			{
-				data = new StringBuilder();
-			}
-			
-			if ( qName.equalsIgnoreCase("file")  && currentStacktraceFrame != null )
-			{
-				data = new StringBuilder();
-			}
-			
-			if ( qName.equalsIgnoreCase("line")  && currentStacktraceFrame != null )
-			{
-				data = new StringBuilder();
-			}			
 		}
 
 		public void endElement(String uri, String localName, String qName) throws SAXException
-		{
-			if ( currentReport == null )
-				return;
-			
-			if ( qName.equalsIgnoreCase("valgrindoutput") && currentReport != null )
-			{
-				System.out.println( "current report summary: ");
-				System.out.println( "        errors: " + currentReport.getErrorCount());
-				for( ValgrindExaminedExecutable exe : currentReport.getExaminedExecutables() )
-					System.out.println( "        exe: " + exe.getName());				
-			}
-			
-			if ( qName.equalsIgnoreCase("error") && currentError != null )
+		{			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 			{
 				currentError.setExecutable( currentExecutable );
 				
@@ -159,103 +103,71 @@ public class ValgrindSaxParser implements Serializable
 				currentError = null;
 			}	
 			
-			if ( qName.equalsIgnoreCase("unique") && currentError != null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
 				currentError.setUniqueId( data.toString() );
-			}
 			
-			if ( qName.equalsIgnoreCase("kind")  && currentError != null )
-			{		
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/kind") )
 				currentError.setKind( ValgrindErrorKind.valueOf( data.toString() ) );							
-			}
 			
-			if ( qName.equalsIgnoreCase("what")  && currentError != null )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/what") )
 				currentError.setDescription( data.toString() );
-			}	
 			
-			if ( qName.equalsIgnoreCase("xwhat") )
-			{
-				xwhat = false;
-			}
-			
-			if ( qName.equalsIgnoreCase("args") )
-			{
-				args = false;
-			}
-			
-			if ( qName.equalsIgnoreCase("argv") )
-			{
-				argv = false;
-			}
-			
-			if ( qName.equalsIgnoreCase("exe")  && args && argv )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
 				currentExecutable = data.toString();
-			}
 			
-			if ( qName.equalsIgnoreCase("text")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/text") )
 				currentError.setDescription( data.toString() );				
-			}
 			
-			if ( qName.equalsIgnoreCase("leakedbytes")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/leakedbytes") )
 				currentError.setLeakedBytes( Integer.valueOf(data.toString()) );				
-			}
 			
-			if ( qName.equalsIgnoreCase("leakedblocks")  && xwhat )
-			{
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/leakedblocks") )
 				currentError.setLeakedBlocks( Integer.valueOf(data.toString()) );
-			}
 			
-			if ( qName.equalsIgnoreCase("stack") && currentStacktrace != null )
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") && currentStacktrace != null )
 			{
 				currentError.setStacktrace( currentStacktrace );
 				currentStacktrace = null;				
 			}
 			
-			if ( qName.equalsIgnoreCase("frame") && currentStacktraceFrame != null )
+			if ( currentStacktraceFrame != null )
 			{
-				if ( currentStacktraceFrame.getLineNumber() != null )
-					currentStacktraceFrame.setSourceCode( sourceCache.get(currentStacktraceFrame.getFilePath(), currentStacktraceFrame.getLineNumber().intValue() ) );
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") )
+				{
+					if ( currentStacktraceFrame.getLineNumber() != null )
+						currentStacktraceFrame.setSourceCode( sourceCache.get(currentStacktraceFrame.getFilePath(), currentStacktraceFrame.getLineNumber().intValue() ) );
+					
+					currentStacktrace.addFrame( currentStacktraceFrame );
+					currentStacktraceFrame = null;
+				}
 				
-				currentStacktrace.addFrame( currentStacktraceFrame );
-				currentStacktraceFrame = null;
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj")  )
+					currentStacktraceFrame.setObjectName( data.toString() );
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") )
+					currentStacktraceFrame.setFunctionName( data.toString() );
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") )
+					currentStacktraceFrame.setDirectoryName( data.toString() );
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") )
+					currentStacktraceFrame.setFileName( data.toString() );
+				
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") )
+				{		
+					try
+					{
+						currentStacktraceFrame.setLineNumber( Integer.valueOf( data.toString() ) );
+					}
+					catch( NumberFormatException e )
+					{
+					}
+				}	
 			}
 			
-			if ( qName.equalsIgnoreCase("obj")  && currentStacktraceFrame != null )
-			{
-				currentStacktraceFrame.setObjectName( data.toString() );
-			}
-			
-			if ( qName.equalsIgnoreCase("fn")  && currentStacktraceFrame != null )
-			{
-				currentStacktraceFrame.setFunctionName( data.toString() );
-			}
-			
-			if ( qName.equalsIgnoreCase("dir")  && currentStacktraceFrame != null )
-			{
-				currentStacktraceFrame.setDirectoryName( data.toString() );
-			}
-			
-			if ( qName.equalsIgnoreCase("file")  && currentStacktraceFrame != null )
-			{
-				currentStacktraceFrame.setFileName( data.toString() );
-			}
-			
-			if ( qName.equalsIgnoreCase("line")  && currentStacktraceFrame != null )
-			{		
-				try
-				{
-					currentStacktraceFrame.setLineNumber( Integer.valueOf( data.toString() ) );
-				}
-				catch( NumberFormatException e )
-				{
-				}
-			}			
 			
 			data = null;
+			path = path.substring(0, path.length() - ( qName.length() + 1 ) );
 		}
 
 		public void characters(char ch[], int start, int length) throws SAXException
