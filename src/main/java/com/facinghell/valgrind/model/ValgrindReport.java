@@ -187,8 +187,13 @@ public class ValgrindReport implements Serializable
 		
 		int count = 0;
 		for ( ValgrindError error: errors )
+		{
+			if ( error.getKind() == null )
+				continue;
+			
 			if ( error.getKind().equals( valgrindErrorKind ) )
 				count++;
+		}
 		
 		return count;
 	}
