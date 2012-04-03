@@ -31,6 +31,7 @@ import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindReport;
 import com.facinghell.valgrind.model.ValgrindStacktraceFrame;
 import com.facinghell.valgrind.parser.ValgrindParserResult;
+import com.facinghell.valgrind.util.ValgrindEvaluator;
 import com.facinghell.valgrind.util.ValgrindLogger;
 import com.facinghell.valgrind.util.ValgrindSourceFile;
 
@@ -53,7 +54,6 @@ public class ValgrindPublisher extends Recorder
 	@Override
 	public Action getProjectAction(AbstractProject<?, ?> project)
 	{
-		System.err.println("getProjectAction");
 		return new ValgrindProjectAction(project);
 	}
 
@@ -80,7 +80,9 @@ public class ValgrindPublisher extends Recorder
 		ValgrindReport valgrindReport;
 
 		valgrindReport = build.getWorkspace().act(parser);		
-		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);
+		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);		
+		
+		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build); 
 		
 		if ( valgrindReport.getAllErrors() != null && !valgrindReport.getAllErrors().isEmpty() )
 		{
