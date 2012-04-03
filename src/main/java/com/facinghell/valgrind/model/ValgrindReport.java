@@ -137,6 +137,11 @@ public class ValgrindReport implements Serializable
 	{		
 		return getErrorCountByKindAndExecutable(ValgrindErrorKind.InvalidRead, executable);
 	}
+	
+	public List<ValgrindError> getInvalidReadErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.InvalidRead );
+	}
 
 	public int getInvalidWriteErrorCount()
 	{
@@ -146,6 +151,11 @@ public class ValgrindReport implements Serializable
 	public int getInvalidWriteErrorCountByExecutable( String executable )
 	{
 		return getErrorCountByKindAndExecutable(ValgrindErrorKind.InvalidWrite, executable);
+	}
+	
+	public List<ValgrindError> getInvalidWriteErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.InvalidWrite );
 	}
 	
 	public int getLeakDefinitelyLostErrorCount()
@@ -158,6 +168,11 @@ public class ValgrindReport implements Serializable
 		return getErrorCountByKindAndExecutable(ValgrindErrorKind.Leak_DefinitelyLost, executable);
 	}
 	
+	public List<ValgrindError> getLeakDefinitelyLostErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Leak_DefinitelyLost );
+	}
+	
 	public int getLeakPossiblyLostErrorCount()
 	{
 		return getErrorCountByKind(ValgrindErrorKind.Leak_PossiblyLost);
@@ -166,6 +181,41 @@ public class ValgrindReport implements Serializable
 	public int getLeakPossiblyLostErrorCountByExecutable( String executable )
 	{
 		return getErrorCountByKindAndExecutable(ValgrindErrorKind.Leak_PossiblyLost, executable);
+	}
+	
+	public List<ValgrindError> getLeakPossiblyLostErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Leak_PossiblyLost );
+	}
+	
+	public int getLeakStillReachableErrorCount()
+	{
+		return getErrorCountByKind(ValgrindErrorKind.Leak_StillReachable);
+	}
+	
+	public int getLeakStillReachableErrorCountByExecutable( String executable )
+	{
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.Leak_StillReachable, executable);
+	}
+	
+	public List<ValgrindError> getLeakStillReachableErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Leak_StillReachable );
+	}
+	
+	public int getLeakIndirectlyLostErrorCount()
+	{
+		return getErrorCountByKind(ValgrindErrorKind.Leak_IndirectlyLost);
+	}
+	
+	public int getLeakIndirectlyLostErrorCountByExecutable( String executable )
+	{
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.Leak_IndirectlyLost, executable);
+	}
+	
+	public List<ValgrindError> getLeakIndirectlyLostErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Leak_IndirectlyLost );
 	}
 	
 	/*
@@ -217,11 +267,11 @@ public class ValgrindReport implements Serializable
 	}	
 	
 	public List<ValgrindError> getErrorsByKind( ValgrindErrorKind valgrindErrorKind )
-	{		
-		if ( errors == null )
-			return null;
-		
+	{	
 		List<ValgrindError> result = new ArrayList<ValgrindError>();
+		
+		if ( errors == null )
+			return result;
 		
 		for ( ValgrindError error: errors )
 			if ( error.getKind().equals( valgrindErrorKind ) )
