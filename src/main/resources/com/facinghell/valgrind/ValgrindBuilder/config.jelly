@@ -23,6 +23,14 @@
   
   <f:entry title="File Ending" field="outputFileEnding">
     <f:textbox />
-  </f:entry>  
+  </f:entry> 
+  
+  <f:entry title="Show Reachable">
+	<f:checkbox name="showReachable" checked="false"/>
+  </f:entry>
+  
+  <f:entry title="Detect undefined value errors">
+	<f:checkbox name="undefinedValueErrors" checked="true"/>
+  </f:entry>
   
 </j:jelly>

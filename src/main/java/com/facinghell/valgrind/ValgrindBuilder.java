@@ -49,17 +49,33 @@ public class ValgrindBuilder extends Builder
 	private final String includePattern;
 	private final String outputDirectory;
 	private final String outputFileEnding;
+	private final Boolean showReachable;
+	private final Boolean undefinedValueErrors;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public ValgrindBuilder(String workingDirectory, String includePattern, String outputDirectory,
-			String outputFileEnding)
+	public ValgrindBuilder(String workingDirectory, 
+			String includePattern, 
+			String outputDirectory,
+			String outputFileEnding,
+			Boolean showReachable,
+			Boolean undefinedValueErrors)
 	{
 		this.workingDirectory = workingDirectory;
 		this.includePattern = includePattern;
 		this.outputDirectory = outputDirectory;
 		this.outputFileEnding = outputFileEnding;
+		this.showReachable = showReachable;
+		this.undefinedValueErrors = undefinedValueErrors;
+	}
+	
+	private String boolean2argument( String name, Boolean value )
+	{
+		if ( value != null && value.booleanValue() )
+			return name + "=yes";
+		
+		return name + "=no";			
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -80,8 +96,11 @@ public class ValgrindBuilder extends Builder
 			List<String> cmds = new ArrayList<String>();
 			cmds.add("valgrind");
 			cmds.add("--tool=memcheck");
-			cmds.add("--leak-check=full");
-//			cmds.add("--show-reachable=yes");
+			cmds.add("--leak-check=full");			
+			
+			cmds.add( boolean2argument("--show-reachable", showReachable) );
+			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
+		
 			cmds.add("--xml=yes");
 			cmds.add("--xml-file=" + outDir.child(file.getName() + outputFileEnding).getRemote());
 			cmds.add(file.getRemote());
@@ -232,4 +251,16 @@ public class ValgrindBuilder extends Builder
 	{
 		return outputFileEnding;
 	}
+
+	public Boolean getShowReachable()
+	{
+		return showReachable;
+	}
+
+	public Boolean getUndefinedValueErrors()
+	{
+		return undefinedValueErrors;
+	}
+
+
 }
