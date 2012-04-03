@@ -20,9 +20,7 @@ import com.facinghell.valgrind.model.ValgrindStacktraceFrame;
 
 public class ValgrindSaxParser implements Serializable
 {
-	private static final long serialVersionUID = -6889121223670989851L;	
-	
-	private ValgrindSourceCache sourceCache;
+	private static final long serialVersionUID = -6889121223670989851L;
 	
 	private class Handler extends DefaultHandler
 	{
@@ -133,10 +131,7 @@ public class ValgrindSaxParser implements Serializable
 			if ( currentStacktraceFrame != null )
 			{
 				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") )
-				{
-					if ( currentStacktraceFrame.getLineNumber() != null )
-						currentStacktraceFrame.setSourceCode( sourceCache.get(currentStacktraceFrame.getFilePath(), currentStacktraceFrame.getLineNumber().intValue() ) );
-					
+				{					
 					currentStacktrace.addFrame( currentStacktraceFrame );
 					currentStacktraceFrame = null;
 				}
@@ -184,11 +179,6 @@ public class ValgrindSaxParser implements Serializable
 		}
 	}
 	
-	public ValgrindSaxParser( ValgrindSourceCache sourceCache )
-	{
-		this.sourceCache = sourceCache;
-	}
-	
 	public ValgrindReport parse( final File file ) throws ParserConfigurationException, SAXException, IOException
 	{
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -210,7 +200,7 @@ public class ValgrindSaxParser implements Serializable
 	{
 		try
 		{
-			new ValgrindSaxParser(new ValgrindSourceCache(10, 5)).parse(new File("core_test.memcheck") );
+			new ValgrindSaxParser().parse(new File("core_test.memcheck") );
 		}
 		catch (IOException e)
 		{

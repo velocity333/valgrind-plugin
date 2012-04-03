@@ -29,7 +29,6 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 	public ValgrindReport invoke(File basedir, VirtualChannel channel) throws IOException, InterruptedException
 	{
 		ValgrindLogger.log(listener, "looking for valgrind files in '" + basedir.getAbsolutePath() + "' with pattern '" + pattern + "'");
-		ValgrindSourceCache sourceCache = new ValgrindSourceCache( 10, 5 );
 		
 		ValgrindReport valgrindReport = new ValgrindReport();
 		
@@ -38,7 +37,7 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 			ValgrindLogger.log(listener, "parsing " + fileName + "...");
 			try
 			{
-				ValgrindReport report = new ValgrindSaxParser( sourceCache ).parse( new File(basedir, fileName) );				
+				ValgrindReport report = new ValgrindSaxParser().parse( new File(basedir, fileName) );				
 				valgrindReport.integrate( report );
 			} 
 			catch (Exception e)

@@ -1,4 +1,6 @@
-package com.facinghell.valgrind.parser;
+package com.facinghell.valgrind.util;
+
+import hudson.model.AbstractBuild;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,30 +20,44 @@ import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 
-public class ValgrindSourceCache 
+public class ValgrindSourceFile 
 {
+	public static final String SOURCE_DIRECTORY = "valgrind-plugin/source-files";
+	
 	private static final int GENERATED_HTML_SOURCE_HEADER_SIZE = 12;
 	private static final int GENERATED_HTML_SOURCE_FOOTER_SIZE = 9;
 	private static final String ERROR_LINE_COLOR = "#FCAF3E";
-	private static final String SOURCE_NOT_AVAIABLE_MESSAGE = "<b>Source code not available</b>";
+	private static final String SOURCE_NOT_AVAIABLE_MESSAGE = "<b>Source code not available</b>";	
 	
 	private Map<String, List<String> > sourceCodeBuffer = new HashMap<String, List<String> >();
+	private Map<String, String> sourceFileLookup;
 	private int linesBefore;
 	private int linesAfter;	
+	private AbstractBuild<?, ?> build;
 	
-	public ValgrindSourceCache( int linesBefore, int linesAfter )
+	public ValgrindSourceFile( int linesBefore, int linesAfter, Map<String, String> sourceFileLookup, AbstractBuild<?, ?> build )
 	{
+		this.sourceFileLookup = sourceFileLookup;
 		this.linesAfter = linesAfter;
 		this.linesBefore = linesBefore;
+		this.build = build;
 	}
 	
-	public String get( String filePath, int lineNumber )
+	public String getSnippet( String fileName, Integer lineNumber )
 	{
-		if ( !sourceCodeBuffer.containsKey(filePath) )
-			load( filePath );
+		if ( fileName == null || lineNumber == null )
+			return SOURCE_NOT_AVAIABLE_MESSAGE;
 		
-		List<String> lines = sourceCodeBuffer.get( filePath );
-		if ( lines == null )
+		if ( !sourceFileLookup.containsKey(fileName) || sourceFileLookup.get(fileName) == null )
+			return SOURCE_NOT_AVAIABLE_MESSAGE;
+		
+		String localFileName = sourceFileLookup.get( fileName );
+		
+		if ( !sourceCodeBuffer.containsKey( localFileName ) )
+			load( localFileName );		
+		
+		List<String> lines = sourceCodeBuffer.get( localFileName );
+		if ( lines == null || lines.isEmpty() )
 			return SOURCE_NOT_AVAIABLE_MESSAGE;
 		
 		StringBuilder output = new StringBuilder();
@@ -49,7 +65,6 @@ public class ValgrindSourceCache
 		int currentLine = 0;
 		int errorLine = lineNumber + GENERATED_HTML_SOURCE_HEADER_SIZE;
 		
-		//System.err.println( "line of interest: " + frame.getLineNumber().intValue() );
 		while( it.hasNext() )
 		{
 			currentLine++;
@@ -92,31 +107,31 @@ public class ValgrindSourceCache
 	}
 	
 	private void load(String filePath)
-	{				
+	{
+		sourceCodeBuffer.put(filePath, null);
+		
 		try
 		{
-			File file = new File(filePath);
+			File dir = new File( build.getRootDir(), SOURCE_DIRECTORY );
 			
-			if ( file.exists() && file.isFile() )
-			{
+			File file = new File( dir, filePath );
+			
+			if  ( file.exists() && file.isFile() )
+			{			
 				String sourceCode = highlightSource( IOUtils.toString( new FileInputStream( file ) ) );
 				
 				@SuppressWarnings("unchecked")
 				List<String> lines = IOUtils.readLines( new StringInputStream(sourceCode) );
 				
-				sourceCodeBuffer.put(filePath,  lines);
-				
-				return;
+				sourceCodeBuffer.put(filePath,  lines);				
 			}
 		}
 		catch( FileNotFoundException e )
-		{			
+		{	
 		} 
 		catch (IOException e) 
 		{
-		}
-		
-		sourceCodeBuffer.put(filePath, null);
+		}		
 	}
 	
 	private String highlightSource( String src ) throws IOException

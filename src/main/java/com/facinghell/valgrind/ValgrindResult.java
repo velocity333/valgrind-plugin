@@ -4,12 +4,14 @@ import hudson.model.AbstractBuild;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.facinghell.valgrind.model.ValgrindError;
 import com.facinghell.valgrind.model.ValgrindReport;
+import com.facinghell.valgrind.util.ValgrindSourceFile;
 import com.facinghell.valgrind.util.ValgrindSummary;
 
 public class ValgrindResult implements Serializable
@@ -18,6 +20,7 @@ public class ValgrindResult implements Serializable
 	
 	private ValgrindReport report;
     private AbstractBuild<?, ?> owner;
+    private Map<String, String> sourceFiles;
 
     public ValgrindResult( AbstractBuild<?, ?> build, ValgrindReport report )
     {
@@ -39,6 +42,16 @@ public class ValgrindResult implements Serializable
 	{
 		this.report = report;
 	}
+	
+	public Map<String, String> getSourceFiles()
+	{
+		return sourceFiles;
+	}
+	
+	public void setSourceFiles(Map<String, String> sourceFiles)
+	{
+		this.sourceFiles = sourceFiles;
+	}	
 
 	/**
 	 * Renders the summary Valgrind report for the build result.
@@ -73,9 +86,11 @@ public class ValgrindResult implements Serializable
 
 		ValgrindError error = report.findError(executable, id);
 		if ( error == null )
-			return null;	
+			return null;		
+
+		ValgrindSourceFile sourceFile = new ValgrindSourceFile( 10, 5, sourceFiles, owner );
  
-		return new ValgrindDetail( owner, error );
+		return new ValgrindDetail( owner, error, sourceFile );
 	}
 
 }

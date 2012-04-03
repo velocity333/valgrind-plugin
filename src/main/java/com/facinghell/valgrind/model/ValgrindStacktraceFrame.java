@@ -12,8 +12,8 @@ public class ValgrindStacktraceFrame implements Serializable
 	private String directoryName;
 	private String fileName;
 	private Integer lineNumber;
-	private String functionName;	
-	private String sourceCode;
+	private String functionName;
+	private transient String sourceCode;
 	
 	public String toString()
 	{

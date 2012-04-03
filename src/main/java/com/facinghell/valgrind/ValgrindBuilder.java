@@ -23,7 +23,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.ctc.wstx.util.StringUtil;
 import com.facinghell.valgrind.util.ValgrindLogger;
 import com.facinghell.valgrind.util.ValgrindUtil;
 
@@ -82,7 +81,7 @@ public class ValgrindBuilder extends Builder
 			cmds.add("valgrind");
 			cmds.add("--tool=memcheck");
 			cmds.add("--leak-check=full");
-			cmds.add("--show-reachable=yes");
+//			cmds.add("--show-reachable=yes");
 			cmds.add("--xml=yes");
 			cmds.add("--xml-file=" + outDir.child(file.getName() + outputFileEnding).getRemote());
 			cmds.add(file.getRemote());
