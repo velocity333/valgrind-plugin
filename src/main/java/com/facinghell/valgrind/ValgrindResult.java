@@ -88,7 +88,7 @@ public class ValgrindResult implements Serializable
 		if ( error == null )
 			return null;		
 
-		ValgrindSourceFile sourceFile = new ValgrindSourceFile( 10, 5, sourceFiles, owner );
+		ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
  
 		return new ValgrindDetail( owner, error, sourceFile );
 	}

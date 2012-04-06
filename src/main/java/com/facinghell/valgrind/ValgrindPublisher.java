@@ -200,12 +200,24 @@ public class ValgrindPublisher extends Recorder
 	@Extension
 	public static final ValgrindPublisherDescriptor DESCRIPTOR = new ValgrindPublisherDescriptor();
 
-	private static final class ValgrindPublisherDescriptor extends BuildStepDescriptor<Publisher>
+	public static final class ValgrindPublisherDescriptor extends BuildStepDescriptor<Publisher>
 	{
+		private int linesBefore;
+		private int linesAfter;
+		
 		public ValgrindPublisherDescriptor()
 		{
 			super(ValgrindPublisher.class);
 			load();
+		}
+		
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException
+		{
+			linesBefore = formData.getInt("linesBefore");
+			linesAfter = formData.getInt("linesAfter");
+			save();
+			return super.configure(req, formData);
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -220,6 +232,16 @@ public class ValgrindPublisher extends Recorder
 		public String getDisplayName()
 		{
 			return "Publish Valgrind results";
+		}
+
+		public int getLinesBefore()
+		{
+			return linesBefore;
+		}
+
+		public int getLinesAfter()
+		{
+			return linesAfter;
 		}
 
 		@Override
