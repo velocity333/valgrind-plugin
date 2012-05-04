@@ -202,8 +202,8 @@ public class ValgrindPublisher extends Recorder
 
 	public static final class ValgrindPublisherDescriptor extends BuildStepDescriptor<Publisher>
 	{
-		private int linesBefore;
-		private int linesAfter;
+		private int linesBefore = 10;
+		private int linesAfter = 5;
 		
 		public ValgrindPublisherDescriptor()
 		{
