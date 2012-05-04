@@ -6,7 +6,7 @@
     <version>1.455</version><!-- which version of Jenkins is this plugin built against? -->
   </parent>
 
-  <groupId>com.facinghell.valgrind</groupId>
+  <groupId>org.jenkinsci.plugins.valgrind</groupId>
   <artifactId>valgrind</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
