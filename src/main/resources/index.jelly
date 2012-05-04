@@ -2,5 +2,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  This is a Valgrind plugin. Its run valgrind with your executables and collects information about memory leaks and errors.
+  Calls valgrind with your executables and collects information about memory leaks and errors.
 </div>
