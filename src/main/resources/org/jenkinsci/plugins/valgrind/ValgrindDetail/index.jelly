@@ -13,6 +13,10 @@
 		      <td class="pane">${it.error.executable}</td>
 		    </tr>
 		    <tr>
+		      <td class="pane-header" style="width:2em">Unique ID</td>
+		      <td class="pane">${it.error.uniqueId}</td>
+		    </tr>		    
+		    <tr>
 		      <td class="pane-header" style="width:2em">Text</td>
 		      <td class="pane">${it.error.description}</td>
 		    </tr>
