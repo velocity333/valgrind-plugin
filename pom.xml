@@ -8,7 +8,7 @@
 
   <groupId>org.jenkinsci.plugins.valgrind</groupId>
   <artifactId>valgrind</artifactId>
-  <version>0.2</version>
+  <version>0.3-SNAPSHOT</version>
   <packaging>hpi</packaging>
   
   <developers>
