@@ -128,6 +128,36 @@ public class ValgrindReport implements Serializable
 	 * Special error counts
 	 */
 	
+	public int getUninitializedValueErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.UninitValue);
+	}
+	
+	public int getUninitializedValueErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.UninitValue, executable);
+	}	
+	
+	public List<ValgrindError> getUninitializedValueErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.UninitValue );
+	}	
+	
+	public int getUninitializedConditionErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.UninitCondition);
+	}
+	
+	public int getUninitializedConditionErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.UninitCondition, executable);
+	}	
+	
+	public List<ValgrindError> getUninitializedConditionErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.UninitCondition );
+	}	
+	
 	public int getInvalidReadErrorCount()
 	{		
 		return getErrorCountByKind(ValgrindErrorKind.InvalidRead);
@@ -267,15 +297,18 @@ public class ValgrindReport implements Serializable
 	}	
 	
 	public List<ValgrindError> getErrorsByKind( ValgrindErrorKind valgrindErrorKind )
-	{	
-		List<ValgrindError> result = new ArrayList<ValgrindError>();
+	{
+		if ( errors == null || errors.isEmpty() )
+			return null;
 		
-		if ( errors == null )
-			return result;
+		List<ValgrindError> result = new ArrayList<ValgrindError>();
 		
 		for ( ValgrindError error: errors )
 			if ( error.getKind().equals( valgrindErrorKind ) )
 				result.add( error );
+		
+		if ( result.isEmpty() )
+			return null;
 		
 		return result;		
 	}
