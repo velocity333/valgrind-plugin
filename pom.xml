@@ -9,6 +9,7 @@
   <artifactId>valgrind</artifactId>
   <version>0.4-SNAPSHOT</version>
   <packaging>hpi</packaging>
+  <name>Jenkins Valgrind Plug-in</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Valgrind+Plugin</url>
   
 	<licenses>
