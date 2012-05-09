@@ -8,17 +8,21 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.util.FormValidation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletException;
+
 import net.sf.json.JSONObject;
 
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.jenkinsci.plugins.valgrind.util.ValgrindUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 
@@ -184,6 +188,24 @@ public class ValgrindBuilder extends Builder
 		{
 			return true;
 		}
+
+		public FormValidation doCheckIncludePattern(@QueryParameter String includePattern) throws IOException, ServletException
+		{
+			if (includePattern.length() == 0)
+				return FormValidation.error("Please set a pattern");
+			
+			return FormValidation.ok();
+		}
+		
+		public FormValidation doCheckOutputFileEnding(@QueryParameter String value) throws IOException, ServletException
+		{
+			if (value.length() == 0)
+				return FormValidation.error("Please set a file ending for generated xml reports");
+			if (value.charAt(0) != '.' )
+				return FormValidation.warning("File ending does not start with a dot");
+			
+			return FormValidation.ok();
+		}		
 
 		public String getDisplayName()
 		{
