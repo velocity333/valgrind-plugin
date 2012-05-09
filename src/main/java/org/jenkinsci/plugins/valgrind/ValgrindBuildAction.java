@@ -106,10 +106,13 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(buildAction.owner);
 			ValgrindReport report = buildAction.getResult().getReport();
 
-			dsb.add(report.getInvalidReadErrorCount(), "Invalid reads", label);
-			dsb.add(report.getInvalidWriteErrorCount(), "Invalid writes", label);
+			dsb.add(report.getInvalidReadErrorCount() + report.getInvalidWriteErrorCount(), "Invalid reads/writes", label);
 			dsb.add(report.getLeakDefinitelyLostErrorCount(), "Leaks (definitely lost)", label);
 			dsb.add(report.getLeakPossiblyLostErrorCount(), "Leaks (possibly lost)", label);
+			dsb.add(report.getUninitializedConditionErrorCount() + report.getUninitializedValueErrorCount(), "Uninitialized value/cond.", label);
+			dsb.add(report.getInvalidFreeErrorCount() + report.getMismatchedFreeErrorCount(), "Illegal/mismatched frees", label);
+			dsb.add(report.getOverlapErrorCount(), "overlaps", label);
+			dsb.add(report.getSyscallParamErrorCount(), "illegal system calls", label);
 		}
 		return dsb;
 	}
