@@ -10,4 +10,8 @@ public enum ValgrindErrorKind
 	Leak_IndirectlyLost,
 	UninitCondition,
 	UninitValue,
+	Overlap,
+	SyscallParam,
+	InvalidFree,
+	MismatchedFree,
 }

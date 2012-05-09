@@ -105,7 +105,107 @@
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
-			   </j:if>	  			   
+			   </j:if>	  	
+			   
+			   <j:if test="${it.report.overlapErrors != null}">
+				   <h2>Overlaps</h2>
+				   
+				   If copying takes place between objects that overlap, the behavior is undefined. 
+				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.overlap" target="_blank">(Valgrind Manual)</a>
+				   
+				   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				   <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">ID</td>
+				      <td class="pane-header">Error</td>
+				    </tr>			    
+				    <tbody>			
+				    <j:forEach var="elt" items="${it.report.overlapErrors}">
+				        <tr>		            
+				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.uniqueId}</td>
+				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				        </tr>
+				    </j:forEach>			
+				    </tbody>    
+				   </table>	
+			   </j:if>	
+			   
+			   <j:if test="${it.report.syscallParamErrors != null}">
+				   <h2>Use of uninitialised or unaddressable values in system calls</h2>				   
+
+				   Use of uninitialised or unaddressable values in system calls.
+				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.bad-syscall-args" target="_blank">(Valgrind Manual)</a>
+				   
+				   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				   <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">ID</td>
+				      <td class="pane-header">Error</td>
+				    </tr>			    
+				    <tbody>			
+				    <j:forEach var="elt" items="${it.report.syscallParamErrors}">
+				        <tr>		            
+				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.uniqueId}</td>
+				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				        </tr>
+				    </j:forEach>			
+				    </tbody>    
+				   </table>	
+			   </j:if>	
+			   
+			   <j:if test="${it.report.invalidFreeErrors != null}">
+				   <h2>Illegal frees</h2>				   
+
+				   Memcheck keeps track of the blocks allocated by your program with malloc/new, so it can know exactly whether or not the argument to free/delete is legitimate or not. 
+				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.rudefn" target="_blank">(Valgrind Manual)</a>
+				   
+				   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				   <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">ID</td>
+				      <td class="pane-header">Error</td>
+				    </tr>			    
+				    <tbody>			
+				    <j:forEach var="elt" items="${it.report.invalidFreeErrors}">
+				        <tr>		            
+				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.uniqueId}</td>
+				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				        </tr>
+				    </j:forEach>			
+				    </tbody>    
+				   </table>	
+			   </j:if>	
+			   
+			   <j:if test="${it.report.mismatchedFreeErrors != null}">
+				   <h2>Mismatched frees</h2>				   
+
+				   Memcheck keeps track of the blocks allocated by your program with malloc/new, so it can know exactly whether or not the argument to free/delete is legitimate or not. 
+				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.rudefn" target="_blank">(Valgrind Manual)</a>
+				   
+				   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+				   <table class="pane sortable" id="files">
+				    <tr>
+				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">ID</td>
+				      <td class="pane-header">Error</td>
+				    </tr>			    
+				    <tbody>			
+				    <j:forEach var="elt" items="${it.report.mismatchedFreeErrors}">
+				        <tr>		            
+				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.uniqueId}</td>
+				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				        </tr>
+				    </j:forEach>			
+				    </tbody>    
+				   </table>	
+			   </j:if>
                 
                <j:if test="${it.report.leakDefinitelyLostErrors != null}">
 				   <h2>Memory Leaks (definitely lost)</h2>

@@ -128,6 +128,66 @@ public class ValgrindReport implements Serializable
 	 * Special error counts
 	 */
 	
+	public int getOverlapErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.Overlap);
+	}
+	
+	public int getOverlapErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.Overlap, executable);
+	}	
+	
+	public List<ValgrindError> getOverlapErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Overlap );
+	}	
+		
+	public int getSyscallParamErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.SyscallParam);
+	}
+	
+	public int getSyscallParamErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.SyscallParam, executable);
+	}	
+	
+	public List<ValgrindError> getSyscallParamErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.SyscallParam );
+	}	
+	
+	public int getInvalidFreeErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.InvalidFree);
+	}
+	
+	public int getInvalidFreeErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.InvalidFree, executable);
+	}	
+	
+	public List<ValgrindError> getInvalidFreeErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.InvalidFree );
+	}	
+	
+	public int getMismatchedFreeErrorCount()
+	{		
+		return getErrorCountByKind(ValgrindErrorKind.MismatchedFree);
+	}
+	
+	public int getMismatchedFreeErrorCountByExecutable( String executable )
+	{		
+		return getErrorCountByKindAndExecutable(ValgrindErrorKind.MismatchedFree, executable);
+	}	
+	
+	public List<ValgrindError> getMismatchedFreeErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.MismatchedFree );
+	}	
+	
 	public int getUninitializedValueErrorCount()
 	{		
 		return getErrorCountByKind(ValgrindErrorKind.UninitValue);
