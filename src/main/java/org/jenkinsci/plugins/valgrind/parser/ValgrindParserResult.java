@@ -37,7 +37,7 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 			ValgrindLogger.log(listener, "parsing " + fileName + "...");
 			try
 			{
-				ValgrindReport report = new ValgrindSaxParser().parse( new File(basedir, fileName) );				
+				ValgrindReport report = new ValgrindSaxParser(listener).parse( new File(basedir, fileName) );				
 				valgrindReport.integrate( report );
 			} 
 			catch (Exception e)
