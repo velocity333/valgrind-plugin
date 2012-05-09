@@ -73,8 +73,14 @@ public class ValgrindPublisher extends Recorder
 	{
 		if (!canContinue(build.getResult()))
 			return true;
+		
+		if ( valgrindPublisherConfig.getPattern() == null || valgrindPublisherConfig.getPattern().isEmpty() )
+		{
+			ValgrindLogger.log(listener, "ERROR: no pattern for valgrind xml files configured");
+			return false;
+		}
 
-		ValgrindLogger.log(listener, "Analysing valgrind results");
+		ValgrindLogger.log(listener, "Analysing valgrind results");		
 
 		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
 		ValgrindReport valgrindReport;
@@ -210,7 +216,7 @@ public class ValgrindPublisher extends Recorder
 			super(ValgrindPublisher.class);
 			load();
 		}
-		
+
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException
 		{
