@@ -201,7 +201,6 @@ public class ValgrindPublisher extends Recorder
 		
 		return null;		
 	}
-	
 
 	@Extension
 	public static final ValgrindPublisherDescriptor DESCRIPTOR = new ValgrindPublisherDescriptor();
@@ -249,15 +248,18 @@ public class ValgrindPublisher extends Recorder
 		{
 			return linesAfter;
 		}
+		
+		public ValgrindPublisherConfig getConfig()
+		{
+			return new ValgrindPublisherConfig();
+		}
 
 		@Override
 		public Publisher newInstance(StaplerRequest req, JSONObject formData)
 				throws hudson.model.Descriptor.FormException
 		{
-
 			ValgrindPublisher valgrindPublisher = new ValgrindPublisher();
-			ValgrindPublisherConfig valgrindPublisherConfig = req.bindJSON(ValgrindPublisherConfig.class,
-					formData);
+			ValgrindPublisherConfig valgrindPublisherConfig = req.bindJSON(ValgrindPublisherConfig.class, formData);
 			valgrindPublisher.setValgrindPublisherConfig(valgrindPublisherConfig);
 
 			return valgrindPublisher;

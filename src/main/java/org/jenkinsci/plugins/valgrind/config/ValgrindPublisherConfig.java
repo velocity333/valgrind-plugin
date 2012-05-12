@@ -8,7 +8,7 @@ public class ValgrindPublisherConfig implements Serializable
 {
 	private static final long serialVersionUID = 1335068144678253494L;
 	
-	private String pattern;
+	private String pattern = "*.memcheck";
 	private String failThresholdInvalidReadWrite;
 	private String failThresholdDefinitelyLost;
 	private String failThresholdTotal;
@@ -32,6 +32,10 @@ public class ValgrindPublisherConfig implements Serializable
 		this.unstableThresholdInvalidReadWrite = unstableThresholdInvalidReadWrite.trim();
 		this.unstableThresholdDefinitelyLost = unstableThresholdDefinitelyLost.trim();
 		this.unstableThresholdTotal = unstableThresholdTotal.trim();		
+	}
+
+	public ValgrindPublisherConfig()
+	{
 	}
 
 	public String getPattern()
