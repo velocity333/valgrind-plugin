@@ -7,12 +7,15 @@
         <j:set var="config" value="${descriptor.config}"/>
     </j:if>
 
-    <f:entry title="Pattern:">
+    <f:entry title="Report Pattern:" 
+        description="Pattern to find your valgrind xml reports.">
+        
         <f:textbox name="valgrind.pattern" value="${config.pattern}"/>
     </f:entry>
    
     
-	  <f:entry title="Build Status Thresholds">
+	  <f:entry title="Build Status Thresholds"
+	    description="Mark build as failed or unstable if number of errors exceeds a threshold.">
 	    <table>
 	      <thead>
 	        <tr>
