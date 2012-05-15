@@ -1,16 +1,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
 
-    <j:set var="config" value="${instance.valgrindPublisherConfig}"/>
-    
-    <j:if test="${config == null}">
-        <j:set var="config" value="${descriptor.config}"/>
-    </j:if>
-
     <f:entry title="Report Pattern:" 
         description="Pattern to find your valgrind xml reports.">
         
-        <f:textbox name="valgrind.pattern" value="${config.pattern}"/>
+        <f:textbox name="valgrind.pattern" value="${instance.valgrindPublisherConfig.pattern}"/>
     </f:entry>
    
     
@@ -33,10 +27,10 @@
 	        <tr>
 	          <td style="vertical-align:middle">Invalid Reads/Writes</td>
 	          <td>
-	            <f:textbox name="valgrind.failThresholdInvalidReadWrite" value="${config.failThresholdInvalidReadWrite}" />
+	            <f:textbox name="valgrind.failThresholdInvalidReadWrite" value="${instance.valgrindPublisherConfig.failThresholdInvalidReadWrite}" />
 	          </td>
 	          <td>
-	            <f:textbox name="valgrind.unstableThresholdInvalidReadWrite" value="${config.unstableThresholdInvalidReadWrite}" />
+	            <f:textbox name="valgrind.unstableThresholdInvalidReadWrite" value="${instance.valgrindPublisherConfig.unstableThresholdInvalidReadWrite}" />
 	          </td>
 	        </tr>	        
 	      </tbody>
@@ -45,10 +39,10 @@
 	        <tr>
 	          <td style="vertical-align:middle">Leak (definitely lost)</td>
 	          <td>
-	            <f:textbox name="valgrind.failThresholdDefinitelyLost" value="${config.failThresholdDefinitelyLost}" />
+	            <f:textbox name="valgrind.failThresholdDefinitelyLost" value="${instance.valgrindPublisherConfig.failThresholdDefinitelyLost}" />
 	          </td>
 	          <td>
-	            <f:textbox name="valgrind.unstableThresholdDefinitelyLost" value="${config.unstableThresholdDefinitelyLost}" />
+	            <f:textbox name="valgrind.unstableThresholdDefinitelyLost" value="${instance.valgrindPublisherConfig.unstableThresholdDefinitelyLost}" />
 	          </td>
 	        </tr>	        
 	      </tbody>
@@ -57,10 +51,10 @@
 	        <tr>
 	          <td style="vertical-align:middle">Total</td>
 	          <td>
-	            <f:textbox name="valgrind.failThresholdTotal" value="${config.failThresholdTotal}" />
+	            <f:textbox name="valgrind.failThresholdTotal" value="${instance.valgrindPublisherConfig.failThresholdTotal}" />
 	          </td>
 	          <td>
-	            <f:textbox name="valgrind.unstableThresholdTotal" value="${config.unstableThresholdTotal}" />
+	            <f:textbox name="valgrind.unstableThresholdTotal" value="${instance.valgrindPublisherConfig.unstableThresholdTotal}" />
 	          </td>
 	        </tr>	        
 	      </tbody>
