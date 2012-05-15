@@ -45,7 +45,7 @@ public class ValgrindEvaluator
 		try
 		{
 			Integer i = Integer.valueOf(threshold);	
-			return errorCount >= i.intValue();
+			return errorCount > i.intValue();
 		}
 		catch( NumberFormatException e )
 		{
