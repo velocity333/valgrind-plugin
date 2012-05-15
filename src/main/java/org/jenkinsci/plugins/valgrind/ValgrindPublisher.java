@@ -32,6 +32,7 @@ import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindEvaluator;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 
@@ -43,7 +44,13 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class ValgrindPublisher extends Recorder
 {
-	private ValgrindPublisherConfig valgrindPublisherConfig;	
+	private ValgrindPublisherConfig valgrindPublisherConfig;
+	
+	@DataBoundConstructor
+	public ValgrindPublisher(ValgrindPublisherConfig valgrindPublisherConfig)
+	{
+		this.valgrindPublisherConfig = valgrindPublisherConfig;
+	}
 
 	@Override
 	public ValgrindPublisherDescriptor getDescriptor()
@@ -252,17 +259,6 @@ public class ValgrindPublisher extends Recorder
 		public ValgrindPublisherConfig getConfig()
 		{
 			return new ValgrindPublisherConfig();
-		}
-
-		@Override
-		public Publisher newInstance(StaplerRequest req, JSONObject formData)
-				throws hudson.model.Descriptor.FormException
-		{
-			ValgrindPublisher valgrindPublisher = new ValgrindPublisher();
-			ValgrindPublisherConfig valgrindPublisherConfig = req.bindJSON(ValgrindPublisherConfig.class, formData);
-			valgrindPublisher.setValgrindPublisherConfig(valgrindPublisherConfig);
-
-			return valgrindPublisher;
-		}
+		}	
 	}
 }
