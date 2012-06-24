@@ -1,5 +1,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"  xmlns:u="/util">
 
+  <f:entry title="Valgrind Executable" field="valgrindExecutable"
+    description="Location of valgrind executable to use. Leave empty to use default valgrind found via PATH">
+    <f:textbox />
+  </f:entry>
+
   <f:entry title="Working Directory" field="workingDirectory">
     <f:textbox />
   </f:entry>

@@ -46,6 +46,7 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class ValgrindBuilder extends Builder
 {
+	private final String valgrindExecutable;
 	private final String workingDirectory;
 	private final String includePattern;
 	private final String outputDirectory;
@@ -56,17 +57,19 @@ public class ValgrindBuilder extends Builder
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public ValgrindBuilder(String workingDirectory, 
+	public ValgrindBuilder(String valgrindExecutable,
+			String workingDirectory, 
 			String includePattern, 
 			String outputDirectory,
 			String outputFileEnding,
 			Boolean showReachable,
 			Boolean undefinedValueErrors)
 	{
-		this.workingDirectory = workingDirectory;
-		this.includePattern = includePattern;
-		this.outputDirectory = outputDirectory;
-		this.outputFileEnding = outputFileEnding;
+		this.valgrindExecutable = valgrindExecutable.trim();
+		this.workingDirectory = workingDirectory.trim();
+		this.includePattern = includePattern.trim();
+		this.outputDirectory = outputDirectory.trim();
+		this.outputFileEnding = outputFileEnding.trim();
 		this.showReachable = showReachable;
 		this.undefinedValueErrors = undefinedValueErrors;
 	}
@@ -97,7 +100,14 @@ public class ValgrindBuilder extends Builder
 				outDir.mkdirs();
 
 			List<String> cmds = new ArrayList<String>();
-			cmds.add("valgrind");
+			
+			String valgrindExecutable = env.expand(this.valgrindExecutable);
+			
+			if( valgrindExecutable == null || valgrindExecutable.isEmpty() )
+				cmds.add("valgrind"); //use valgrind from path
+			else
+				cmds.add(valgrindExecutable); //use specified valgrind 	
+			
 			cmds.add("--tool=memcheck");
 			cmds.add("--leak-check=full");			
 			
