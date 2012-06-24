@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.valgrind;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -81,15 +82,17 @@ public class ValgrindBuilder extends Builder
 	@SuppressWarnings("rawtypes")
 	private int callValgrind(AbstractBuild build, Launcher launcher, BuildListener listener, FilePath file)
 			throws IOException, InterruptedException
-	{
+	{			
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try
 		{
-			FilePath workDir = build.getWorkspace().child(workingDirectory);
+			EnvVars env = build.getEnvironment(null);
+			
+			FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
 			if (!workDir.exists() || !workDir.isDirectory())
 				workDir.mkdirs();
 
-			FilePath outDir = build.getWorkspace().child(outputDirectory);
+			FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
 			if (!outDir.exists() || !outDir.isDirectory())
 				outDir.mkdirs();
 
@@ -102,7 +105,7 @@ public class ValgrindBuilder extends Builder
 			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
 		
 			cmds.add("--xml=yes");
-			cmds.add("--xml-file=" + outDir.child(file.getName() + outputFileEnding).getRemote());
+			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());
 			cmds.add(file.getRemote());
 
 			Launcher.ProcStarter starter = launcher.launch();
@@ -124,7 +127,9 @@ public class ValgrindBuilder extends Builder
 	{
 		try
 		{
-			FilePath[] files = build.getWorkspace().child(workingDirectory).list(includePattern);
+			EnvVars env = build.getEnvironment(null);
+			
+			FilePath[] files = build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(includePattern));
 
 			ValgrindLogger.log( listener, "executable files: " + ValgrindUtil.join(files, ", "));
 

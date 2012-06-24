@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.valgrind;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -97,16 +98,18 @@ public class ValgrindPublisher extends Recorder
 			ValgrindLogger.log(listener, "ERROR: no pattern for valgrind xml files configured");
 			return false;
 		}
+		
+		EnvVars env = build.getEnvironment(null);
 
 		ValgrindLogger.log(listener, "Analysing valgrind results");		
 
-		ValgrindParserResult parser = new ValgrindParserResult(listener, valgrindPublisherConfig.getPattern());
+		ValgrindParserResult parser = new ValgrindParserResult(listener, env.expand(valgrindPublisherConfig.getPattern()));
 		ValgrindReport valgrindReport;
 
 		valgrindReport = build.getWorkspace().act(parser);		
 		ValgrindResult valgrindResult = new ValgrindResult(build, valgrindReport);		
 		
-		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build); 
+		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
 		
 		if ( valgrindReport.getAllErrors() != null && !valgrindReport.getAllErrors().isEmpty() )
 		{

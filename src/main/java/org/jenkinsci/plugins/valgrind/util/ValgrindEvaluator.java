@@ -1,11 +1,12 @@
 package org.jenkinsci.plugins.valgrind.util;
 
-import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
-import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
-
+import hudson.EnvVars;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
+
+import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
+import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 
 
 public class ValgrindEvaluator
@@ -19,22 +20,22 @@ public class ValgrindEvaluator
 		this.listener = listener;
 	}
 	
-	public void evaluate( ValgrindReport report, AbstractBuild<?, ?> build )
-	{
+	public void evaluate( ValgrindReport report, AbstractBuild<?, ?> build, EnvVars env )
+	{		
 		build.setResult( evaluate(
 				report.getLeakDefinitelyLostErrorCount(), 
-				config.getUnstableThresholdDefinitelyLost(), 
-				config.getFailThresholdDefinitelyLost() ) );
+				env.expand( config.getUnstableThresholdDefinitelyLost() ), 
+				env.expand( config.getFailThresholdDefinitelyLost() ) ) );
 
 		build.setResult( evaluate(
 				report.getInvalidReadErrorCount() + report.getInvalidWriteErrorCount(), 
-				config.getUnstableThresholdInvalidReadWrite(), 
-				config.getFailThresholdInvalidReadWrite() ) );
+				env.expand( config.getUnstableThresholdInvalidReadWrite() ), 
+				env.expand( config.getFailThresholdInvalidReadWrite() ) ) );
 		
 		build.setResult( evaluate(
 				report.getErrorCount(), 
-				config.getUnstableThresholdTotal(), 
-				config.getFailThresholdTotal() ) );
+				env.expand( config.getUnstableThresholdTotal() ), 
+				env.expand( config.getFailThresholdTotal() ) ) );
 	}	
 	
 	private boolean exceedsThreshold( int errorCount, String threshold )
