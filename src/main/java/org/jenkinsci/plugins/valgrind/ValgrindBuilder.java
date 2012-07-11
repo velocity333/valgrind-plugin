@@ -158,6 +158,11 @@ public class ValgrindBuilder extends Builder
 
 		return true;
 	}
+	
+	public String getValgrindExecutable()
+	{
+		return valgrindExecutable;
+	}	
 
 	public String getWorkingDirectory()
 	{
