@@ -109,14 +109,17 @@ public class ValgrindBuilder extends Builder
 			List<String> cmds = new ArrayList<String>();
 			
 			String valgrindExecutable = env.expand(this.valgrindExecutable);
+			String leakCheckLevelString = LeakCheckLevel.full.toString();
+			if ( this.leakCheckLevel != null )
+				leakCheckLevelString = this.leakCheckLevel.toString();
 			
 			if( valgrindExecutable == null || valgrindExecutable.isEmpty() )
 				cmds.add("valgrind"); //use valgrind from path
 			else
-				cmds.add(valgrindExecutable); //use specified valgrind 	
+				cmds.add(valgrindExecutable); //use specified valgrind			
 			
 			cmds.add("--tool=memcheck");
-			cmds.add("--leak-check=" + this.leakCheckLevel.toString());
+			cmds.add("--leak-check=" + leakCheckLevelString);
 			
 			cmds.add( boolean2argument("--show-reachable", showReachable) );
 			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
