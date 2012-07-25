@@ -10,6 +10,7 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,13 +47,17 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class ValgrindBuilder extends Builder
 {
+	public static enum LeakCheckLevel {
+		full, yes, summary, no
+	}
 	private final String valgrindExecutable;
 	private final String workingDirectory;
 	private final String includePattern;
 	private final String outputDirectory;
 	private final String outputFileEnding;
-	private final Boolean showReachable;
-	private final Boolean undefinedValueErrors;
+	private final boolean showReachable;
+	private final boolean undefinedValueErrors;
+	private final LeakCheckLevel leakCheckLevel;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -62,8 +67,9 @@ public class ValgrindBuilder extends Builder
 			String includePattern, 
 			String outputDirectory,
 			String outputFileEnding,
-			Boolean showReachable,
-			Boolean undefinedValueErrors)
+			boolean showReachable,
+			boolean undefinedValueErrors,
+			LeakCheckLevel leakCheckLevel)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -72,6 +78,7 @@ public class ValgrindBuilder extends Builder
 		this.outputFileEnding = outputFileEnding.trim();
 		this.showReachable = showReachable;
 		this.undefinedValueErrors = undefinedValueErrors;
+		this.leakCheckLevel = leakCheckLevel;
 	}
 	
 	private String boolean2argument( String name, Boolean value )
@@ -109,7 +116,7 @@ public class ValgrindBuilder extends Builder
 				cmds.add(valgrindExecutable); //use specified valgrind 	
 			
 			cmds.add("--tool=memcheck");
-			cmds.add("--leak-check=full");			
+			cmds.add("--leak-check=" + this.leakCheckLevel.toString());
 			
 			cmds.add( boolean2argument("--show-reachable", showReachable) );
 			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
@@ -184,20 +191,36 @@ public class ValgrindBuilder extends Builder
 		return outputFileEnding;
 	}
 
-	public Boolean getShowReachable()
+	public boolean isShowReachable()
 	{
 		return showReachable;
 	}
 
-	public Boolean getUndefinedValueErrors()
+	public boolean isUndefinedValueErrors()
 	{
 		return undefinedValueErrors;
+	}
+	
+	public LeakCheckLevel getLeakCheckLevel()
+	{
+		return leakCheckLevel;
 	}
 
 	@Override
 	public DescriptorImpl getDescriptor()
 	{
 		return (DescriptorImpl) super.getDescriptor();
+	}
+	
+	@SuppressWarnings("unused")
+	private ListBoxModel doFillLeakCheckLevelItems() 
+	{
+		ListBoxModel items = new ListBoxModel();
+		
+		for (LeakCheckLevel level : LeakCheckLevel.values()) 
+			items.add(level.name(), String.valueOf(level.ordinal()));
+
+		return items;
 	}
 
 	@Extension
@@ -207,6 +230,10 @@ public class ValgrindBuilder extends Builder
 		public boolean isApplicable(Class<? extends AbstractProject> aClass)
 		{
 			return true;
+		}
+
+		public LeakCheckLevel[] getLeakCheckLevels() {
+			return LeakCheckLevel.values();
 		}
 
 		public FormValidation doCheckIncludePattern(@QueryParameter String includePattern) throws IOException, ServletException
