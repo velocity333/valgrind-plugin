@@ -9,6 +9,11 @@
     <f:textbox />
   </f:entry>
   
+  <f:entry title="Executable Arguments" field="programOptions"
+    description="Command line arguments for executable under test">
+    <f:textbox />
+  </f:entry>
+  
   <f:entry title="Output Directory" field="outputDirectory">
     <f:textbox />
   </f:entry>
@@ -21,7 +26,7 @@
 	  <f:entry title="Valgrind Executable" field="valgrindExecutable"
 	    description="Location of valgrind executable to use. Leave empty to use default valgrind found via PATH">
 	    <f:textbox />
-	  </f:entry>
+	  </f:entry>	  
 	
 	  <f:entry title="Show Reachable" field="showReachable"
 	    description="When disabled, the memory leak detector only shows 'definitely lost' and 'possibly lost' blocks. When enabled, the leak detector also shows 'reachable' and 'indirectly lost' blocks. (valgrind option '--show-reachable=yes|no')">
@@ -42,5 +47,11 @@
 	      </j:forEach>
 	     </select>
 	  </f:entry>
+	  
+	  <f:entry title="Additional Valgrind Options" field="valgrindOptions"
+	    description="Arbitrary valgrind options">
+	    <f:textbox />
+	  </f:entry>
+	  
   </f:advanced>
 </j:jelly>

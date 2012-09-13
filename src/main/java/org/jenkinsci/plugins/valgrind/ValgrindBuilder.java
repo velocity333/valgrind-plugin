@@ -58,6 +58,8 @@ public class ValgrindBuilder extends Builder
 	private final boolean showReachable;
 	private final boolean undefinedValueErrors;
 	private final LeakCheckLevel leakCheckLevel;
+	private final String programOptions;
+	private final String valgrindOptions;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -69,7 +71,9 @@ public class ValgrindBuilder extends Builder
 			String outputFileEnding,
 			boolean showReachable,
 			boolean undefinedValueErrors,
-			LeakCheckLevel leakCheckLevel)
+			LeakCheckLevel leakCheckLevel,
+			String programOptions,
+			String valgrindOptions)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -79,6 +83,8 @@ public class ValgrindBuilder extends Builder
 		this.showReachable = showReachable;
 		this.undefinedValueErrors = undefinedValueErrors;
 		this.leakCheckLevel = leakCheckLevel;
+		this.programOptions = programOptions;
+		this.valgrindOptions = valgrindOptions;
 	}
 	
 	private String boolean2argument( String name, Boolean value )
@@ -97,6 +103,7 @@ public class ValgrindBuilder extends Builder
 		try
 		{
 			EnvVars env = build.getEnvironment(null);
+			env.put("PROGRAM_NAME", file.getName());
 			
 			FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
 			if (!workDir.exists() || !workDir.isDirectory())
@@ -126,7 +133,14 @@ public class ValgrindBuilder extends Builder
 		
 			cmds.add("--xml=yes");
 			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());
+			
+			if ( !valgrindOptions.isEmpty() )
+				cmds.add(env.expand(valgrindOptions));
+			
 			cmds.add(file.getRemote());
+			
+			if ( !programOptions.isEmpty() )
+				cmds.add(env.expand(programOptions));
 
 			Launcher.ProcStarter starter = launcher.launch();
 			starter = starter.pwd(workDir);
@@ -207,6 +221,16 @@ public class ValgrindBuilder extends Builder
 	public LeakCheckLevel getLeakCheckLevel()
 	{
 		return leakCheckLevel;
+	}
+	
+	public String getProgramOptions()
+	{
+		return programOptions;
+	}
+	
+	public String getValgrindOptions()
+	{
+		return valgrindOptions;
 	}
 
 	@Override
