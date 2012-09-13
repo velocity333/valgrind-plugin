@@ -10,7 +10,7 @@
   </f:entry>
   
   <f:entry title="Executable Arguments" field="programOptions"
-    description="Command line arguments for executable under test">
+    description="Command line arguments for executable under test. $${PROGRAM_NAME} contains name of current executable.">
     <f:textbox />
   </f:entry>
   
@@ -49,7 +49,7 @@
 	  </f:entry>
 	  
 	  <f:entry title="Additional Valgrind Options" field="valgrindOptions"
-	    description="Arbitrary valgrind options">
+	    description="This plugin does not expose all valgrind options, so if you want to call valgrind with a special option, you can configure it here.">
 	    <f:textbox />
 	  </f:entry>
 	  
