@@ -135,12 +135,30 @@ public class ValgrindBuilder extends Builder
 			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());
 			
 			if ( valgrindOptions != null && !valgrindOptions.isEmpty() )
-				cmds.add(env.expand(valgrindOptions));
+			{
+				String[] args = env.expand(valgrindOptions).split(" ");
+				for( String arg : args )
+				{
+					arg = arg.trim();
+					
+					if ( arg != null && !arg.isEmpty() )
+						cmds.add(arg);
+				}
+			}
 			
 			cmds.add(file.getRemote());
 			
 			if ( programOptions != null && !programOptions.isEmpty() )
-				cmds.add(env.expand(programOptions));
+			{
+				String[] args = env.expand(programOptions).split(" ");
+				for( String arg : args )
+				{
+					arg = arg.trim();
+					
+					if ( arg != null && !arg.isEmpty() )
+						cmds.add(arg);
+				}
+			}
 
 			Launcher.ProcStarter starter = launcher.launch();
 			starter = starter.pwd(workDir);
