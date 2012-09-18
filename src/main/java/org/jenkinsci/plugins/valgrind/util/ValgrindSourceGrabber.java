@@ -25,11 +25,14 @@ public class ValgrindSourceGrabber
 	private FilePath basedir;
 	private int index = 0;
 	
-	public ValgrindSourceGrabber(BuildListener listener, FilePath basedir, File localRoot)
+	public ValgrindSourceGrabber(BuildListener listener, FilePath basedir)
 	{
 		this.listener = listener;
-		this.basedir = basedir;		
-		
+		this.basedir = basedir;	
+	}
+	
+	public boolean init(File localRoot)
+	{
         this.destDirectory = new File(localRoot, ValgrindSourceFile.SOURCE_DIRECTORY);
         
         if ( !destDirectory.exists() ) 
@@ -37,8 +40,11 @@ public class ValgrindSourceGrabber
             if ( !destDirectory.mkdirs() )
             {
             	ValgrindLogger.log(listener, "ERROR: failed to create local directory for source files: '" + destDirectory.getAbsolutePath() + "'");
+            	return false;
             }
         }
+        
+        return true;
 	}
 	
 	public void grabFromStacktrace(ValgrindStacktrace stacktrace)

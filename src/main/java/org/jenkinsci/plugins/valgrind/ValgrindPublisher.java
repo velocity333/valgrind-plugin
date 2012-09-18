@@ -106,7 +106,11 @@ public class ValgrindPublisher extends Recorder
 		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
 		
 		ValgrindLogger.log(listener, "Analysing valgrind results");	
-		ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot(), build.getRootDir());
+		
+		ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot());
+		
+		if ( !sourceGrabber.init( build.getRootDir() ) )
+			return false;
 		
 		for ( ValgrindError error : valgrindReport.getAllErrors() )
 		{
