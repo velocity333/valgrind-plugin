@@ -1,10 +1,13 @@
 package org.jenkinsci.plugins.valgrind.model;
 
+import java.io.Serializable;
 
-public class ValgrindAuxiliary
+public class ValgrindAuxiliary implements Serializable
 {
-	private String description;
-	private ValgrindStacktrace stacktrace;
+	private static final long	serialVersionUID	= -156868233454667586L;
+	
+	private String				description;
+	private ValgrindStacktrace	stacktrace;
 	
 	public ValgrindStacktrace getStacktrace()
 	{

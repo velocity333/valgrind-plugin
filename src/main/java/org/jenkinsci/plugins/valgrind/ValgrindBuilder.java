@@ -60,6 +60,7 @@ public class ValgrindBuilder extends Builder
 	private final LeakCheckLevel leakCheckLevel;
 	private final String programOptions;
 	private final String valgrindOptions;
+	private final boolean trackOrigins;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -73,7 +74,8 @@ public class ValgrindBuilder extends Builder
 			boolean undefinedValueErrors,
 			LeakCheckLevel leakCheckLevel,
 			String programOptions,
-			String valgrindOptions)
+			String valgrindOptions,
+			boolean trackOrigins)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -85,6 +87,7 @@ public class ValgrindBuilder extends Builder
 		this.leakCheckLevel = leakCheckLevel;
 		this.programOptions = programOptions;
 		this.valgrindOptions = valgrindOptions;
+		this.trackOrigins = trackOrigins;
 	}
 	
 	private String boolean2argument( String name, Boolean value )
@@ -130,6 +133,7 @@ public class ValgrindBuilder extends Builder
 			
 			cmds.add( boolean2argument("--show-reachable", showReachable) );
 			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
+			cmds.add( boolean2argument("--track-origins", trackOrigins) );
 		
 			cmds.add("--xml=yes");
 			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());

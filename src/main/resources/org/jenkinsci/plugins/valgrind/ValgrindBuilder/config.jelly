@@ -38,6 +38,11 @@
 		<f:checkbox name="undefinedValueErrors" />
 	  </f:entry>
 	  
+	  <f:entry title="Track origins" field="trackOrigins"
+	    description="This makes Memcheck run more slowly, but can make it much easier to track down the root causes of uninitialised value errors. (valgrind option '--track-origins=yes|no')">
+		<f:checkbox name="trackOrigins" />
+	  </f:entry>
+	  
 	  <f:entry title="Leak check level" field="leakCheckLevel"
 	    description="When enabled, search for memory leaks when the program finishes. If set to summary, it says how many leaks occurred. If set to full or yes, it also gives details of each individual leak.">	    
 	  	<select class="setting-input" name="leakCheckLevel" >
