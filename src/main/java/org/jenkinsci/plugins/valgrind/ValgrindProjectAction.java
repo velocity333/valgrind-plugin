@@ -39,12 +39,10 @@ public class ValgrindProjectAction extends AbstractValgrindProjectAction
 	@Override
 	public Integer getLastResultBuild()
 	{
-		for (AbstractBuild<?, ?> b = (AbstractBuild<?, ?>) project.getLastBuild(); b != null; b = b
-				.getPreviousNotFailedBuild())
+		for (AbstractBuild<?, ?> b = (AbstractBuild<?, ?>) project.getLastBuild(); b != null; b = b.getPreviousBuiltBuild())
 		{
-			if (b.getResult() == Result.FAILURE)
-				continue;
 			ValgrindBuildAction r = b.getAction(ValgrindBuildAction.class);
+			
 			if (r != null)
 				return b.getNumber();
 		}
