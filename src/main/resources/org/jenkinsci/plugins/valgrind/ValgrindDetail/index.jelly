@@ -46,16 +46,18 @@
 			    <br/>
 	        </j:forEach>
 	        
-	        <j:if test="${it.error.auxiliaryData != null}">
-	        	<h2>Auxiliary Details</h2>
+	        <j:if test="${it.error.auxiliaryData != null}">        	
 
+				<h2>Auxiliary Details</h2>
+				
 		        <j:forEach var="aux" items="${it.error.auxiliaryData}">
-		        
-		        	<j:if test="${aux.description != null}">
-		        		<h4>${aux.description}</h4>
-		        	</j:if>
 		        	
-					<j:if test="${aux.stacktrace != null}">
+		        	<j:if test="${aux.description != null}">
+		        		<h3>${aux.description}</h3>		        		
+		        	</j:if>		        	
+		        	
+					<j:if test="${aux.stacktrace != null}">			
+					
 						<j:forEach var="frame" items="${aux.stacktrace.frames}">						
 			                <table class="pane" id="files">	          
 						    <tr>
@@ -76,7 +78,8 @@
 						    </tr>
 						    </table>
 						    <br/>
-						</j:forEach>		 
+						</j:forEach>
+		 
 		        	</j:if>
 
 		        </j:forEach>
