@@ -88,7 +88,7 @@ public class ValgrindBuilder extends Builder
 	@SuppressWarnings("rawtypes")
 	private int callValgrind(AbstractBuild build, Launcher launcher, BuildListener listener, FilePath file)
 			throws IOException, InterruptedException
-	{			
+	{		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try
 		{
@@ -120,7 +120,11 @@ public class ValgrindBuilder extends Builder
 			
 			cmds.add( boolean2argument("--show-reachable", showReachable) );
 			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
-			cmds.add( boolean2argument("--track-origins", trackOrigins) );
+			
+			if ( !undefinedValueErrors && trackOrigins )
+				ValgrindLogger.log(listener, "WARNING: enabling 'track origins' has no effect when 'undefined value errors' is disabled" );
+			else
+				cmds.add( boolean2argument("--track-origins", trackOrigins) );				
 		
 			cmds.add("--xml=yes");
 			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());

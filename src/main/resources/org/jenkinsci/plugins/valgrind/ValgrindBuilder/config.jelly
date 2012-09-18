@@ -39,7 +39,8 @@
 	  </f:entry>
 	  
 	  <f:entry title="Track origins" field="trackOrigins"
-	    description="This makes Memcheck run more slowly, but can make it much easier to track down the root causes of uninitialised value errors. (valgrind option '--track-origins=yes|no')">
+	    description="This makes Memcheck run more slowly, but can make it much easier to track down the root causes of uninitialised value errors (valgrind option '--track-origins=yes|no'). This option will be silently ignored if 'Detect undefined value errors' is not enabled"
+	    >
 		<f:checkbox name="trackOrigins" />
 	  </f:entry>
 	  
