@@ -20,6 +20,14 @@
 		      <td class="pane-header" style="width:2em">Text</td>
 		      <td class="pane">${it.error.description}</td>
 		    </tr>
+		    <tr>
+		      <td class="pane-header" style="width:2em">Auxiliary</td>
+		      <td class="pane">
+		      	<j:forEach var="aux" items="${it.error.auxiliaryData}">
+		      		${aux.description}<br/>
+		      	</j:forEach>		      
+			  </td>
+		    </tr>		    
 		    </table>			
 			
 			<h2>Stacktrace</h2>						
