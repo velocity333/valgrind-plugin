@@ -1,0 +1,81 @@
+package org.jenkinsci.plugins.valgrind.parser;
+
+import static org.junit.Assert.*;
+import hudson.model.BuildListener;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.easymock.EasyMock;
+import org.jenkinsci.plugins.valgrind.model.ValgrindError;
+import org.jenkinsci.plugins.valgrind.model.ValgrindErrorKind;
+import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
+import org.jenkinsci.plugins.valgrind.model.ValgrindStacktrace;
+import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
+import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+public class ValgrindSaxParserTest
+{
+	private BuildListener listenerMock;
+	private ValgrindSaxParser parser;
+	
+	@Before
+	public void setup()
+	{
+		listenerMock = EasyMock.createMock(BuildListener.class);
+		parser = new ValgrindSaxParser(listenerMock);
+	}
+	
+	@Test
+	public void simple() throws ParserConfigurationException, SAXException, IOException
+	{	
+		ValgrindReport report = parser.parse(new File("src/test/resources/org/jenkinsci/plugins/valgrind/parser/simple.xml"));
+			
+		assertNotNull( report );
+		assertEquals( 3, report.getErrorCount() );
+		
+		assertEquals( 1, report.getErrorCountByKind(ValgrindErrorKind.UninitCondition));
+		assertEquals( 1, report.getErrorCountByKind(ValgrindErrorKind.UninitValue));
+		assertEquals( 1, report.getErrorCountByKind(ValgrindErrorKind.Leak_DefinitelyLost));
+		assertEquals( 0, report.getErrorCountByKind(ValgrindErrorKind.Leak_PossiblyLost));
+		
+		List<ValgrindError> leakPossiblyLostErrors = report.getErrorsByKind(ValgrindErrorKind.Leak_PossiblyLost);
+		assertNull(leakPossiblyLostErrors);
+		
+		List<ValgrindError> uninitConditionErrors = report.getErrorsByKind(ValgrindErrorKind.UninitCondition);
+		assertNotNull(uninitConditionErrors);
+		assertEquals( 1, uninitConditionErrors.size() );
+		
+		ValgrindError error = uninitConditionErrors.get(0);
+		assertNotNull(error);
+		
+		assertEquals( ValgrindErrorKind.UninitCondition, error.getKind() );
+		assertEquals( "0x2" , error.getUniqueId() );
+		assertEquals( "Conditional jump or move depends on uninitialised value(s)", error.getDescription() );
+		assertEquals( "program1", error.getExecutable() );
+		assertNull( error.getLeakedBlocks() );
+		assertNull( error.getLeakedBytes() );
+		
+		ValgrindStacktrace stacktrace = error.getStacktrace();
+		assertNotNull(stacktrace);
+		
+		List<ValgrindStacktraceFrame> frames = stacktrace.getFrames();
+		assertNotNull(frames);
+		assertEquals( 4,  frames.size() );
+		
+		assertNotNull(frames.get(0));		
+		assertNull(frames.get(0).getFileName());
+		assertNull(frames.get(0).getLineNumber());
+		assertEquals("/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.16", frames.get(0).getObjectName());
+		
+		assertNotNull(frames.get(3));		
+		assertEquals( "main.cpp", frames.get(3).getFileName() );
+		assertEquals( Integer.valueOf(24), frames.get(3).getLineNumber() );
+		assertEquals("/home/jenkins/test-slave/workspace/valgrind-test/program1", frames.get(3).getObjectName());		
+	}
+}
