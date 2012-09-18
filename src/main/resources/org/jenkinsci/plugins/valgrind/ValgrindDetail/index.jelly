@@ -44,7 +44,44 @@
 			    </tr>
 			    </table>
 			    <br/>
-	        </j:forEach>						  
+	        </j:forEach>
+	        
+	        <j:if test="${it.error.auxiliaryData != null}">
+	        	<h2>Auxiliary Details</h2>
+
+		        <j:forEach var="aux" items="${it.error.auxiliaryData}">
+		        
+		        	<j:if test="${aux.description != null}">
+		        		<h4>${aux.description}</h4>
+		        	</j:if>
+		        	
+					<j:if test="${aux.stacktrace != null}">
+						<j:forEach var="frame" items="${aux.stacktrace.frames}">						
+			                <table class="pane" id="files">	          
+						    <tr>
+						      <td class="pane-header" style="width:2em">Object</td>
+						      <td class="pane">${frame.objectName}</td>
+						    </tr>
+						    <tr>
+						      <td class="pane-header" style="width:2em">Function</td>
+						      <td class="pane">${frame.functionName}</td>
+						    </tr>			    			    
+						    <tr>
+						      <td class="pane-header" style="width:2em">File/Line</td>
+						      <td class="pane">${frame.filePathAndLine}</td>
+						    </tr>			    
+						    <tr>
+						      <td class="pane-header" style="width:2em">Code</td>
+						      <td class="pane">${frame.sourceCode}</td>
+						    </tr>
+						    </table>
+						    <br/>
+						</j:forEach>		 
+		        	</j:if>
+
+		        </j:forEach>
+			</j:if>	
+	        					  
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

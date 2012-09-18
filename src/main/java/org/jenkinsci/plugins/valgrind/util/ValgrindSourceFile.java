@@ -20,6 +20,12 @@ import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 
+
+/**
+ * 
+ * @author Johannes Ohlemacher
+ * 
+ */
 public class ValgrindSourceFile 
 {
 	public static final String SOURCE_DIRECTORY = "valgrind-plugin/source-files";

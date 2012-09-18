@@ -5,9 +5,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
 import org.jenkinsci.plugins.valgrind.util.ValgrindUtil;
 
 
+/**
+ * 
+ * @author Johannes Ohlemacher
+ * 
+ */
 public class ValgrindError implements Serializable
 {
 	private static final long serialVersionUID = 6470943829358084900L;
@@ -28,6 +34,23 @@ public class ValgrindError implements Serializable
 		"text: " + description + "\n" +
 		"stack: " + stacktrace.toString();
 	}	
+	
+	public void setSourceCode( ValgrindSourceFile sourceFile )
+	{
+		if ( stacktrace != null )
+			stacktrace.setSourceCode( sourceFile );
+		
+		if ( auxiliaryData != null )
+		{
+			for( ValgrindAuxiliary aux : auxiliaryData )
+			{
+				if ( aux == null || aux.getStacktrace() == null )
+					continue;
+				
+				aux.getStacktrace().setSourceCode( sourceFile);					
+			}
+		}
+	}
 	
 	public ValgrindStacktrace getStacktrace()
 	{

@@ -27,23 +27,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-
 /**
- * Sample {@link Builder}.
  * 
- * <p>
- * When the user configures the project and enables this builder,
- * {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
- * {@link ValgrindBuilder} is created. The created instance is persisted to the
- * project configuration XML by using XStream, so this allows you to use
- * instance fields (like {@link #name}) to remember the configuration.
+ * @author Johannes Ohlemacher
  * 
- * <p>
- * When a build is performed, the
- * {@link #perform(AbstractBuild, Launcher, BuildListener)} method will be
- * invoked.
- * 
- * @author Kohsuke Kawaguchi
  */
 public class ValgrindBuilder extends Builder
 {
@@ -253,6 +240,11 @@ public class ValgrindBuilder extends Builder
 	public String getValgrindOptions()
 	{
 		return valgrindOptions;
+	}
+	
+	public boolean isTrackOrigins()
+	{
+		return trackOrigins;
 	}
 
 	@Override

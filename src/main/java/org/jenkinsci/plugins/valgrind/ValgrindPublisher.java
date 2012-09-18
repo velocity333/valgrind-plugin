@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.valgrind;
 
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixProject;
 import hudson.model.Action;
@@ -11,28 +10,23 @@ import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
-import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
+import org.jenkinsci.plugins.valgrind.model.ValgrindAuxiliary;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
-import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
 import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindEvaluator;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
-import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
+import org.jenkinsci.plugins.valgrind.util.ValgrindSourceGrabber;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -111,11 +105,25 @@ public class ValgrindPublisher extends Recorder
 		
 		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
 		
-		if ( valgrindReport.getAllErrors() != null && !valgrindReport.getAllErrors().isEmpty() )
+		ValgrindLogger.log(listener, "Analysing valgrind results");	
+		ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot(), build.getRootDir());
+		
+		for ( ValgrindError error : valgrindReport.getAllErrors() )
 		{
-			Map<String, String> sourceFiles = retrieveSourceFiles( listener, build.getRootDir(), launcher.getChannel(), valgrindReport, build.getModuleRoot() );	
-			valgrindResult.setSourceFiles( sourceFiles );		
+			if ( error.getStacktrace() != null )
+				sourceGrabber.grabFromStacktrace( error.getStacktrace() );
+			
+			if ( error.getAuxiliaryData() != null )
+			{
+				for ( ValgrindAuxiliary aux : error.getAuxiliaryData() )
+				{
+					if ( aux.getStacktrace() != null )
+						sourceGrabber.grabFromStacktrace(aux.getStacktrace());
+				}				
+			}
 		}
+		
+		valgrindResult.setSourceFiles(sourceGrabber.getLookupMap());
 
 		ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult,
 				valgrindPublisherConfig);
@@ -125,7 +133,7 @@ public class ValgrindPublisher extends Recorder
 
 		return true;
 	}
-
+	
 	public ValgrindPublisherConfig getValgrindPublisherConfig()
 	{
 		return valgrindPublisherConfig;
@@ -134,102 +142,15 @@ public class ValgrindPublisher extends Recorder
 	public void setValgrindPublisherConfig(ValgrindPublisherConfig valgrindPublisherConfig)
 	{
 		this.valgrindPublisherConfig = valgrindPublisherConfig;
-	}
+	}	
 	
-	
-	private Map<String, String> retrieveSourceFiles( BuildListener listener, File localRoot, VirtualChannel channel, ValgrindReport valgrindReport, FilePath basedir )
-	{		
-        File directory = new File(localRoot, ValgrindSourceFile.SOURCE_DIRECTORY);
-        
-        if ( !directory.exists() ) 
-        {
-            if ( !directory.mkdirs() )
-            {
-            	ValgrindLogger.log(listener, "ERROR: failed to create local directory for source files: '" + directory.getAbsolutePath() + "'");
-            	return null;
-            }
-        }		
-		
-		Map<String, String> sourceFiles = new HashMap<String, String>();
-		
-		int index = 0;
-		
-		for( ValgrindError valgrindError : valgrindReport.getAllErrors() )
-		{
-			if ( valgrindError == null || valgrindError.getStacktrace() == null || valgrindError.getStacktrace().getFrames() == null )
-				continue;
-			
-			for ( ValgrindStacktraceFrame frame : valgrindError.getStacktrace().getFrames() )
-			{
-				if ( frame == null )
-					continue;
-				
-				String filePath =  frame.getFilePath();
-				
-				if ( filePath == null || filePath.isEmpty() || sourceFiles.containsKey( filePath ) )
-					continue;				
-				
-				FilePath file = new FilePath( basedir, filePath );
-				
-				index++;				
-				sourceFiles.put( filePath, retrieveSourceFile( listener, directory, channel, file, index ) );
-			}
-		}
-		
-		if ( sourceFiles.isEmpty() )
-			return null;		
-		
-		return sourceFiles;
-	}
-	
-	private String retrieveSourceFile( BuildListener listener, File localDirectory, VirtualChannel channel, FilePath file, int index )
-	{		
-		try
-		{			
-			if ( !file.exists() )
-			{
-				ValgrindLogger.log(listener, "'" + file.getRemote() + "' does not exist, source code won't be available");
-				return null;
-			}
-			
-			if ( file.isDirectory() )
-			{
-				ValgrindLogger.log(listener, "WARN: '" + file.getRemote() + "' is a directory, source code won't be available");
-				return null;
-			}		
-			
-			String fileName = "source_" + index + ".tmp";
-			File masterFile = new File( localDirectory, fileName );
-			
-			ValgrindLogger.log(listener, "copying source file '" + file.getRemote() + "' to '" + fileName + "'...");
-			
-			if ( masterFile.exists() )
-			{
-				ValgrindLogger.log(listener, "WARN: local file '" + fileName + "' already exists");
-				return null;
-			}
-            
-            FileOutputStream outputStream = new FileOutputStream(masterFile);
-            
-            file.copyTo(outputStream);            
-            
-			return fileName;			
-		}
-		catch (Exception e)
-		{
-			ValgrindLogger.log(listener, "ERROR: failed to retrieve '" + file.getRemote() + "', " + e.getMessage() );
-		}
-		
-		return null;		
-	}
-
 	@Extension
 	public static final ValgrindPublisherDescriptor DESCRIPTOR = new ValgrindPublisherDescriptor();
 
 	public static final class ValgrindPublisherDescriptor extends BuildStepDescriptor<Publisher>
 	{
-		private int linesBefore = 10;
-		private int linesAfter = 5;
+		private int	linesBefore	= 10;
+		private int	linesAfter	= 5;
 		
 		public ValgrindPublisherDescriptor()
 		{
@@ -273,18 +194,6 @@ public class ValgrindPublisher extends Recorder
 		public ValgrindPublisherConfig getConfig()
 		{
 			return new ValgrindPublisherConfig();
-		}	
-/*		
-        @Override
-        public Publisher newInstance(StaplerRequest req, JSONObject formData)
-                throws hudson.model.Descriptor.FormException {     
-        	
-        	formData.remove("kind");
-        	formData.remove("stapler-class");
-            
-            ValgrindPublisherConfig config = req.bindJSON(ValgrindPublisherConfig.class, formData);
-            return new ValgrindPublisher(config);
-        }
-*/        
+		}      
 	}
 }

@@ -5,12 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
 
+
+/**
+ * 
+ * @author Johannes Ohlemacher
+ * 
+ */
 public class ValgrindStacktrace implements Serializable
 {
 	private static final long serialVersionUID = 3165729611300651095L;
 	
 	private List<ValgrindStacktraceFrame> frames;
+	
+	public void setSourceCode( ValgrindSourceFile sourceFile )
+	{
+		if ( frames == null )
+			return;
+		
+		for ( ValgrindStacktraceFrame frame : frames )
+		{
+			if ( frame == null )
+				continue;					
+
+			frame.setSourceCode( sourceFile.getSnippet( frame.getFilePath(), frame.getLineNumber() ) );
+		}
+	}
 	
 	public String toString()
 	{		
