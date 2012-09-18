@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.valgrind.model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jenkinsci.plugins.valgrind.util.ValgrindUtil;
 
@@ -10,14 +12,15 @@ public class ValgrindError implements Serializable
 {
 	private static final long serialVersionUID = 6470943829358084900L;
 	
-	private String executable;
-	private String uniqueId;	
-	private ValgrindErrorKind kind;
-	private ValgrindStacktrace stacktrace;
-	private String description;
-	private Integer leakedBytes;
-	private Integer leakedBlocks;
-	
+	private String					executable;
+	private String					uniqueId;
+	private ValgrindErrorKind		kind;
+	private ValgrindStacktrace		stacktrace;
+	private String					description;
+	private Integer					leakedBytes;
+	private Integer					leakedBlocks;
+	private List<ValgrindAuxiliary>	auxiliaryData;
+
 	public String toString()
 	{
 		return 
@@ -79,19 +82,41 @@ public class ValgrindError implements Serializable
 			this.executable = new File(this.executable).getName();
 	}
 	
-	public Integer getLeakedBytes() {
+	public Integer getLeakedBytes()
+	{
 		return leakedBytes;
 	}
 
-	public void setLeakedBytes(Integer leakedBytes) {
+	public void setLeakedBytes( Integer leakedBytes )
+	{
 		this.leakedBytes = leakedBytes;
 	}
 
-	public Integer getLeakedBlocks() {
+	public Integer getLeakedBlocks()
+	{
 		return leakedBlocks;
 	}
 
-	public void setLeakedBlocks(Integer leakedBlocks) {
+	public void setLeakedBlocks( Integer leakedBlocks )
+	{
 		this.leakedBlocks = leakedBlocks;
-	}	
+	}
+	
+	public List<ValgrindAuxiliary> getAuxiliaryData()
+	{
+		return auxiliaryData;
+	}
+
+	public void setAuxiliaryData( List<ValgrindAuxiliary> auxiliaryData )
+	{
+		this.auxiliaryData = auxiliaryData;
+	}
+	
+	public void addAuxiliaryData( ValgrindAuxiliary auxiliaryData )
+	{
+		if ( this.auxiliaryData == null )
+			this.auxiliaryData = new ArrayList<ValgrindAuxiliary>();
+		
+		this.auxiliaryData.add(auxiliaryData);
+	}
 }

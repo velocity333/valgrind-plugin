@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.jenkinsci.plugins.valgrind.model.ValgrindAuxiliary;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
 import org.jenkinsci.plugins.valgrind.model.ValgrindErrorKind;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
@@ -32,6 +33,7 @@ public class ValgrindSaxParser implements Serializable
 		private ValgrindError currentError;
 		private ValgrindStacktrace currentStacktrace;
 		private ValgrindStacktraceFrame currentStacktraceFrame;
+		private ValgrindAuxiliary currentAuxiliary;
 		private StringBuilder data;
 		private String currentExecutable = null;		
 		private String path = "";
@@ -68,7 +70,10 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/leakedblocks") )
 				data = new StringBuilder();				
 			
-			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") && currentError.getStacktrace() == null )
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/auxwhat") )
+				data = new StringBuilder();			
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") )
 				currentStacktrace = new ValgrindStacktrace();
 			
 			if ( currentStacktrace != null )
@@ -97,12 +102,16 @@ public class ValgrindSaxParser implements Serializable
 		{			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 			{
+				if ( currentAuxiliary != null )
+					currentError.addAuxiliaryData(currentAuxiliary);
+				
 				currentError.setExecutable( currentExecutable );
 				
 				if ( currentError.getKind() != null )
 					currentReport.addError( currentError );
 				
 				currentError = null;
+				currentAuxiliary = null;
 			}	
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
@@ -122,6 +131,15 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/what") )
 				currentError.setDescription( data.toString() );
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/auxwhat") && currentError != null )
+			{
+				if ( currentAuxiliary != null )
+					currentError.addAuxiliaryData(currentAuxiliary);
+				
+				currentAuxiliary = new ValgrindAuxiliary();
+				currentAuxiliary.setDescription( data.toString() );
+			}
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
 				currentExecutable = data.toString();
@@ -155,7 +173,15 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") && currentStacktrace != null )
 			{
-				currentError.setStacktrace( currentStacktrace );
+				if ( currentAuxiliary != null )
+				{
+					currentAuxiliary.setStacktrace(currentStacktrace);
+				}
+				else if ( currentError.getStacktrace() == null )
+				{
+					currentError.setStacktrace( currentStacktrace );
+				}
+				
 				currentStacktrace = null;				
 			}
 			
