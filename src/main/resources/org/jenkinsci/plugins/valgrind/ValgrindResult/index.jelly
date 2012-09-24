@@ -7,6 +7,10 @@
 		<l:main-panel>
 			   <h1>Valgrind Result</h1>
 			   
+			   <j:if test="${it.report.allErrors == null}">
+			   		<i>no errors</i>
+			   </j:if>
+			   
 			   <j:if test="${it.report.uninitializedValueErrors != null}">
 				   <h2>Uninitialized Value</h2>
 				   
