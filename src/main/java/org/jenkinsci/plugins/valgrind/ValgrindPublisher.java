@@ -112,18 +112,21 @@ public class ValgrindPublisher extends Recorder
 		if ( !sourceGrabber.init( build.getRootDir() ) )
 			return false;
 		
-		for ( ValgrindError error : valgrindReport.getAllErrors() )
+		if ( valgrindReport.getAllErrors() != null )
 		{
-			if ( error.getStacktrace() != null )
-				sourceGrabber.grabFromStacktrace( error.getStacktrace() );
-			
-			if ( error.getAuxiliaryData() != null )
+			for ( ValgrindError error : valgrindReport.getAllErrors() )
 			{
-				for ( ValgrindAuxiliary aux : error.getAuxiliaryData() )
+				if ( error.getStacktrace() != null )
+					sourceGrabber.grabFromStacktrace( error.getStacktrace() );
+				
+				if ( error.getAuxiliaryData() != null )
 				{
-					if ( aux.getStacktrace() != null )
-						sourceGrabber.grabFromStacktrace(aux.getStacktrace());
-				}				
+					for ( ValgrindAuxiliary aux : error.getAuxiliaryData() )
+					{
+						if ( aux.getStacktrace() != null )
+							sourceGrabber.grabFromStacktrace(aux.getStacktrace());
+					}				
+				}
 			}
 		}
 		
