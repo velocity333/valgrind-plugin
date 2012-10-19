@@ -3,9 +3,14 @@
   <f:entry title="Working Directory" field="workingDirectory">
     <f:textbox />
   </f:entry>
-  
-  <f:entry title="Executable Pattern" field="includePattern" 
+    
+  <f:entry title="Executable Include Pattern" field="includePattern" 
     description="Pattern to find executables, valgrind will be called for each of them.">
+    <f:textbox />
+  </f:entry>
+  
+  <f:entry title="Executable Exclude Pattern" field="excludePattern" 
+    description="The matching files will be skipped, valgrind will not be called for them">
     <f:textbox />
   </f:entry>
   
@@ -23,6 +28,7 @@
   </f:entry> 
   
   <f:advanced>
+    
 	  <f:entry title="Valgrind Executable" field="valgrindExecutable"
 	    description="Location of valgrind executable to use. Leave empty to use default valgrind found via PATH">
 	    <f:textbox />

@@ -15,6 +15,7 @@ import hudson.util.ListBoxModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -40,6 +41,7 @@ public class ValgrindBuilder extends Builder
 	private final String valgrindExecutable;
 	private final String workingDirectory;
 	private final String includePattern;
+	private final String excludePattern;
 	private final String outputDirectory;
 	private final String outputFileEnding;
 	private final boolean showReachable;
@@ -55,6 +57,7 @@ public class ValgrindBuilder extends Builder
 	public ValgrindBuilder(String valgrindExecutable,
 			String workingDirectory, 
 			String includePattern, 
+			String excludePattern,
 			String outputDirectory,
 			String outputFileEnding,
 			boolean showReachable,
@@ -67,6 +70,7 @@ public class ValgrindBuilder extends Builder
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
 		this.includePattern = includePattern.trim();
+		this.excludePattern = excludePattern;
 		this.outputDirectory = outputDirectory.trim();
 		this.outputFileEnding = outputFileEnding.trim();
 		this.showReachable = showReachable;
@@ -176,12 +180,21 @@ public class ValgrindBuilder extends Builder
 		{
 			EnvVars env = build.getEnvironment(null);
 			
-			FilePath[] files = build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(includePattern));
-
-			ValgrindLogger.log( listener, "executable files: " + ValgrindUtil.join(files, ", "));
-
-			for (FilePath file : files)
+			List<FilePath> includes = Arrays.asList( build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(includePattern)) );
+			ValgrindLogger.log( listener, "includes files: " + ValgrindUtil.join(includes, ", "));			
+			
+			List<FilePath> excludes = null;			
+			if ( excludePattern != null && !excludePattern.isEmpty() )
 			{
+				excludes = Arrays.asList( build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(excludePattern)) );			
+				ValgrindLogger.log( listener, "excluded files: " + ValgrindUtil.join(excludes, ", "));				
+			}
+			
+			for (FilePath file : includes)
+			{		
+				if ( excludes != null && excludes.contains(file) )
+					continue;
+				
 				int exitCode = callValgrind(build, launcher, listener, file);
 				if (exitCode != 0)
 					return false;
@@ -210,6 +223,11 @@ public class ValgrindBuilder extends Builder
 	{
 		return includePattern;
 	}
+	
+	public String getExcludePattern()
+	{
+		return excludePattern;
+	}	
 
 	public String getOutputDirectory()
 	{
