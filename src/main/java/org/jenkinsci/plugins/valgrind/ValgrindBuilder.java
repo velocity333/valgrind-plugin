@@ -14,7 +14,6 @@ import hudson.util.ListBoxModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,8 +21,15 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.jenkinsci.plugins.valgrind.util.ValgrindBooleanOption;
+import org.jenkinsci.plugins.valgrind.util.ValgrindCall;
+import org.jenkinsci.plugins.valgrind.util.ValgrindEnumOption;
+import org.jenkinsci.plugins.valgrind.util.ValgrindExecutable;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
+import org.jenkinsci.plugins.valgrind.util.ValgrindStringOption;
+import org.jenkinsci.plugins.valgrind.util.ValgrindTrackOriginsOption;
 import org.jenkinsci.plugins.valgrind.util.ValgrindUtil;
+import org.jenkinsci.plugins.valgrind.util.ValgrindVersion;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -38,6 +44,16 @@ public class ValgrindBuilder extends Builder
 	public static enum LeakCheckLevel {
 		full, yes, summary, no
 	}
+	
+	public static final ValgrindVersion VERSION_3_1_0 = ValgrindVersion.createInstance(3, 1, 0);
+	public static final ValgrindVersion VERSION_3_2_0 = ValgrindVersion.createInstance(3, 2, 0);
+	public static final ValgrindVersion VERSION_3_3_0 = ValgrindVersion.createInstance(3, 3, 0);
+	public static final ValgrindVersion VERSION_3_4_0 = ValgrindVersion.createInstance(3, 4, 0);
+	public static final ValgrindVersion VERSION_3_5_0 = ValgrindVersion.createInstance(3, 5, 0);
+	public static final ValgrindVersion VERSION_3_6_0 = ValgrindVersion.createInstance(3, 6, 0);
+	public static final ValgrindVersion VERSION_3_7_0 = ValgrindVersion.createInstance(3, 7, 0);
+	public static final ValgrindVersion VERSION_3_8_0 = ValgrindVersion.createInstance(3, 8, 0);
+	
 	private final String valgrindExecutable;
 	private final String workingDirectory;
 	private final String includePattern;
@@ -80,97 +96,6 @@ public class ValgrindBuilder extends Builder
 		this.valgrindOptions = valgrindOptions;
 		this.trackOrigins = trackOrigins;
 	}
-	
-	private String boolean2argument( String name, Boolean value )
-	{
-		if ( value != null && value.booleanValue() )
-			return name + "=yes";
-		
-		return name + "=no";			
-	}
-
-	@SuppressWarnings("rawtypes")
-	private int callValgrind(AbstractBuild build, Launcher launcher, BuildListener listener, FilePath file)
-			throws IOException, InterruptedException
-	{		
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try
-		{
-			EnvVars env = build.getEnvironment(null);
-			env.put("PROGRAM_NAME", file.getName());
-			
-			FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
-			if (!workDir.exists() || !workDir.isDirectory())
-				workDir.mkdirs();
-
-			FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
-			if (!outDir.exists() || !outDir.isDirectory())
-				outDir.mkdirs();
-
-			List<String> cmds = new ArrayList<String>();
-			
-			String valgrindExecutable = env.expand(this.valgrindExecutable);
-			String leakCheckLevelString = LeakCheckLevel.full.toString();
-			if ( this.leakCheckLevel != null )
-				leakCheckLevelString = this.leakCheckLevel.toString();
-			
-			if( valgrindExecutable == null || valgrindExecutable.isEmpty() )
-				cmds.add("valgrind"); //use valgrind from path
-			else
-				cmds.add(valgrindExecutable); //use specified valgrind			
-			
-			cmds.add("--tool=memcheck");
-			cmds.add("--leak-check=" + leakCheckLevelString);
-			
-			cmds.add( boolean2argument("--show-reachable", showReachable) );
-			cmds.add( boolean2argument("--undef-value-errors", undefinedValueErrors) );			
-			
-			if ( !undefinedValueErrors && trackOrigins )
-				ValgrindLogger.log(listener, "WARNING: enabling 'track origins' has no effect when 'undefined value errors' is disabled" );
-			else
-				cmds.add( boolean2argument("--track-origins", trackOrigins) );				
-		
-			cmds.add("--xml=yes");
-			cmds.add("--xml-file=" + outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote());
-			
-			if ( valgrindOptions != null && !valgrindOptions.isEmpty() )
-			{
-				String[] args = env.expand(valgrindOptions).split(" ");
-				for( String arg : args )
-				{
-					arg = arg.trim();
-					
-					if ( arg != null && !arg.isEmpty() )
-						cmds.add(arg);
-				}
-			}
-			
-			cmds.add(file.getRemote());
-			
-			if ( programOptions != null && !programOptions.isEmpty() )
-			{
-				String[] args = env.expand(programOptions).split(" ");
-				for( String arg : args )
-				{
-					arg = arg.trim();
-					
-					if ( arg != null && !arg.isEmpty() )
-						cmds.add(arg);
-				}
-			}
-
-			Launcher.ProcStarter starter = launcher.launch();
-			starter = starter.pwd(workDir);
-			starter = starter.stdout(os);
-			starter = starter.stderr(os);
-			starter = starter.cmds(cmds);
-
-			return starter.join();
-		} finally
-		{
-			ValgrindLogger.log(listener, os.toString());
-		}
-	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -180,6 +105,20 @@ public class ValgrindBuilder extends Builder
 		{
 			EnvVars env = build.getEnvironment(null);
 			
+			/*
+			 * Create directories
+			 */
+			FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
+			if (!workDir.exists() || !workDir.isDirectory())
+				workDir.mkdirs();
+
+			FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
+			if (!outDir.exists() || !outDir.isDirectory())
+				outDir.mkdirs();
+			
+			/*
+			 * Build program list 
+			 */
 			List<FilePath> includes = Arrays.asList( build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(includePattern)) );
 			ValgrindLogger.log( listener, "includes files: " + ValgrindUtil.join(includes, ", "));			
 			
@@ -190,19 +129,54 @@ public class ValgrindBuilder extends Builder
 				ValgrindLogger.log( listener, "excluded files: " + ValgrindUtil.join(excludes, ", "));				
 			}
 			
+			/*
+			 * Create valgrind executable
+			 */
+			ValgrindExecutable valgrindExecutable = new ValgrindExecutable(launcher, env.expand(this.valgrindExecutable));
+			ValgrindLogger.log( listener, valgrindExecutable.getExecutable() + ": " + valgrindExecutable.getVersion()  );
+			
+			/*
+			 * Call valgrind for each found file
+			 */
 			for (FilePath file : includes)
 			{		
 				if ( excludes != null && excludes.contains(file) )
-					continue;
+					continue;				
+		
+				env.put("PROGRAM_NAME", file.getName());
+				final String xmlFilename = outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote();
 				
-				int exitCode = callValgrind(build, launcher, listener, file);
-				if (exitCode != 0)
-					return false;
+				ValgrindCall call = new ValgrindCall();
+				call.setValgrindExecutable(valgrindExecutable);
+				call.setEnv(env);
+				call.setWorkingDirectory(workDir.getRemote());
+				call.setProgramName(file.getRemote());
+				call.addProgramArguments(programOptions);
+	        
+	        	call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
+	        	call.addValgrindOption(new ValgrindEnumOption<LeakCheckLevel>("leak-check", leakCheckLevel, LeakCheckLevel.full));
+	        	call.addValgrindOption(new ValgrindBooleanOption("show-reachable", showReachable));
+	        	call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors));
+	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_7_0));	        
+	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
+	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename));	        	
+				
+	        	ByteArrayOutputStream output = new ByteArrayOutputStream();     	
+	        	try
+	        	{
+	        		int exitCode = call.exec(listener, launcher, output);
+					if (exitCode != 0)
+						return false;
+	        	}
+	        	finally
+	        	{
+	        		ValgrindLogger.log(listener, "valgrind output: \n" + output.toString());
+	        	}
 			}
 		} 
 		catch (Exception e)
 		{
-			ValgrindLogger.log(listener, "ERROR: " + e.getMessage());
+			ValgrindLogger.log(listener, "ERROR, " + e.getClass().getCanonicalName() + ": " + e.getMessage());
 			return false;
 		}
 
