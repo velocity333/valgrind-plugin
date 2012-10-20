@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.valgrind.util;
+package org.jenkinsci.plugins.valgrind.call;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

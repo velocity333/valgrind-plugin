@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.valgrind.util;
 
 import static org.junit.Assert.*;
 
+import org.jenkinsci.plugins.valgrind.call.ValgrindVersion;
 import org.junit.Test;
 
 public class ValgrindVersionTest

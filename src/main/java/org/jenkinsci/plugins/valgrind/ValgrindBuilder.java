@@ -21,15 +21,15 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
-import org.jenkinsci.plugins.valgrind.util.ValgrindBooleanOption;
-import org.jenkinsci.plugins.valgrind.util.ValgrindCall;
-import org.jenkinsci.plugins.valgrind.util.ValgrindEnumOption;
-import org.jenkinsci.plugins.valgrind.util.ValgrindExecutable;
+import org.jenkinsci.plugins.valgrind.call.ValgrindBooleanOption;
+import org.jenkinsci.plugins.valgrind.call.ValgrindCall;
+import org.jenkinsci.plugins.valgrind.call.ValgrindEnumOption;
+import org.jenkinsci.plugins.valgrind.call.ValgrindExecutable;
+import org.jenkinsci.plugins.valgrind.call.ValgrindStringOption;
+import org.jenkinsci.plugins.valgrind.call.ValgrindTrackOriginsOption;
+import org.jenkinsci.plugins.valgrind.call.ValgrindVersion;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
-import org.jenkinsci.plugins.valgrind.util.ValgrindStringOption;
-import org.jenkinsci.plugins.valgrind.util.ValgrindTrackOriginsOption;
 import org.jenkinsci.plugins.valgrind.util.ValgrindUtil;
-import org.jenkinsci.plugins.valgrind.util.ValgrindVersion;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;

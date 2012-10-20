@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.valgrind.util;
+package org.jenkinsci.plugins.valgrind.call;
 
 import hudson.EnvVars;
 import hudson.Launcher;
@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 
 public class ValgrindCall
 {
