@@ -182,15 +182,20 @@ public class ValgrindBuilder extends Builder
 						return false;
 	        	}
 	        	finally
-	        	{	        		
-	        		ValgrindLogger.log(listener, "valgrind standard out: \n" + stdout.toString());
-        			ValgrindLogger.log(listener, "valgrind error out: \n" + stderr.toString());
+	        	{	        
+	        		String stdoutString = stdout.toString().trim();
+	        		String stderrString = stderr.toString().trim();
+	        		
+	        		if ( !stdoutString.isEmpty() )
+	        			ValgrindLogger.log(listener, "valgrind standard out: \n" + stdoutString);
+	        		
+	        		if ( !stderrString.isEmpty() )
+	        			ValgrindLogger.log(listener, "valgrind error out: \n" + stderrString);
 	        	}
 			}
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
 			ValgrindLogger.log(listener, "ERROR, " + e.getClass().getCanonicalName() + ": " + e.getMessage());
 			return false;
 		}
