@@ -68,6 +68,7 @@ public class ValgrindBuilder extends Builder
 	private final String programOptions;
 	private final String valgrindOptions;
 	private final boolean trackOrigins;
+	private final boolean ignoreExitCode;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -83,7 +84,8 @@ public class ValgrindBuilder extends Builder
 			LeakCheckLevel leakCheckLevel,
 			String programOptions,
 			String valgrindOptions,
-			boolean trackOrigins)
+			boolean trackOrigins,
+			boolean ignoreExitCode)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -97,6 +99,7 @@ public class ValgrindBuilder extends Builder
 		this.programOptions = programOptions;
 		this.valgrindOptions = valgrindOptions;
 		this.trackOrigins = trackOrigins;
+		this.ignoreExitCode = ignoreExitCode;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -162,23 +165,28 @@ public class ValgrindBuilder extends Builder
 	        	call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors, VERSION_3_2_0));
 	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));	        
 	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
-	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));	        	
+	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
+	        	
+	        	if ( valgrindOptions != null )
+	        		call.addCustomValgrindOptions(valgrindOptions.split(" "));
 				
 	        	ByteArrayOutputStream stdout = new ByteArrayOutputStream();     	
 	        	ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 	        	try
 	        	{
 	        		int exitCode = call.exec(listener, launcher, stdout, stderr);
+	        		ValgrindLogger.log(listener, "valgrind exit code: " + exitCode);
 	        		
 	        		if ( !valgrindExecutable.getVersion().isGreaterOrEqual(VERSION_3_5_0) )
 	        		{
-	        			ValgrindLogger.log(listener, "WARNING: valgrind version does not support writing xml output to file, xml output will be captured from error out");
+	        			ValgrindLogger.log(listener, "WARNING: valgrind version does not support writing xml output to file directly " +
+	        					"(requires version 3.5.0 or later), xml output will be captured from error out");
 	        			OutputStream os = xmlFile.write();
 	        			PrintStream out = new PrintStream(os);
 	        			out.print(stderr.toString());
 	        		}
 	        		
-					if (exitCode != 0)
+					if (exitCode != 0 && !ignoreExitCode)
 						return false;
 	        	}
 	        	finally

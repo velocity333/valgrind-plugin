@@ -32,7 +32,12 @@
 	  <f:entry title="Valgrind Executable" field="valgrindExecutable"
 	    description="Location of valgrind executable to use. Leave empty to use default valgrind found via PATH">
 	    <f:textbox />
-	  </f:entry>	  
+	  </f:entry>	
+	  
+	  <f:entry title="Ignore exit code" field="ignoreExitCode"
+	    description="Usally every exit code other than 0 (from valgrind or the program under test) is treated as an error and the build will fail, check this ignore the exit code">
+	    <f:checkbox name="ignoreExitCode" />
+	  </f:entry>  
 	
 	  <f:entry title="Show Reachable" field="showReachable"
 	    description="When disabled, the memory leak detector only shows 'definitely lost' and 'possibly lost' blocks. When enabled, the leak detector also shows 'reachable' and 'indirectly lost' blocks. (valgrind option '--show-reachable=yes|no')">

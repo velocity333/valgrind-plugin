@@ -19,8 +19,9 @@ public class ValgrindCall
 	private String					programName;
 	private FilePath				workingDirectory;	
 
-	private List<ValgrindOption>	valgrindOptions		= new ArrayList<ValgrindOption>();		
-	private List<String>			programArguments	= new ArrayList<String>();
+	private List<ValgrindOption>	valgrindOptions		 = new ArrayList<ValgrindOption>();
+	private List<String>            customValgindOptions = new ArrayList<String>();
+	private List<String>			programArguments	 = new ArrayList<String>();
 	
 	public ValgrindCall()
 	{		
@@ -53,6 +54,25 @@ public class ValgrindCall
 	{
 		if (option != null)
 			valgrindOptions.add(option);
+	}
+	
+	public void addCustomValgrindOptions(String... options)
+	{
+		for( String option : options )
+			addCustomValgrindOption(option);
+	}
+	
+	public void addCustomValgrindOption(String option)
+	{
+		if ( option == null )
+			return;
+		
+		option = option.trim();
+		
+		if ( option.isEmpty() )
+			return;
+		
+		customValgindOptions.add(option);
 	}
 	
 	public void addProgramArguments(String... arguments)
@@ -93,11 +113,14 @@ public class ValgrindCall
 				ValgrindLogger.log(listener, "option '" + option.getName() + "' is not applicable: " + e.getMessage());				
 			}			
 		}
+		
+		for (String option : customValgindOptions)
+			cmds.add(env.expand(option));
 
 		cmds.add(programName);
 
 		for (String argument : programArguments)
-			cmds.add(env.expand(argument));
+			cmds.add(env.expand(argument));		
 		
 		ValgrindLogger.log(listener, "working dir: " + workingDirectory);
 
