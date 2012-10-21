@@ -14,6 +14,8 @@ import hudson.util.ListBoxModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -144,38 +146,51 @@ public class ValgrindBuilder extends Builder
 					continue;				
 		
 				env.put("PROGRAM_NAME", file.getName());
-				final String xmlFilename = outDir.child(file.getName() + env.expand(outputFileEnding)).getRemote();
+				final FilePath xmlFile = outDir.child(file.getName() + env.expand(outputFileEnding));
+				final String xmlFilename = xmlFile.getRemote();
 				
 				ValgrindCall call = new ValgrindCall();
 				call.setValgrindExecutable(valgrindExecutable);
 				call.setEnv(env);
-				call.setWorkingDirectory(workDir.getRemote());
+				call.setWorkingDirectory(workDir);
 				call.setProgramName(file.getRemote());
 				call.addProgramArguments(programOptions);
 	        
 	        	call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
 	        	call.addValgrindOption(new ValgrindEnumOption<LeakCheckLevel>("leak-check", leakCheckLevel, LeakCheckLevel.full));
 	        	call.addValgrindOption(new ValgrindBooleanOption("show-reachable", showReachable));
-	        	call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors));
-	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_7_0));	        
+	        	call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors, VERSION_3_2_0));
+	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));	        
 	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
-	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename));	        	
+	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));	        	
 				
-	        	ByteArrayOutputStream output = new ByteArrayOutputStream();     	
+	        	ByteArrayOutputStream stdout = new ByteArrayOutputStream();     	
+	        	ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 	        	try
 	        	{
-	        		int exitCode = call.exec(listener, launcher, output);
+	        		int exitCode = call.exec(listener, launcher, stdout, stderr);
+	        		
+	        		if ( !valgrindExecutable.getVersion().isGreaterOrEqual(VERSION_3_5_0) )
+	        		{
+	        			ValgrindLogger.log(listener, "WARNING: valgrind version does not support writing xml output to file, xml output will be captured from error out");
+	        			OutputStream os = xmlFile.write();
+	        			PrintStream out = new PrintStream(os);
+	        			out.print(stderr.toString());
+	        		}
+	        		
 					if (exitCode != 0)
 						return false;
 	        	}
 	        	finally
-	        	{
-	        		ValgrindLogger.log(listener, "valgrind output: \n" + output.toString());
+	        	{	        		
+	        		ValgrindLogger.log(listener, "valgrind standard out: \n" + stdout.toString());
+        			ValgrindLogger.log(listener, "valgrind error out: \n" + stderr.toString());
 	        	}
 			}
 		} 
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			ValgrindLogger.log(listener, "ERROR, " + e.getClass().getCanonicalName() + ": " + e.getMessage());
 			return false;
 		}

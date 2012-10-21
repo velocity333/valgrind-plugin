@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.valgrind.call;
 
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 
@@ -16,7 +17,7 @@ public class ValgrindCall
 	private ValgrindExecutable		valgrindExecutable;
 	private EnvVars					env;
 	private String					programName;
-	private String					workingDirectory;	
+	private FilePath				workingDirectory;	
 
 	private List<ValgrindOption>	valgrindOptions		= new ArrayList<ValgrindOption>();		
 	private List<String>			programArguments	= new ArrayList<String>();
@@ -43,12 +44,9 @@ public class ValgrindCall
 			this.programName = null;
 	}
 	
-	public void setWorkingDirectory(String workingDirectory)
+	public void setWorkingDirectory(FilePath workingDirectory)
 	{
-		this.workingDirectory = workingDirectory;		
-	
-		if ( this.workingDirectory != null && this.workingDirectory.isEmpty() )
-			this.workingDirectory = null;
+		this.workingDirectory = workingDirectory;
 	}
 	
 	public void addValgrindOption(ValgrindOption option)
@@ -66,7 +64,7 @@ public class ValgrindCall
 		}
 	}	
 
-	public int exec(BuildListener listener, Launcher launcher, ByteArrayOutputStream output) throws IOException, InterruptedException
+	public int exec(BuildListener listener, Launcher launcher, ByteArrayOutputStream stdout, ByteArrayOutputStream stderr) throws IOException, InterruptedException
 	{
 		if ( valgrindExecutable == null )
 			throw new IllegalStateException("valgrind executable is null");
@@ -78,7 +76,7 @@ public class ValgrindCall
 			throw new IllegalStateException("environment is null");
 		
 		if ( workingDirectory == null )
-			throw new IllegalStateException("workingDirectory is null");
+			throw new IllegalStateException("working directory is null");		
 		
 		List<String> cmds = new ArrayList<String>();
 
@@ -92,7 +90,7 @@ public class ValgrindCall
 			}
 			catch(ValgrindOptionNotApplicableException e)
 			{
-				ValgrindLogger.log(listener, "WARNING, option '" + option.getName() + "' is not applicable: " + e.getMessage());				
+				ValgrindLogger.log(listener, "option '" + option.getName() + "' is not applicable: " + e.getMessage());				
 			}			
 		}
 
@@ -100,11 +98,13 @@ public class ValgrindCall
 
 		for (String argument : programArguments)
 			cmds.add(env.expand(argument));
+		
+		ValgrindLogger.log(listener, "working dir: " + workingDirectory);
 
 		Launcher.ProcStarter starter = launcher.launch();
 		starter = starter.pwd(workingDirectory);
-		starter = starter.stdout(output);
-		starter = starter.stderr(output);
+		starter = starter.stdout(stdout);
+		starter = starter.stderr(stderr);
 		starter = starter.cmds(cmds);
 
 		return starter.join();
