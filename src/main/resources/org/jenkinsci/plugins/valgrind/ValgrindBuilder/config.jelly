@@ -35,7 +35,7 @@
 	  </f:entry>	
 	  
 	  <f:entry title="Ignore exit code" field="ignoreExitCode"
-	    description="Usally every exit code other than 0 (from valgrind or the program under test) is treated as an error and the build will fail, check this ignore the exit code">
+	    description="Usally any exit code other than 0 (from valgrind or the program under test) is treated as an error and the build will fail, enable this option to ignore the exit code.">
 	    <f:checkbox name="ignoreExitCode" />
 	  </f:entry>  
 	
