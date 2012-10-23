@@ -138,7 +138,7 @@ public class ValgrindBuilder extends Builder
 			 * Create valgrind executable
 			 */
 			ValgrindExecutable valgrindExecutable = new ValgrindExecutable(launcher, env.expand(this.valgrindExecutable));
-			ValgrindLogger.log( listener, valgrindExecutable.getExecutable() + ": " + valgrindExecutable.getVersion()  );
+			ValgrindLogger.log( listener, "detected valgrind version (" + valgrindExecutable.getExecutable() + "): " + valgrindExecutable.getVersion()  );
 			
 			/*
 			 * Call valgrind for each found file
