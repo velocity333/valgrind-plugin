@@ -111,8 +111,8 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			dsb.add(report.getLeakPossiblyLostErrorCount(), "Leaks (possibly lost)", label);
 			dsb.add(report.getUninitializedConditionErrorCount() + report.getUninitializedValueErrorCount(), "Uninitialized value/cond.", label);
 			dsb.add(report.getInvalidFreeErrorCount() + report.getMismatchedFreeErrorCount(), "Illegal/mismatched frees", label);
-			dsb.add(report.getOverlapErrorCount(), "overlaps", label);
-			dsb.add(report.getSyscallParamErrorCount(), "illegal system calls", label);
+			dsb.add(report.getOverlapErrorCount(), "Overlaps", label);
+			dsb.add(report.getSyscallParamErrorCount(), "Illegal system calls", label);
 		}
 		return dsb;
 	}
