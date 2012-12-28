@@ -69,6 +69,8 @@ public class ValgrindBuilder extends Builder
 	private final String valgrindOptions;
 	private final boolean trackOrigins;
 	private final boolean ignoreExitCode;
+	private final boolean traceChildren;
+	private final boolean childSilentAfterFork;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -85,7 +87,9 @@ public class ValgrindBuilder extends Builder
 			String programOptions,
 			String valgrindOptions,
 			boolean trackOrigins,
-			boolean ignoreExitCode)
+			boolean ignoreExitCode,
+			boolean traceChildren,
+			boolean childSilentAfterFork)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -100,6 +104,8 @@ public class ValgrindBuilder extends Builder
 		this.valgrindOptions = valgrindOptions;
 		this.trackOrigins = trackOrigins;
 		this.ignoreExitCode = ignoreExitCode;
+		this.traceChildren = traceChildren;
+		this.childSilentAfterFork = childSilentAfterFork;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -163,7 +169,9 @@ public class ValgrindBuilder extends Builder
 	        	call.addValgrindOption(new ValgrindEnumOption<LeakCheckLevel>("leak-check", leakCheckLevel, LeakCheckLevel.full));
 	        	call.addValgrindOption(new ValgrindBooleanOption("show-reachable", showReachable));
 	        	call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors, VERSION_3_2_0));
-	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));	        
+	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));
+	        	call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", childSilentAfterFork, VERSION_3_5_0));
+	        	call.addValgrindOption(new ValgrindBooleanOption("trace-children", traceChildren, VERSION_3_5_0));
 	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
 	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
 	        	
@@ -270,6 +278,16 @@ public class ValgrindBuilder extends Builder
 	{
 		return trackOrigins;
 	}
+	
+	public boolean isTraceChildren()
+	{
+		return traceChildren;
+	}
+	
+	public boolean isChildSilentAfterFork()
+	{
+		return childSilentAfterFork;
+	}	
 
 	@Override
 	public DescriptorImpl getDescriptor()

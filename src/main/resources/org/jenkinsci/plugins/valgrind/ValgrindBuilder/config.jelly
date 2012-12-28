@@ -65,6 +65,16 @@
 	     </select>
 	  </f:entry>
 	  
+	  <f:entry title="Trace children" field="traceChildren"
+	    description="TODO: insert description here">
+		<f:checkbox name="traceChildren" />
+	  </f:entry>
+	  
+	  <f:entry title="Child silent after fork" field="childSilentAfterFork"
+	    description="TODO: insert description here">
+		<f:checkbox name="childSilentAfterFork" />
+	  </f:entry>
+	  
 	  <f:entry title="Additional Valgrind Options" field="valgrindOptions"
 	    description="This plugin does not expose all valgrind options, so if you want to call valgrind with a special option, you can configure it here.">
 	    <f:textbox />
