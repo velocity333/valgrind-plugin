@@ -2,9 +2,13 @@ package org.jenkinsci.plugins.valgrind.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.collections.MapIterator;
 
 public class ValgrindReport implements Serializable
 {
@@ -12,6 +16,48 @@ public class ValgrindReport implements Serializable
 	
 	private List<ValgrindError> errors;	
 	private Set<String> executables;
+	
+	public static class ErrorsPerProcess
+	{
+		public List<ValgrindError> errors = new ArrayList<ValgrindError>();
+		public String pid;
+		public String ppid;
+		public String executable;
+		public List<ErrorsPerProcess> childs = new ArrayList<ErrorsPerProcess>();
+		public ErrorsPerProcess parent;
+	}
+	
+	public List<ErrorsPerProcess> getErrorsPerProcess()
+	{
+		Map<String, ErrorsPerProcess> lookup = new HashMap<String, ErrorsPerProcess>();
+		
+		for( ValgrindError error : errors )
+		{
+			if ( !lookup.containsKey(error.getPid()) )
+			{
+				ErrorsPerProcess errorsPerProcess = new ErrorsPerProcess();
+				errorsPerProcess.pid = error.getPid();
+				errorsPerProcess.ppid = error.getPpid();
+				errorsPerProcess.executable = error.getExecutable();
+				
+				lookup.put(error.getPid(), errorsPerProcess);
+			}
+
+			lookup.get(error.getPid()).errors.add(error);
+		}
+		
+		List<ErrorsPerProcess> res = new ArrayList<ErrorsPerProcess>(lookup.values());
+		for( ErrorsPerProcess errorsPerProcess : res )
+		{
+			if ( lookup.containsKey(errorsPerProcess.ppid) )
+			{
+				errorsPerProcess.parent = lookup.get(errorsPerProcess.ppid);
+				errorsPerProcess.parent.childs.add(errorsPerProcess);				
+			}
+		}
+		
+		return res;
+	}
 	
 	public void addError( ValgrindError error )
 	{
