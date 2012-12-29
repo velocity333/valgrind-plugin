@@ -57,6 +57,7 @@ public class ValgrindSaxParserTest
 		
 		assertEquals( ValgrindErrorKind.UninitCondition, error.getKind() );
 		assertEquals( "0x2" , error.getUniqueId() );
+		assertEquals( "10421" , error.getPid() );
 		assertEquals( "Conditional jump or move depends on uninitialised value(s)", error.getDescription() );
 		assertEquals( "program1", error.getExecutable() );
 		assertNull( error.getLeakedBlocks() );

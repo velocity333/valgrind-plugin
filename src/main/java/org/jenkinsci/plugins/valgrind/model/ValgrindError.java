@@ -19,6 +19,8 @@ public class ValgrindError implements Serializable
 	private static final long serialVersionUID = 6470943829358084900L;
 	
 	private String					executable;
+	private String                 pid;
+	private String                 ppid;
 	private String					uniqueId;
 	private ValgrindErrorKind		kind;
 	private ValgrindStacktrace		stacktrace;
@@ -51,6 +53,26 @@ public class ValgrindError implements Serializable
 			}
 		}
 	}
+	
+	public void setPid(String pid)
+	{
+		this.pid = pid;
+	}
+	
+	public String getPid()
+	{
+		return pid;
+	}
+	
+	public void setPpid(String ppid)
+	{
+		this.ppid = ppid;
+	}
+	
+	public String getPpid()
+	{
+		return ppid;
+	}	
 	
 	public ValgrindStacktrace getStacktrace()
 	{

@@ -35,7 +35,9 @@ public class ValgrindSaxParser implements Serializable
 		private ValgrindStacktraceFrame currentStacktraceFrame;
 		private ValgrindAuxiliary currentAuxiliary;
 		private StringBuilder data;
-		private String currentExecutable = null;		
+		private String currentExecutable = null;
+		private String currentProcessId = null;
+		private String currentParentProcessId = null;
 		private String path = "";
 		
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -51,6 +53,12 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
 				data = new StringBuilder();
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/pid") )
+				data = new StringBuilder();			
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/ppid") )
+				data = new StringBuilder();			
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/kind") )
 				data = new StringBuilder();
@@ -106,6 +114,8 @@ public class ValgrindSaxParser implements Serializable
 					currentError.addAuxiliaryData(currentAuxiliary);
 				
 				currentError.setExecutable( currentExecutable );
+				currentError.setPid(currentProcessId);
+				currentError.setPpid(currentParentProcessId);
 				
 				if ( currentError.getKind() != null )
 					currentReport.addError( currentError );
@@ -116,6 +126,12 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
 				currentError.setUniqueId( data.toString() );
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/pid") )
+				currentProcessId = data.toString();
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/ppid") )
+				currentParentProcessId = data.toString();				
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/kind") )
 			{

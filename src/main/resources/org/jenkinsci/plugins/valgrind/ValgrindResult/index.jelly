@@ -21,6 +21,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -28,6 +30,8 @@
 				    <j:forEach var="elt" items="${it.report.uninitializedValueErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -46,6 +50,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -53,6 +59,8 @@
 				    <j:forEach var="elt" items="${it.report.uninitializedConditionErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -71,6 +79,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -78,6 +88,8 @@
 				    <j:forEach var="elt" items="${it.report.invalidWriteErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -96,6 +108,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -103,6 +117,8 @@
 				    <j:forEach var="elt" items="${it.report.invalidReadErrors}">
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -121,6 +137,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -128,6 +146,8 @@
 				    <j:forEach var="elt" items="${it.report.overlapErrors}">
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -146,6 +166,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -153,6 +175,8 @@
 				    <j:forEach var="elt" items="${it.report.syscallParamErrors}">
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -171,6 +195,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -178,6 +204,8 @@
 				    <j:forEach var="elt" items="${it.report.invalidFreeErrors}">
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -196,6 +224,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header">Error</td>
 				    </tr>			    
@@ -203,6 +233,8 @@
 				    <j:forEach var="elt" items="${it.report.mismatchedFreeErrors}">
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				        </tr>
@@ -221,7 +253,9 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
-				      <td class="pane-header" style="width:2em">ID</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>
+				      <td class="pane-header" style="width:2em">ID</td>				     
 				      <td class="pane-header" style="width:2em">Error</td>
 				      <td class="pane-header" style="width:2em">Bytes</td>
 				      <td class="pane-header">Blocks</td>
@@ -230,6 +264,8 @@
 				    <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				          <td class="pane">${elt.leakedBytes}</td>
@@ -250,6 +286,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header" style="width:2em">Error</td>
 				      <td class="pane-header" style="width:2em">Bytes</td>
@@ -259,6 +297,8 @@
 				    <j:forEach var="elt" items="${it.report.leakPossiblyLostErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				          <td class="pane">${elt.leakedBytes}</td>
@@ -279,6 +319,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header" style="width:2em">Error</td>
 				      <td class="pane-header" style="width:2em">Bytes</td>
@@ -288,6 +330,8 @@
 				    <j:forEach var="elt" items="${it.report.leakIndirectlyLostErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane-header" style="width:2em">ID</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
@@ -309,6 +353,8 @@
 				   <table class="pane sortable" id="files">
 				    <tr>
 				      <td class="pane-header" style="width:2em">Executable</td>
+				      <td class="pane-header" style="width:2em">PID</td>
+				      <td class="pane-header" style="width:2em">PPID</td>				      
 				      <td class="pane-header" style="width:2em">ID</td>
 				      <td class="pane-header" style="width:2em">Error</td>
 				      <td class="pane-header" style="width:2em">Bytes</td>
@@ -318,6 +364,8 @@
 				    <j:forEach var="elt" items="${it.report.leakStillReachableErrors}">    
 				        <tr>		            
 				          <td class="pane">${elt.executable}</td>
+				          <td class="pane">${elt.pid}</td>
+				          <td class="pane">${elt.ppid}</td>				          
 				          <td class="pane">${elt.uniqueId}</td>
 				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
 				          <td class="pane">${elt.leakedBytes}</td>
