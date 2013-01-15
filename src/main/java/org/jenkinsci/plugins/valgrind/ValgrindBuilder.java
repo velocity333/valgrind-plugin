@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.tools.ant.types.Commandline;
 import org.jenkinsci.plugins.valgrind.call.ValgrindBooleanOption;
 import org.jenkinsci.plugins.valgrind.call.ValgrindCall;
 import org.jenkinsci.plugins.valgrind.call.ValgrindEnumOption;
@@ -163,7 +164,7 @@ public class ValgrindBuilder extends Builder
 				call.setEnv(env);
 				call.setWorkingDirectory(workDir);
 				call.setProgramName(file.getRemote());
-				call.addProgramArguments(programOptions);
+				call.addProgramArguments(Commandline.translateCommandline(programOptions));
 	        
 	        	call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
 	        	call.addValgrindOption(new ValgrindEnumOption<LeakCheckLevel>("leak-check", leakCheckLevel, LeakCheckLevel.full));
