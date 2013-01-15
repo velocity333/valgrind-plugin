@@ -13,7 +13,11 @@
 			   
 			   <j:if test="${it.report.allErrors != null}">
 			    <j:forEach var="elt" items="${it.report.errorsPerProcess}">
-			    	<h2><a name="pid${elt.pid}">Process ${elt.pid} (${elt.executable})</a></h2>
+			        
+			    	<h2>
+			    	<img height="16" style="margin: 2px;" alt="" width="16" src="/plugin/valgrind/icons/process-64.png"/>			    	
+			    	<a name="pid${elt.pid}">Process ${elt.pid} (${elt.executable})</a>
+			    	</h2>
     	
 					<table class="pane" id="files">          
 				    <tr>
@@ -37,29 +41,9 @@
 				    </tr>	
 				    </table>	    	
 			    	
-			       <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-				   <table class="pane sortable" id="files">
-				    <tr>
-				      <td class="pane-header" style="width:2em">ID</td>
-				      <td class="pane-header">Error</td>
-				    </tr>			    
-				    <tbody>	
-			    	<j:forEach var="err" items="${elt.errors}">
-			        	<tr>		            
-				          <td class="pane">${err.uniqueId}</td>
-				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
-				        </tr>			    	
-			    	</j:forEach>
-				    </tbody>    
-				   </table>				    	
-				</j:forEach>
-			   </j:if>			   
-			   
-			   
-			   
-			   <j:if test="${it.report.uninitializedValueErrors != null}">
-				   <h2>Uninitialized Value</h2>
-				   
+	   
+			   <j:if test="${elt.uninitializedValueErrors != null}">
+				   <p><b>Uninitialized Value:</b>		   
 				   An uninitialised-value use error is reported when your program uses a value which hasn't been initialised -- in other words, is undefined. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.uninitvals" target="_blank">(Valgrind Manual)</a> 
 				   
@@ -73,22 +57,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.uninitializedValueErrors}">    
+				    <j:forEach var="err" items="${elt.uninitializedValueErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
-				   </table>		
+				   </table>	
+				   </p>	
 			   </j:if>	
 			   
-			   <j:if test="${it.report.uninitializedConditionErrors != null}">
-				   <h2>Uninitialized Condition</h2>
-				   
+			   <j:if test="${elt.uninitializedConditionErrors != null}">
+				   <p><b>Uninitialized Condition:</b>				   
 				   An uninitialised-condition use error is reported when a condition depends on uninitialised values.
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.value" target="_blank">(Valgrind Manual)</a>
 				   
@@ -102,21 +86,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.uninitializedConditionErrors}">    
+				    <j:forEach var="err" items="${elt.uninitializedConditionErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
-				   </table>		
+				   </table>	
+				   </p>	
 			   </j:if>
 			   
-			   <j:if test="${it.report.invalidWriteErrors != null}">
-				   <h2>Invalid Writes</h2>
+			   <j:if test="${elt.invalidWriteErrors != null}">
+				   <p><b>Invalid Writes:</b>
 				   
 				   This happens when your program writes memory at a place which Memcheck reckons it shouldn't. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.badrw" target="_blank">(Valgrind Manual)</a>				   
@@ -131,21 +116,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.invalidWriteErrors}">    
+				    <j:forEach var="err" items="${elt.invalidWriteErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
-				   </table>		
+				   </table>	
+				   </p>	
 			   </j:if>	   
 	
-			   <j:if test="${it.report.invalidReadErrors != null}">
-				   <h2>Invalid Reads</h2>
+			   <j:if test="${elt.invalidReadErrors != null}">
+				   <p><b>Invalid Reads:</b>
 				   
 				   This happens when your program reads memory at a place which Memcheck reckons it shouldn't. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.badrw" target="_blank">(Valgrind Manual)</a>
@@ -160,21 +146,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.invalidReadErrors}">
+				    <j:forEach var="err" items="${elt.invalidReadErrors}">
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>	  	
 			   
-			   <j:if test="${it.report.overlapErrors != null}">
-				   <h2>Overlaps</h2>
+			   <j:if test="${elt.overlapErrors != null}">
+				   <p><b>Overlaps:</b>
 				   
 				   If copying takes place between objects that overlap, the behavior is undefined. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.overlap" target="_blank">(Valgrind Manual)</a>
@@ -189,21 +176,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.overlapErrors}">
+				    <j:forEach var="err" items="${elt.overlapErrors}">
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>	
 			   
-			   <j:if test="${it.report.syscallParamErrors != null}">
-				   <h2>Use of uninitialised or unaddressable values in system calls</h2>				   
+			   <j:if test="${elt.syscallParamErrors != null}">
+				   <p><b>Use of uninitialised or unaddressable values in system calls:</b>				   
 
 				   Use of uninitialised or unaddressable values in system calls.
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.bad-syscall-args" target="_blank">(Valgrind Manual)</a>
@@ -218,21 +206,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.syscallParamErrors}">
+				    <j:forEach var="err" items="${elt.syscallParamErrors}">
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>	
 			   
-			   <j:if test="${it.report.invalidFreeErrors != null}">
-				   <h2>Illegal frees</h2>				   
+			   <j:if test="${elt.invalidFreeErrors != null}">
+				   <p><b>Illegal frees:</b>				   
 
 				   Memcheck keeps track of the blocks allocated by your program with malloc/new, so it can know exactly whether or not the argument to free/delete is legitimate or not. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.rudefn" target="_blank">(Valgrind Manual)</a>
@@ -247,21 +236,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.invalidFreeErrors}">
+				    <j:forEach var="err" items="${elt.invalidFreeErrors}">
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>	
 			   
-			   <j:if test="${it.report.mismatchedFreeErrors != null}">
-				   <h2>Mismatched frees</h2>				   
+			   <j:if test="${elt.mismatchedFreeErrors != null}">
+				   <p><b>Mismatched frees:</b>				   
 
 				   Memcheck keeps track of the blocks allocated by your program with malloc/new, so it can know exactly whether or not the argument to free/delete is legitimate or not. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.rudefn" target="_blank">(Valgrind Manual)</a>
@@ -276,21 +266,22 @@
 				      <td class="pane-header">Error</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.mismatchedFreeErrors}">
+				    <j:forEach var="err" items="${elt.mismatchedFreeErrors}">
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>
                 
-               <j:if test="${it.report.leakDefinitelyLostErrors != null}">
-				   <h2>Memory Leaks (definitely lost)</h2>
+               <j:if test="${elt.leakDefinitelyLostErrors != null}">
+				   <p><b>Memory Leaks (definitely lost):</b>
 				   
 				   This means that no pointer to the block of memory can be found. The block is classified as "lost", because the programmer could not possibly have freed it at program exit, since no pointer to it exists. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks" target="_blank">(Valgrind Manual)</a>
@@ -307,23 +298,24 @@
 				      <td class="pane-header">Blocks</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.leakDefinitelyLostErrors}">    
+				    <j:forEach var="err" items="${elt.leakDefinitelyLostErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
-				          <td class="pane">${elt.leakedBytes}</td>
-				          <td class="pane">${elt.leakedBlocks}</td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
+				          <td class="pane">${err.leakedBytes}</td>
+				          <td class="pane">${err.leakedBlocks}</td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>
+				   </p>				   
 			   </j:if>			   
 			   
-			   <j:if test="${it.report.leakPossiblyLostErrors != null}">
-				   <h2>Memory Leaks (possibly lost)</h2>
+			   <j:if test="${elt.leakPossiblyLostErrors != null}">
+				   <p><b>Memory Leaks (possibly lost):</b>
 				   
 				   This means that a chain of one or more pointers to the block of memory has been found, but at least one of the pointers is an interior-pointer. This could just be a random value in memory that happens to point into the block. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks" target="_blank">(Valgrind Manual)</a>				   
@@ -340,23 +332,24 @@
 				      <td class="pane-header">Blocks</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.leakPossiblyLostErrors}">    
+				    <j:forEach var="err" items="${elt.leakPossiblyLostErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
-				          <td class="pane">${elt.leakedBytes}</td>
-				          <td class="pane">${elt.leakedBlocks}</td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
+				          <td class="pane">${err.leakedBytes}</td>
+				          <td class="pane">${err.leakedBlocks}</td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>	
+				   </p>				   
 			   </j:if>			   
 			   
-			   <j:if test="${it.report.leakIndirectlyLostErrors != null}">
-				   <h2>Memory Leaks (indirectly lost)</h2>
+			   <j:if test="${elt.leakIndirectlyLostErrors != null}">
+				   <p><b>Memory Leaks (indirectly lost):</b>
 				   
 				   This means that the block is lost, not because there are no pointers to it, but rather because all the blocks that point to it are themselves lost. 
 				   <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks" target="_blank">(Valgrind Manual)</a>
@@ -373,25 +366,25 @@
 				      <td class="pane-header">Blocks</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.leakIndirectlyLostErrors}">    
+				    <j:forEach var="err" items="${elt.leakIndirectlyLostErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
 				          <td class="pane-header" style="width:2em">ID</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
-				          <td class="pane">${elt.leakedBytes}</td>
-				          <td class="pane">${elt.leakedBlocks}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
+				          <td class="pane">${err.leakedBytes}</td>
+				          <td class="pane">${err.leakedBlocks}</td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>
+				   </p>				   
 			   </j:if>	
 			   
-			   <j:if test="${it.report.leakStillReachableErrors != null}">
-				   <h2>Memory Leaks (still reachable)</h2>
-				   
+			   <j:if test="${elt.leakStillReachableErrors != null}">
+				   <p><b>Memory Leaks (still reachable):</b>				   
 				    A start-pointer or chain of start-pointers to the block is found. Since the block is still pointed at, the programmer could, at least in principle, have freed it before program exit.
 				    <a href="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks" target="_blank">(Valgrind Manual)</a>
 				    
@@ -407,20 +400,29 @@
 				      <td class="pane-header">Blocks</td>
 				    </tr>			    
 				    <tbody>			
-				    <j:forEach var="elt" items="${it.report.leakStillReachableErrors}">    
+				    <j:forEach var="err" items="${elt.leakStillReachableErrors}">    
 				        <tr>		            
-				          <td class="pane">${elt.executable}</td>
-				          <td class="pane">${elt.pid}</td>
-				          <td class="pane">${elt.ppid}</td>				          
-				          <td class="pane">${elt.uniqueId}</td>
-				          <td class="pane"><a href="id=${elt.executable},${elt.uniqueId}">${elt.description}</a></td>
-				          <td class="pane">${elt.leakedBytes}</td>
-				          <td class="pane">${elt.leakedBlocks}</td>
+				          <td class="pane">${err.executable}</td>
+				          <td class="pane">${err.pid}</td>
+				          <td class="pane">${err.ppid}</td>				          
+				          <td class="pane">${err.uniqueId}</td>
+				          <td class="pane"><a href="id=${err.executable},${err.uniqueId}">${err.description}</a></td>
+				          <td class="pane">${err.leakedBytes}</td>
+				          <td class="pane">${err.leakedBlocks}</td>
 				        </tr>
 				    </j:forEach>			
 				    </tbody>    
 				   </table>
-			   </j:if>	
+				   </p>				   
+			   </j:if>				    	
+			    	
+			    	
+			    	
+				</j:forEach>
+			   </j:if>			   
+			   
+			   
+		
 			   				   		  
 		</l:main-panel>
 	</l:layout>

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.MapIterator;
-
 public class ValgrindReport implements Serializable
 {
 	private static final long serialVersionUID = -9036045639715893780L;
@@ -25,6 +23,83 @@ public class ValgrindReport implements Serializable
 		public String executable;
 		public List<ErrorsPerProcess> childs = new ArrayList<ErrorsPerProcess>();
 		public ErrorsPerProcess parent;
+		
+		public List<ValgrindError> getOverlapErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.Overlap );
+		}		
+		
+		public List<ValgrindError> getSyscallParamErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.SyscallParam );
+		}		
+		
+		public List<ValgrindError> getInvalidFreeErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.InvalidFree );
+		}		
+		
+		public List<ValgrindError> getMismatchedFreeErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.MismatchedFree );
+		}	
+
+		public List<ValgrindError> getUninitializedValueErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.UninitValue );
+		}		
+		
+		public List<ValgrindError> getUninitializedConditionErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.UninitCondition );
+		}	
+		
+		public List<ValgrindError> getInvalidReadErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.InvalidRead );
+		}
+		
+		public List<ValgrindError> getInvalidWriteErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.InvalidWrite );
+		}
+		
+		public List<ValgrindError> getLeakDefinitelyLostErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.Leak_DefinitelyLost );
+		}
+		
+		public List<ValgrindError> getLeakPossiblyLostErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.Leak_PossiblyLost );
+		}
+		
+		public List<ValgrindError> getLeakStillReachableErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.Leak_StillReachable );
+		}
+		
+		public List<ValgrindError> getLeakIndirectlyLostErrors()
+		{
+			return getErrorsByKind( ValgrindErrorKind.Leak_IndirectlyLost );
+		}
+		
+		private List<ValgrindError> getErrorsByKind( ValgrindErrorKind valgrindErrorKind )
+		{
+			if ( errors == null || errors.isEmpty() )
+				return null;
+			
+			List<ValgrindError> result = new ArrayList<ValgrindError>();
+			
+			for ( ValgrindError error: errors )
+				if ( error.getKind().equals( valgrindErrorKind ) )
+					result.add( error );
+			
+			if ( result.isEmpty() )
+				return null;
+			
+			return result;		
+		}
 	}
 	
 	public List<ErrorsPerProcess> getErrorsPerProcess()
