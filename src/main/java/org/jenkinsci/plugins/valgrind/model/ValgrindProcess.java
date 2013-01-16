@@ -1,13 +1,16 @@
 package org.jenkinsci.plugins.valgrind.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jenkinsci.plugins.valgrind.util.ValgrindErrorList;
 
 
-public class ValgrindProcess
+public class ValgrindProcess implements Serializable
 {
+	private static final long	serialVersionUID	= -7073482135992069077L;
+	
 	private String executable;
 	private String[] arguments;
 	private String pid;

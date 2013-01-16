@@ -132,15 +132,19 @@ public class ValgrindPublisher extends Recorder
 		}
 		
 		//remove workspace path from executable name
-		String workspacePath = build.getWorkspace().getRemote() + "/";
-		ValgrindLogger.log(listener, "workspacePath: " + workspacePath);				
-		for ( ValgrindProcess p : valgrindReport.getProcesses() )
+		if ( valgrindReport.getProcesses() != null )
 		{
-			if ( p.getExecutable().startsWith(workspacePath) )
-				p.setExecutable( p.getExecutable().substring(workspacePath.length()));
+			String workspacePath = build.getWorkspace().getRemote() + "/";
+			ValgrindLogger.log(listener, "workspacePath: " + workspacePath);
 			
-			if ( p.getExecutable().startsWith("./") )
-				p.setExecutable( p.getExecutable().substring(2) );
+			for ( ValgrindProcess p : valgrindReport.getProcesses() )
+			{
+				if ( p.getExecutable().startsWith(workspacePath) )
+					p.setExecutable( p.getExecutable().substring(workspacePath.length()));
+				
+				if ( p.getExecutable().startsWith("./") )
+					p.setExecutable( p.getExecutable().substring(2) );
+			}
 		}
 		
 		valgrindResult.setSourceFiles(sourceGrabber.getLookupMap());

@@ -37,7 +37,11 @@ public class ValgrindReport implements Serializable
 		if ( processes != null )
 		{
 			for( ValgrindProcess p : processes )
-				list.addAll(p.getErrors());			
+			{
+				List<ValgrindError> l = p.getErrors();
+				if ( l != null )
+					list.addAll( l );
+			}
 		}
 		
 		if ( errors != null )
