@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
@@ -21,21 +22,31 @@ public class ValgrindResult implements Serializable
 	private ValgrindReport report;
     private AbstractBuild<?, ?> owner;
     private Map<String, String> sourceFiles;
+     
 
     public ValgrindResult( AbstractBuild<?, ?> build, ValgrindReport report )
     {
     	this.owner = build;
-    	this.report = report; 
+    	this.report = report;
     }
     
 	public AbstractBuild<?, ?> getOwner()
 	{
 		return owner;
 	}
+	
+	public ValgrindPublisherConfig getConfig()
+	{
+		ValgrindBuildAction action = (ValgrindBuildAction)owner.getAction(ValgrindBuildAction.class);
+    	if ( action == null )
+    		return null;
+    	
+		return action.getConfig();    			
+	}
 
 	public ValgrindReport getReport()
 	{
-		return report;
+		return report;		
 	}
 
 	public void setReport(ValgrindReport report)
@@ -73,18 +84,18 @@ public class ValgrindResult implements Serializable
 	 */
 	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
 			throws IOException
-	{
-		if ( !link.startsWith("id=") )
+	{    	
+		if ( !link.startsWith("pid=") )
 			return null;
 		
 		int sep = link.indexOf(",");		
-		if ( sep < 3 )
+		if ( sep < 4 )
 			return null;
 
-		String executable = link.substring(3, sep);
-		String id = link.substring( sep + 1 );
+		String pid = link.substring(4, sep);
+		String uniqueId = link.substring( sep + 1 );
 
-		ValgrindError error = report.findError(executable, id);
+		ValgrindError error = report.findError(pid, uniqueId);
 		if ( error == null )
 			return null;		
 

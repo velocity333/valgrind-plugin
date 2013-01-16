@@ -13,6 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.jenkinsci.plugins.valgrind.model.ValgrindAuxiliary;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
 import org.jenkinsci.plugins.valgrind.model.ValgrindErrorKind;
+import org.jenkinsci.plugins.valgrind.model.ValgrindProcess;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktrace;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
@@ -30,14 +31,12 @@ public class ValgrindSaxParser implements Serializable
 	private class Handler extends DefaultHandler
 	{
 		private ValgrindReport currentReport;
+		private ValgrindProcess currentProcess;
 		private ValgrindError currentError;
 		private ValgrindStacktrace currentStacktrace;
 		private ValgrindStacktraceFrame currentStacktraceFrame;
 		private ValgrindAuxiliary currentAuxiliary;
 		private StringBuilder data;
-		private String currentExecutable = null;
-		private String currentProcessId = null;
-		private String currentParentProcessId = null;
 		private String path = "";
 		
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -46,7 +45,11 @@ public class ValgrindSaxParser implements Serializable
 			path += "/" + qName;
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput") )
+			{
 				currentReport = new ValgrindReport();
+				currentProcess = new ValgrindProcess();
+				currentReport.addProcess(currentProcess);
+			}
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 				currentError = new ValgrindError();
@@ -113,12 +116,8 @@ public class ValgrindSaxParser implements Serializable
 				if ( currentAuxiliary != null )
 					currentError.addAuxiliaryData(currentAuxiliary);
 				
-				currentError.setExecutable( currentExecutable );
-				currentError.setPid(currentProcessId);
-				currentError.setPpid(currentParentProcessId);
-				
-				if ( currentError.getKind() != null )
-					currentReport.addError( currentError );
+				if ( currentError.getKind() != null && currentProcess != null )
+					currentProcess.addError( currentError );
 				
 				currentError = null;
 				currentAuxiliary = null;
@@ -127,11 +126,11 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/unique") )
 				currentError.setUniqueId( data.toString() );
 			
-			if ( path.equalsIgnoreCase("/valgrindoutput/pid") )
-				currentProcessId = data.toString();
+			if ( path.equalsIgnoreCase("/valgrindoutput/pid") && currentProcess != null )
+				currentProcess.setPid(data.toString());
 			
-			if ( path.equalsIgnoreCase("/valgrindoutput/ppid") )
-				currentParentProcessId = data.toString();				
+			if ( path.equalsIgnoreCase("/valgrindoutput/ppid") && currentProcess != null )
+				currentProcess.setPpid(data.toString());				
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/kind") )
 			{
@@ -157,8 +156,8 @@ public class ValgrindSaxParser implements Serializable
 				currentAuxiliary.setDescription( data.toString() );
 			}
 			
-			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
-				currentExecutable = data.toString();
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") && currentProcess != null )
+				currentProcess.setExecutable(data.toString());
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/text") )
 				currentError.setDescription( data.toString() );				

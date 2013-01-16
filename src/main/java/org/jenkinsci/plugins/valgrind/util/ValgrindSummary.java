@@ -15,7 +15,7 @@ public class ValgrindSummary
 	{
 
 		StringBuilder summary = new StringBuilder();
-		int errorCount = result.getReport().getErrorCount();
+		int errorCount = result.getReport().getErrorList().getErrorCount();
 
 		if (errorCount == 0)
 		{
@@ -30,7 +30,7 @@ public class ValgrindSummary
 			else
 				summary.append(Integer.toString(errorCount) + " errors, ");
 
-			summary.append(result.getReport().getDefinitelyLeakedBytes());
+			summary.append(result.getReport().getErrorList().getDefinitelyLeakedBytes());
 			summary.append(" bytes definitely lost");
 			
 			summary.append("</a>");

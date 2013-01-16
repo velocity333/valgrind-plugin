@@ -23,17 +23,17 @@ public class ValgrindEvaluator
 	public void evaluate( ValgrindReport report, AbstractBuild<?, ?> build, EnvVars env )
 	{		
 		build.setResult( evaluate(
-				report.getLeakDefinitelyLostErrorCount(), 
+				report.getErrorList().getLeakDefinitelyLostErrorCount(), 
 				env.expand( config.getUnstableThresholdDefinitelyLost() ), 
 				env.expand( config.getFailThresholdDefinitelyLost() ) ) );
 
 		build.setResult( evaluate(
-				report.getInvalidReadErrorCount() + report.getInvalidWriteErrorCount(), 
+				report.getErrorList().getInvalidReadErrorCount() + report.getErrorList().getInvalidWriteErrorCount(), 
 				env.expand( config.getUnstableThresholdInvalidReadWrite() ), 
 				env.expand( config.getFailThresholdInvalidReadWrite() ) ) );
 		
 		build.setResult( evaluate(
-				report.getErrorCount(), 
+				report.getErrorList().getErrorCount(), 
 				env.expand( config.getUnstableThresholdTotal() ), 
 				env.expand( config.getFailThresholdTotal() ) ) );
 	}	

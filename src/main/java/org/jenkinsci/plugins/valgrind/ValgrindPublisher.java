@@ -22,6 +22,7 @@ import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
 import org.jenkinsci.plugins.valgrind.model.ValgrindAuxiliary;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
+import org.jenkinsci.plugins.valgrind.model.ValgrindProcess;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindEvaluator;
@@ -128,6 +129,18 @@ public class ValgrindPublisher extends Recorder
 					}				
 				}
 			}
+		}
+		
+		//remove workspace path from executable name
+		String workspacePath = build.getWorkspace().getRemote() + "/";
+		ValgrindLogger.log(listener, "workspacePath: " + workspacePath);				
+		for ( ValgrindProcess p : valgrindReport.getProcesses() )
+		{
+			if ( p.getExecutable().startsWith(workspacePath) )
+				p.setExecutable( p.getExecutable().substring(workspacePath.length()));
+			
+			if ( p.getExecutable().startsWith("./") )
+				p.setExecutable( p.getExecutable().substring(2) );
 		}
 		
 		valgrindResult.setSourceFiles(sourceGrabber.getLookupMap());
