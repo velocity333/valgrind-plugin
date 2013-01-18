@@ -6,6 +6,11 @@
         
         <f:textbox name="valgrind.pattern" value="${instance.valgrindPublisherConfig.pattern}"/>
     </f:entry>
+    
+	  <f:entry title="Show processes without errors" field="showProcessesWithoutErrors"
+	    description="">
+		<f:checkbox name="traceChildren" />
+	  </f:entry>    
    
     
 	  <f:entry title="Build Status Thresholds"

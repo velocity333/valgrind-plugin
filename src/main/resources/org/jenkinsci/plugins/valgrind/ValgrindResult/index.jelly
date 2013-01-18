@@ -23,7 +23,7 @@
 			    	<h2>
 			    	<img height="16" style="margin: 2px;" alt="" width="16" src="/plugin/valgrind/icons/process-64.png"/>
 			    	<a name="pid${process.pid}" />			    	
-			    	<a href="#pid${process.parent.pid}">${process.executable} (process ${process.pid})</a>
+			    	<a href="pid=${process.pid}">${process.executable} (process ${process.pid})</a>
 			    	</h2>
 
 					<table class="pane" id="files">   

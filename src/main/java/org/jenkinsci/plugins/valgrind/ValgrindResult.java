@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
+import org.jenkinsci.plugins.valgrind.model.ValgrindProcess;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSummary;
@@ -18,6 +19,7 @@ import org.kohsuke.stapler.StaplerResponse;
 public class ValgrindResult implements Serializable
 {	
 	private static final long serialVersionUID = -5347879997716170059L;
+	private static final String PID_TOKEN = "pid=";
 	
 	private ValgrindReport report;
     private AbstractBuild<?, ?> owner;
@@ -82,26 +84,37 @@ public class ValgrindResult implements Serializable
 	 * @return
 	 * @throws IOException
 	 */
-	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
+	public Object getDynamic(final String l, final StaplerRequest request, final StaplerResponse response)
 			throws IOException
-	{    	
-		if ( !link.startsWith("pid=") )
+	{	
+		final String[] s = l.split("/");
+		final String data = s[s.length -1];
+		
+		if ( !data.startsWith(PID_TOKEN) )
 			return null;
 		
-		int sep = link.indexOf(",");		
-		if ( sep < 4 )
-			return null;
+		int sep = data.indexOf(",");
+		
+		if ( sep > PID_TOKEN.length() )
+		{
+			String pid = data.substring(PID_TOKEN.length(), sep);
+			String uniqueId = data.substring( sep + 1 );
 
-		String pid = link.substring(4, sep);
-		String uniqueId = link.substring( sep + 1 );
+			ValgrindError error = report.findError(pid, uniqueId);
+			if ( error == null )
+				return null;		
 
-		ValgrindError error = report.findError(pid, uniqueId);
-		if ( error == null )
-			return null;		
-
-		ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
- 
-		return new ValgrindDetail( owner, error, sourceFile );
+			ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
+	 
+			return new ValgrindDetail( owner, error, sourceFile );			
+		}
+		else
+		{
+			String pid = data.substring(PID_TOKEN.length());
+			ValgrindProcess process = report.findProcess(pid);
+			
+			return new ValgrindProcessDetails(owner, process);			
+		}
 	}
 
 }

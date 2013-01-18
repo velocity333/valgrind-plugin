@@ -15,7 +15,7 @@ public class ValgrindDetail
 	private ValgrindError error;
 	final private AbstractBuild<?, ?> owner;
 	
-	ValgrindDetail( AbstractBuild<?, ?> owner, ValgrindError error, ValgrindSourceFile valgrindSourceFile )
+	public ValgrindDetail( AbstractBuild<?, ?> owner, ValgrindError error, ValgrindSourceFile valgrindSourceFile )
 	{
 		this.owner = owner;
 		this.error = error;	
@@ -27,11 +27,6 @@ public class ValgrindDetail
 	public ValgrindError getError()
 	{
 		return error;
-	}
-
-	public void setError(ValgrindError error)
-	{
-		this.error = error;
 	}
 
 	public AbstractBuild<?, ?> getOwner()
