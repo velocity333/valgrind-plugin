@@ -13,15 +13,15 @@
 			<table class="pane" id="files">          
 		    <tr>
 		      <td class="pane-header" style="width:2em">Executable</td>
-		      <td class="pane">${it.error.executable}</td>
+		      <td class="pane">${it.process.executable}</td>
 		    </tr>
 		    <tr>
 		      <td class="pane-header" style="width:2em">PID</td>
-		      <td class="pane">${it.error.pid}</td>
+		      <td class="pane">${it.process.pid}</td>
 		    </tr>
 			<tr>
 		      <td class="pane-header" style="width:2em">PPID</td>
-		      <td class="pane">${it.error.ppid}</td>
+		      <td class="pane">${it.process.ppid}</td>
 		    </tr>
 		    <tr>
 		      <td class="pane-header" style="width:2em">Unique ID</td>
