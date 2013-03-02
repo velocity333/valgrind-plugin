@@ -23,7 +23,8 @@
     <f:textbox />
   </f:entry>
   
-  <f:entry title="File Ending" field="outputFileEnding">    
+  <f:entry title="File Ending" field="outputFileEnding"
+  	description="The plugin will add '%p' to the filename automatically, so valgrind will create a separate report file for each process (including spawned child processes)">  
     <f:textbox />
   </f:entry> 
   
@@ -66,12 +67,12 @@
 	  </f:entry>
 	  
 	  <f:entry title="Trace children" field="traceChildren"
-	    description="TODO: insert description here">
+	    description="When enabled, Valgrind will trace into sub-processes initiated via the exec system call. This is necessary for multi-process programs.">
 		<f:checkbox name="traceChildren" />
 	  </f:entry>
 	  
 	  <f:entry title="Child silent after fork" field="childSilentAfterFork"
-	    description="TODO: insert description here">
+	    description="When enabled, Valgrind will not show any debugging or logging output for the child process resulting from a fork call.">
 		<f:checkbox name="childSilentAfterFork" />
 	  </f:entry>
 	  

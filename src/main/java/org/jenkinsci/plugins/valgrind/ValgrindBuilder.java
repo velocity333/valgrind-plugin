@@ -156,7 +156,7 @@ public class ValgrindBuilder extends Builder
 					continue;				
 		
 				env.put("PROGRAM_NAME", file.getName());
-				final FilePath xmlFile = outDir.child(file.getName() + env.expand(outputFileEnding));
+				final FilePath xmlFile = outDir.child(file.getName() + ".%p" + env.expand(outputFileEnding));
 				final String xmlFilename = xmlFile.getRemote();
 				
 				ValgrindCall call = new ValgrindCall();
