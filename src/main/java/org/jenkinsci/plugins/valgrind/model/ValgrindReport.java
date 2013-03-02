@@ -64,6 +64,7 @@ public class ValgrindReport implements Serializable
 		processes.addAll(valgrindReport.processes);
 	}	
 	
+	@SuppressWarnings("deprecation")
 	public ValgrindError findError( String pid, String uniqueId )
 	{
 		//for compatibility with older records, search for error with executable == pid
@@ -104,6 +105,7 @@ public class ValgrindReport implements Serializable
 		return new ValgrindErrorList(getAllErrors());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public List<ValgrindProcess> getProcesses()
 	{
 		List<ValgrindProcess> result = new ArrayList<ValgrindProcess>();

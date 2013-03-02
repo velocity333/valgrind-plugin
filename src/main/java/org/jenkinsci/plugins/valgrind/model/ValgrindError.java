@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.valgrind.model;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +17,15 @@ public class ValgrindError implements Serializable
 {
 	private static final long serialVersionUID = 6470943829358084900L;
 	
+	@Deprecated
 	private String					executable;
+	@SuppressWarnings("unused")
+	@Deprecated
 	private String                 pid;
+	@SuppressWarnings("unused")
+	@Deprecated
 	private String                 ppid;
+	
 	private String					uniqueId;
 	private ValgrindErrorKind		kind;
 	private ValgrindStacktrace		stacktrace;
@@ -53,26 +58,6 @@ public class ValgrindError implements Serializable
 			}
 		}
 	}
-	
-	public void setPid(String pid)
-	{
-		this.pid = pid;
-	}
-	
-	public String getPid()
-	{
-		return pid;
-	}
-	
-	public void setPpid(String ppid)
-	{
-		this.ppid = ppid;
-	}
-	
-	public String getPpid()
-	{
-		return ppid;
-	}	
 	
 	public ValgrindStacktrace getStacktrace()
 	{
@@ -114,17 +99,10 @@ public class ValgrindError implements Serializable
 		this.uniqueId = ValgrindUtil.trimToNull( uniqueId );
 	}
 
+	@Deprecated
 	public String getExecutable()
 	{
 		return executable;
-	}
-
-	public void setExecutable(String executable)
-	{
-		this.executable = ValgrindUtil.trimToNull( executable );
-		
-		if ( this.executable != null )
-			this.executable = new File(this.executable).getName();
 	}
 	
 	public Integer getLeakedBytes()

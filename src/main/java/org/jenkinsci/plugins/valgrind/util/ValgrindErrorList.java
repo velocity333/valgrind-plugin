@@ -262,6 +262,7 @@ public class ValgrindErrorList
 		return bytes;
 	}	
 	
+	@SuppressWarnings("deprecation")
 	public int getLeakedBytes( ValgrindErrorKind kind, String executable )
 	{
 		if ( errors == null )
