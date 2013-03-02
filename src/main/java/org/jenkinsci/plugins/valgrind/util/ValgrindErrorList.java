@@ -220,6 +220,48 @@ public class ValgrindErrorList
 		return bytes;
 	}
 	
+	public int getIndirectlyLeakedBytes()
+	{
+		if ( errors == null )
+			return 0;
+		
+		int bytes = 0;
+		
+		for ( ValgrindError error : errors )
+		{
+			if ( error.getKind() != ValgrindErrorKind.Leak_IndirectlyLost )
+				continue;
+			
+			if ( error.getLeakedBytes() == null )
+				continue;
+			
+			bytes += error.getLeakedBytes().intValue();
+		}
+		
+		return bytes;
+	}	
+	
+	public int getStillReachableLeakedBytes()
+	{
+		if ( errors == null )
+			return 0;
+		
+		int bytes = 0;
+		
+		for ( ValgrindError error : errors )
+		{
+			if ( error.getKind() != ValgrindErrorKind.Leak_StillReachable )
+				continue;
+			
+			if ( error.getLeakedBytes() == null )
+				continue;
+			
+			bytes += error.getLeakedBytes().intValue();
+		}
+		
+		return bytes;
+	}	
+	
 	public int getLeakedBytes( ValgrindErrorKind kind, String executable )
 	{
 		if ( errors == null )

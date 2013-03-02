@@ -106,7 +106,7 @@ public class ValgrindResult implements Serializable
 
 			ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
 	 
-			return new ValgrindDetail( owner, error, sourceFile );			
+			return new ValgrindDetail( owner, report.findProcess(pid), error, sourceFile );			
 		}
 		else
 		{

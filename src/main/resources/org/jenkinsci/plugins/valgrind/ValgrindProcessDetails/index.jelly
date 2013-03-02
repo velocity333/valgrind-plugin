@@ -14,6 +14,7 @@
 		<l:main-panel>
 			   <h1>Valgrind Process Details</h1>		   
 	        
+	        	<a href="../">back to processes overview</a>
 	        
 		    	<h2>
 		    	<img height="16" style="margin: 2px;" alt="" width="16" src="/plugin/valgrind/icons/process-64.png"/>		    	
@@ -34,7 +35,7 @@
 				   		${process.ppid}
 				   </j:if>	
 				   <j:if test="${process.parent != null}">
-				   		<a href="#pid${process.parent.pid}">${process.parent.pid} (${process.parent.executable})</a>
+				   		<a href="../pid=${process.parent.pid}">${process.parent.pid} (${process.parent.executable})</a>
 				   </j:if>
 			      </td>
 			    </tr>
@@ -42,7 +43,7 @@
 			      <td class="pane-header" style="width:2em">Child processes</td>				      
 			      <td class="pane">				      					      		
 			      		<j:forEach var="child" items="${process.childs}">			    		
-		    				<p style="margin: 0px;"><a href="#pid${child.pid}">${child.pid} (${child.executable})</a></p>
+		    				<p style="margin: 0px;"><a href="../pid=${child.pid}">${child.pid} (${child.executable})</a></p>
 		    			</j:forEach>
 			      </td>
 			    </tr>
