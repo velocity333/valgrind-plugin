@@ -49,6 +49,11 @@ public class ValgrindSaxParserTest
 		assertEquals( "10421" , process.getPid() );
 		assertEquals( "./program1", process.getExecutable() );
 		
+		assertNotNull(process.getArguments());
+		assertEquals(2, process.getArguments().size());
+		assertEquals("arg1_part1 arg1_part2", process.getArguments().get(0));
+		assertEquals("arg2", process.getArguments().get(1));
+		
 		assertEquals( 3, report.getErrorList().getErrorCount() );
 		assertEquals( 3, process.getErrorList().getErrorCount() );
 		
@@ -89,7 +94,10 @@ public class ValgrindSaxParserTest
 		assertNotNull(frames.get(3));		
 		assertEquals( "main.cpp", frames.get(3).getFileName() );
 		assertEquals( Integer.valueOf(24), frames.get(3).getLineNumber() );
-		assertEquals("/home/jenkins/test-slave/workspace/valgrind-test/program1", frames.get(3).getObjectName());		
+		assertEquals("/home/jenkins/test-slave/workspace/valgrind-test/program1", frames.get(3).getObjectName());
+		
+		
+		
 	}
 	
 	@Test

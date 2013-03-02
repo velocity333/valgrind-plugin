@@ -25,7 +25,7 @@
 			    <tr>
 			      <td class="pane-header" style="width:2em">Arguments</td>				      
 			      <td class="pane">				      					      		
-					"bla" "blub2" "dum die dasasdsd"
+					${process.argumentsString}
 			      </td>
 			    </tr>
 			    <tr>

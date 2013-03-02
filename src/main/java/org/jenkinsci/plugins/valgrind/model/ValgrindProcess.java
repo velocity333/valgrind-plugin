@@ -12,7 +12,7 @@ public class ValgrindProcess implements Serializable
 	private static final long	serialVersionUID	= -7073482135992069077L;
 	
 	private String executable;
-	private String[] arguments;
+	private List<String> arguments;
 	private String pid;
 	private String ppid;
 	private List<ValgrindError> errors;
@@ -44,14 +44,22 @@ public class ValgrindProcess implements Serializable
 		this.executable = executable;
 	}
 	
-	public String[] getArguments()
+	public List<String> getArguments()
 	{
 		return arguments;
 	}
 	
-	public void setArguments(String[] arguments)
+	public void setArguments(List<String> arguments)
 	{
 		this.arguments = arguments;
+	}
+	
+	public void addArgument(String arg)
+	{
+		if ( arguments == null )
+			arguments = new ArrayList<String>();
+		
+		arguments.add(arg);
 	}
 	
 	public String getPid()
@@ -127,5 +135,18 @@ public class ValgrindProcess implements Serializable
 				childs.add(p);
 			}
 		}
+	}
+	
+	public String getArgumentsString()
+	{
+		String s = "";
+		
+		if ( arguments != null )
+		{
+			for( String a : arguments )
+				s += "\"" + a + "\" ";
+		}
+		
+		return s.trim();
 	}
 }

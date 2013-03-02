@@ -83,6 +83,7 @@ public class ValgrindReport implements Serializable
 		return null;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public ValgrindProcess findProcess(String pid)
 	{
 		if ( processes != null )
@@ -95,9 +96,22 @@ public class ValgrindReport implements Serializable
 					return process;
 				}
 			}
-		}	
+		}		
 		
-		return null;
+		ValgrindProcess process = new ValgrindProcess();
+		process.setExecutable(pid);
+		process.setPid(pid);
+		
+		if ( errors != null )	
+		{
+			for ( ValgrindError error : errors )
+			{
+				if ( error.getExecutable().equals(pid) )
+					process.addError(error);
+			}
+		}
+		
+		return process;
 	}
 
 	public ValgrindErrorList getErrorList()

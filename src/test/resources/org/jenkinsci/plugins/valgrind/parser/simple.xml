@@ -28,6 +28,8 @@
   </vargv>
   <argv>
     <exe>./program1</exe>
+    <arg>arg1_part1 arg1_part2</arg>
+    <arg>arg2</arg>    
   </argv>
 </args>
 
