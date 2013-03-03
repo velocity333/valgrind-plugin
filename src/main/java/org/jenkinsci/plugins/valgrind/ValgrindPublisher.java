@@ -47,7 +47,9 @@ public class ValgrindPublisher extends Recorder
 			String failThresholdTotal,
 			String unstableThresholdInvalidReadWrite, 
 			String unstableThresholdDefinitelyLost, 
-			String unstableThresholdTotal)
+			String unstableThresholdTotal,
+			boolean publishResultsForAbortedBuilds,
+			boolean publishResultsForFailedBuilds)
 	{
 		valgrindPublisherConfig = new ValgrindPublisherConfig(
 				pattern, 
@@ -56,7 +58,9 @@ public class ValgrindPublisher extends Recorder
 				failThresholdTotal,
 				unstableThresholdInvalidReadWrite, 
 				unstableThresholdDefinitelyLost, 
-				unstableThresholdTotal );		
+				unstableThresholdTotal,
+				publishResultsForAbortedBuilds,
+				publishResultsForFailedBuilds );		
 	}	
 
 	@Override
@@ -78,7 +82,14 @@ public class ValgrindPublisher extends Recorder
 
 	protected boolean canContinue(final Result result)
 	{
-		return result != Result.ABORTED && result != Result.FAILURE;
+		if ( result == Result.ABORTED && !valgrindPublisherConfig.isPublishResultsForAbortedBuilds() )
+			return false;
+
+		if ( result == Result.FAILURE && !valgrindPublisherConfig.isPublishResultsForFailedBuilds() )
+			return false;
+		
+		System.err.println("YEAH, publish for Result: " + result.toString());
+		return true;
 	}
 
 	@Override

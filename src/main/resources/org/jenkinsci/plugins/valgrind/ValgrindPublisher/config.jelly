@@ -7,11 +7,13 @@
         <f:textbox name="valgrind.pattern" value="${instance.valgrindPublisherConfig.pattern}"/>
     </f:entry>
     
-	  <f:entry title="Show processes without errors" field="showProcessesWithoutErrors"
-	    description="">
-		<f:checkbox name="traceChildren" />
+	  <f:entry title="Publish results for aborted builds">
+		<f:checkbox name="valgrind.publishResultsForAbortedBuilds" checked="${instance.valgrindPublisherConfig.publishResultsForAbortedBuilds}"/>
 	  </f:entry>    
    
+	  <f:entry title="Publish results for failed builds">
+		<f:checkbox name="valgrind.publishResultsForFailedBuilds" checked="${instance.valgrindPublisherConfig.publishResultsForFailedBuilds}"/>
+	  </f:entry>      
     
 	  <f:entry title="Build Status Thresholds"
 	    description="Mark build as failed or unstable if number of errors exceeds a threshold.">
