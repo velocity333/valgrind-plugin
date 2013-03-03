@@ -177,7 +177,7 @@ public class ValgrindBuilder extends Builder
 	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
 	        	
 	        	if ( valgrindOptions != null )
-	        		call.addCustomValgrindOptions(valgrindOptions.split(" "));
+	        		call.addCustomValgrindOptions(Commandline.translateCommandline(valgrindOptions));
 				
 	        	ByteArrayOutputStream stdout = new ByteArrayOutputStream();     	
 	        	ByteArrayOutputStream stderr = new ByteArrayOutputStream();
