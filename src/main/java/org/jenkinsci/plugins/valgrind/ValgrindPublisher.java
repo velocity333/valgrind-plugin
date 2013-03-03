@@ -88,7 +88,6 @@ public class ValgrindPublisher extends Recorder
 		if ( result == Result.FAILURE && !valgrindPublisherConfig.isPublishResultsForFailedBuilds() )
 			return false;
 		
-		System.err.println("YEAH, publish for Result: " + result.toString());
 		return true;
 	}
 
