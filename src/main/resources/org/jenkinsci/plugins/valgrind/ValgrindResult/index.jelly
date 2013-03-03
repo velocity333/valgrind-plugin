@@ -115,10 +115,6 @@
 				   	  		<td>${process.errorList.uninitializedConditionErrorCount}</td>
 				   	  	</tr>
 				   	  	</j:if>
-				   	  	<tr>
-				   	  		<td><b>total</b></td>
-							<td><b>${process.errorList.errorCount}</b></td>
-				   	  	</tr>
 			   	  	</table>
 			   	  </td>
 			   	  <td class="pane"  style="vertical-align:top">
