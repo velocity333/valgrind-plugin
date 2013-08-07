@@ -15,13 +15,8 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
-import hudson.remoting.VirtualChannel;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.List;
 
 import net.sf.json.JSONObject;
 
@@ -34,12 +29,8 @@ import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindEvaluator;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceGrabber;
-import org.jenkinsci.plugins.valgrind.MyFilePath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.QueryParameter;
-
-import org.apache.tools.ant.*;
 
 
 /**
