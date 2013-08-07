@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.valgrind;
 
 import hudson.model.AbstractBuild;
+import hudson.FilePath;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSummary;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
 
 
 public class ValgrindResult implements Serializable
@@ -60,7 +62,8 @@ public class ValgrindResult implements Serializable
 	        return report; //for results serialized through older plugin version(s)
 	    }
 	    else {
-	        return owner.getWorkspace().act(parser);
+	        FilePath file = new FilePath(owner.getRootDir());
+		return file.act(parser);
 	    }
 	}
 
