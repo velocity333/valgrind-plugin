@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>valgrind</artifactId>
-  <version>0.20-SNAPSHOT</version>
+  <version>0.20</version>
   <packaging>hpi</packaging>
   <name>Jenkins Valgrind Plug-in</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Valgrind+Plugin</url>
