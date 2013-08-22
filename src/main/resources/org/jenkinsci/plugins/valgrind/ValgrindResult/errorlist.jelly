@@ -66,14 +66,14 @@
 	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/> 
    
     <j:set var="errorList" value="${process.errorList.leakPossiblyLostErrors}"/>
-    <j:set var="errorListName" value="Memory Leaks (definitely lost)"/>
+    <j:set var="errorListName" value="Memory Leaks (possibly lost)"/>
     <j:set var="errorListDesc" value="This means that no pointer to the block of memory can be found. The block is classified as 'lost', because the programmer could not possibly have freed it at program exit, since no pointer to it exists."/>
     <j:set var="manualLink" value="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks"/>
     <j:set var="isLeak" value="false"/>
 	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/> 
 			   
     <j:set var="errorList" value="${process.errorList.leakDefinitelyLostErrors}"/>
-    <j:set var="errorListName" value="Memory Leaks (possibly lost)"/>
+    <j:set var="errorListName" value="Memory Leaks (definitely lost)"/>
     <j:set var="errorListDesc" value="This means that a chain of one or more pointers to the block of memory has been found, but at least one of the pointers is an interior-pointer. This could just be a random value in memory that happens to point into the block."/>
     <j:set var="manualLink" value="http://valgrind.org/docs/manual/mc-manual.html#mc-manual.leaks"/>
     <j:set var="isLeak" value="false"/>
