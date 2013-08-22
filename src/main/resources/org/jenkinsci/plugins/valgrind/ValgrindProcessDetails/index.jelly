@@ -89,17 +89,17 @@
 				
 			    <j:set var="errorCount" value="${process.errorList.leakIndirectlyLostErrorCount}"/>
 			    <j:set var="errorName" value="Memory leak errors (indirectly lost)"/>
-			    <j:set var="errorBytes" value="${process.errorList.possiblyLeakedBytes}"/>
+			    <j:set var="errorBytes" value="${process.errorList.indirectlyLeakedBytes}"/>
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
 				
 			    <j:set var="errorCount" value="${process.errorList.leakPossiblyLostErrorCount}"/>
 			    <j:set var="errorName" value="Memory leak errors (possibly lost)"/>
-			    <j:set var="errorBytes" value="null"/>
+			    <j:set var="errorBytes" value="${process.errorList.possiblyLeakedBytes}"/>
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
 				
 			    <j:set var="errorCount" value="${process.errorList.leakStillReachableErrorCount}"/>
 			    <j:set var="errorName" value="Memory leak errors (still reachable)"/>
-			    <j:set var="errorBytes" value="null"/>
+			    <j:set var="errorBytes" value="${process.errorList.stillReachableLeakedBytes}"/>
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>																				
 
 			    <tr>
