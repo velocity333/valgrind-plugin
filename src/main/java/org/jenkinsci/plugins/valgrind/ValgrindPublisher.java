@@ -104,9 +104,9 @@ public class ValgrindPublisher extends Recorder
 		{
 			ValgrindLogger.log(listener, "ERROR: no pattern for valgrind xml files configured");
 			return false;
-		}
-		
+		}		
 	
+		@SuppressWarnings("deprecation")
 		EnvVars env = build.getEnvironment();
 		
 		FilePath baseFileFrom = build.getWorkspace();
@@ -115,17 +115,18 @@ public class ValgrindPublisher extends Recorder
 		String[] files = baseFileFrom.act(scanner);
 		
 		ValgrindLogger.log(listener, "Files to copy:");
-		for (int i = 0; i < files.length; i++) {
-		    ValgrindLogger.log(listener, files[i]);
+		for (int i = 0; i < files.length; i++)
+		{
+			ValgrindLogger.log(listener, files[i]);
 		}
-		
-		for (int i = 0; i < files.length; i++) {
-		    FilePath fileFrom = new FilePath(baseFileFrom, files[i]);
-		    FilePath fileTo = new FilePath(baseFileTo, "valgrind-plugin/valgrind-results/" + files[i]);
-		    ValgrindLogger.log(listener, "Copying " + files[i] + " to " + fileTo.getRemote());
-		    fileFrom.copyTo(fileTo);		    
-		}
-		
+
+		for (int i = 0; i < files.length; i++)
+		{
+			FilePath fileFrom = new FilePath(baseFileFrom, files[i]);
+			FilePath fileTo = new FilePath(baseFileTo, "valgrind-plugin/valgrind-results/" + files[i]);
+			ValgrindLogger.log(listener, "Copying " + files[i] + " to " + fileTo.getRemote());
+			fileFrom.copyTo(fileTo);
+		}		
 		
 		ValgrindLogger.log(listener, "Analysing valgrind results; configure Jenkins system log (ValgrindLogger) for details");
 		
