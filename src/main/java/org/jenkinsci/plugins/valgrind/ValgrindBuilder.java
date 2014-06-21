@@ -254,6 +254,11 @@ public class ValgrindBuilder extends Builder
 	{
 		return showReachable;
 	}
+        
+        public boolean isIgnoreExitCode()
+        {
+                return ignoreExitCode;
+        }
 
 	public boolean isUndefinedValueErrors()
 	{
