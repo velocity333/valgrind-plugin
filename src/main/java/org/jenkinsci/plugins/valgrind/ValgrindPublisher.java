@@ -52,7 +52,8 @@ public class ValgrindPublisher extends Recorder
 			String unstableThresholdTotal,
 			boolean publishResultsForAbortedBuilds,
 			boolean publishResultsForFailedBuilds,
-			boolean failBuildOnMissingReports)
+			boolean failBuildOnMissingReports,
+			boolean failBuildOnInvalidReports)
 	{
 		valgrindPublisherConfig = new ValgrindPublisherConfig(
 				pattern, 
@@ -64,7 +65,8 @@ public class ValgrindPublisher extends Recorder
 				unstableThresholdTotal,
 				publishResultsForAbortedBuilds,
 				publishResultsForFailedBuilds,
-				failBuildOnMissingReports);		
+				failBuildOnMissingReports,
+				failBuildOnInvalidReports);		
 	}	
 
 	@Override
@@ -139,7 +141,7 @@ public class ValgrindPublisher extends Recorder
 			
 			ValgrindLogger.log(listener, "Analysing valgrind results; configure Jenkins system log (ValgrindLogger) for details");
 			
-			ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern());
+			ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern(), listener);
 			
 			ValgrindResult valgrindResult = new ValgrindResult(build, parser);
 			ValgrindReport valgrindReport = valgrindResult.getReport();

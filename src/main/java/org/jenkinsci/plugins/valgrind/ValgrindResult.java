@@ -58,13 +58,11 @@ public class ValgrindResult implements Serializable
 	 */
 	public ValgrindReport getReport() throws IOException, InterruptedException
 	{
-	    if(report != null) {
+	    if(report != null) 
 	        return report; //for results serialized through older plugin version(s)
-	    }
-	    else {
-	        FilePath file = new FilePath(owner.getRootDir());
-		return file.act(parser);
-	    }
+
+        FilePath file = new FilePath(owner.getRootDir());
+        return file.act(parser);
 	}
 
 	public Map<String, String> getSourceFiles()

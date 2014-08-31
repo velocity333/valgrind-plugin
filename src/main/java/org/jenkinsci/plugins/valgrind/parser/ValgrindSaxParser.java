@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 
@@ -36,6 +37,13 @@ public class ValgrindSaxParser implements Serializable
 		private StringBuilder data;
 		private String path = "";
 		
+		@Override
+		public void error(SAXParseException e) throws SAXException
+		{			
+			throw e;			
+		}
+		
+		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException
 		{
@@ -109,6 +117,7 @@ public class ValgrindSaxParser implements Serializable
 			}
 		}
 
+		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException
 		{			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
@@ -240,6 +249,7 @@ public class ValgrindSaxParser implements Serializable
 			path = path.substring(0, path.length() - ( qName.length() + 1 ) );
 		}
 
+		@Override
 		public void characters(char ch[], int start, int length) throws SAXException
 		{
 			if ( data == null )

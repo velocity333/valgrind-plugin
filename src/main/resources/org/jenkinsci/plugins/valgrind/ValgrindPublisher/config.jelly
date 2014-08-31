@@ -7,9 +7,13 @@
         <f:textbox name="valgrind.pattern" value="${instance.valgrindPublisherConfig.pattern}"/>
     </f:entry>
     
-	  <f:entry title="Fail build on missing reports">
+	  <f:entry title="Fail build on missing reports" description="Mark build as failed if no report was found.">
 		<f:checkbox name="valgrind.failBuildOnMissingReports" checked="${instance.valgrindPublisherConfig.failBuildOnMissingReports}"/>
 	  </f:entry>     
+	  
+	  <f:entry title="Fail build on invalid reports" description="Mark build as failed on malformed xml reports.">
+		<f:checkbox name="valgrind.failBuildOnInvalidReports" checked="${instance.valgrindPublisherConfig.failBuildOnInvalidReports}"/>
+	  </f:entry>	  
     
 	  <f:entry title="Publish results for aborted builds">
 		<f:checkbox name="valgrind.publishResultsForAbortedBuilds" checked="${instance.valgrindPublisherConfig.publishResultsForAbortedBuilds}"/>

@@ -36,6 +36,11 @@ public class ValgrindEvaluator
 				report.getErrorList().getErrorCount(), 
 				env.expand( config.getUnstableThresholdTotal() ), 
 				env.expand( config.getFailThresholdTotal() ) ) );
+		
+		if(report.hasParserErrors() && config.isFailBuildOnInvalidReports())
+		{
+			build.setResult( Result.FAILURE );
+		}
 	}	
 	
 	private boolean exceedsThreshold( int errorCount, String threshold )

@@ -21,6 +21,7 @@ public class ValgrindReport implements Serializable
 	private Set<String> executables;	
 	
 	private List<ValgrindProcess> processes;
+	private Map<String, String> parserErrors;
 	
 	public void addProcess( ValgrindProcess process )
 	{
@@ -28,6 +29,19 @@ public class ValgrindReport implements Serializable
 			processes = new ArrayList<ValgrindProcess>();
 		
 		processes.add( process );
+	}
+	
+	public void addParserError(String filename, String errorMessage)
+	{
+		if(parserErrors == null)
+			parserErrors = new HashMap<String, String>();
+		
+		parserErrors.put(filename,  errorMessage);
+	}
+	
+	public boolean hasParserErrors()
+	{
+		return (parserErrors != null) && !parserErrors.isEmpty();
 	}
 	
 	public List<ValgrindError> getAllErrors()

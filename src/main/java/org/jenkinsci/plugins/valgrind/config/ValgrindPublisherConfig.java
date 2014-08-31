@@ -18,6 +18,7 @@ public class ValgrindPublisherConfig implements Serializable
 	private boolean publishResultsForAbortedBuilds;
 	private boolean publishResultsForFailedBuilds;
 	private boolean failBuildOnMissingReports;
+	private boolean failBuildOnInvalidReports;
 	
 	@DataBoundConstructor
 	public ValgrindPublisherConfig( String pattern, 
@@ -29,7 +30,8 @@ public class ValgrindPublisherConfig implements Serializable
 			String unstableThresholdTotal,
 			boolean publishResultsForAbortedBuilds,
 			boolean publishResultsForFailedBuilds,
-			boolean failBuildOnMissingReports)
+			boolean failBuildOnMissingReports,
+			boolean failBuildOnInvalidReports)
 	{
 		this.pattern = pattern.trim();
 		this.failThresholdInvalidReadWrite = failThresholdInvalidReadWrite.trim();
@@ -41,6 +43,7 @@ public class ValgrindPublisherConfig implements Serializable
 		this.publishResultsForAbortedBuilds = publishResultsForAbortedBuilds;
 		this.publishResultsForFailedBuilds = publishResultsForFailedBuilds;
 		this.failBuildOnMissingReports = failBuildOnMissingReports;
+		this.failBuildOnInvalidReports = failBuildOnInvalidReports;
 	}
 
 	public ValgrindPublisherConfig()
@@ -96,4 +99,9 @@ public class ValgrindPublisherConfig implements Serializable
 	{
 		return failBuildOnMissingReports;
 	}
+	
+	public boolean isFailBuildOnInvalidReports()
+	{
+		return failBuildOnInvalidReports;
+	}	
 }
