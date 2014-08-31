@@ -17,6 +17,7 @@ import hudson.tasks.Recorder;
 import hudson.FilePath;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import net.sf.json.JSONObject;
 
@@ -137,14 +138,13 @@ public class ValgrindPublisher extends Recorder
 				FilePath fileTo = new FilePath(baseFileTo, "valgrind-plugin/valgrind-results/" + files[i]);
 				ValgrindLogger.log(listener, "Copying " + files[i] + " to " + fileTo.getRemote());
 				fileFrom.copyTo(fileTo);
-			}		
+			}
 			
-			ValgrindLogger.log(listener, "Analysing valgrind results; configure Jenkins system log (ValgrindLogger) for details");
-			
-			ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern(), listener);
+			ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern());
 			
 			ValgrindResult valgrindResult = new ValgrindResult(build, parser);
 			ValgrindReport valgrindReport = valgrindResult.getReport();
+			logParserError(listener, valgrindReport);
 			
 			new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
 			
@@ -211,6 +211,17 @@ public class ValgrindPublisher extends Recorder
 	{
 		this.valgrindPublisherConfig = valgrindPublisherConfig;
 	}	
+	
+	private void logParserError(BuildListener listener, ValgrindReport report)
+	{
+		if(report == null || report.getParserErrors() == null)
+			return;		
+
+		for (Entry<String, String> entry : report.getParserErrors().entrySet())
+		{
+			ValgrindLogger.log(listener, "ERROR: failed to parse " + entry.getKey() + ": " + entry.getValue());
+		}
+	}
 	
 	@Extension
 	public static final ValgrindPublisherDescriptor DESCRIPTOR = new ValgrindPublisherDescriptor();

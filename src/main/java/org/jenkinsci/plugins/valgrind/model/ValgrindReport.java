@@ -44,6 +44,11 @@ public class ValgrindReport implements Serializable
 		return (parserErrors != null) && !parserErrors.isEmpty();
 	}
 	
+	public Map<String, String> getParserErrors()
+	{
+		return parserErrors;
+	}
+	
 	public List<ValgrindError> getAllErrors()
 	{
 		List<ValgrindError> list = new ArrayList<ValgrindError>();

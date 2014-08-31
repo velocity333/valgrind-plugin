@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.valgrind.parser;
 
 import hudson.FilePath;
 import hudson.Util;
-import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
 
 import java.io.File;
@@ -18,12 +17,10 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 {
 	private static final long serialVersionUID = -5475538646374717099L;
 	private String pattern;
-	private BuildListener listener;
 	
-	public ValgrindParserResult( String pattern, BuildListener listener )
+	public ValgrindParserResult( String pattern )
 	{
 		this.pattern = pattern;
-		this.listener = listener;
 	}
 
 	public ValgrindReport invoke(File basedir, VirtualChannel channel) throws IOException, InterruptedException
@@ -43,7 +40,6 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 			catch (Exception e)
 			{
 				valgrindReport.addParserError(fileName, e.getMessage());
-				ValgrindLogger.log(listener, "ERROR: failed to parse " + fileName + ": " + e.getMessage());
 			}
 		}
 
