@@ -51,7 +51,8 @@ public class ValgrindPublisher extends Recorder
 			String unstableThresholdDefinitelyLost, 
 			String unstableThresholdTotal,
 			boolean publishResultsForAbortedBuilds,
-			boolean publishResultsForFailedBuilds)
+			boolean publishResultsForFailedBuilds,
+			boolean failBuildOnMissingReports)
 	{
 		valgrindPublisherConfig = new ValgrindPublisherConfig(
 				pattern, 
@@ -62,7 +63,8 @@ public class ValgrindPublisher extends Recorder
 				unstableThresholdDefinitelyLost, 
 				unstableThresholdTotal,
 				publishResultsForAbortedBuilds,
-				publishResultsForFailedBuilds );		
+				publishResultsForFailedBuilds,
+				failBuildOnMissingReports);		
 	}	
 
 	@Override
@@ -114,79 +116,88 @@ public class ValgrindPublisher extends Recorder
 		ValgrindResultsScanner scanner = new ValgrindResultsScanner(valgrindPublisherConfig.getPattern());
 		String[] files = baseFileFrom.act(scanner);
 		
-		ValgrindLogger.log(listener, "Files to copy:");
-		for (int i = 0; i < files.length; i++)
+		if(files.length == 0 && valgrindPublisherConfig.isFailBuildOnMissingReports())
 		{
-			ValgrindLogger.log(listener, files[i]);
+			ValgrindLogger.log( listener, "ERROR: no report files found for pattern '" + valgrindPublisherConfig.getPattern() + "'" );
+			build.setResult( Result.FAILURE );
 		}
-
-		for (int i = 0; i < files.length; i++)
+		else
 		{
-			FilePath fileFrom = new FilePath(baseFileFrom, files[i]);
-			FilePath fileTo = new FilePath(baseFileTo, "valgrind-plugin/valgrind-results/" + files[i]);
-			ValgrindLogger.log(listener, "Copying " + files[i] + " to " + fileTo.getRemote());
-			fileFrom.copyTo(fileTo);
-		}		
-		
-		ValgrindLogger.log(listener, "Analysing valgrind results; configure Jenkins system log (ValgrindLogger) for details");
-		
-		ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern());
-		
-		ValgrindResult valgrindResult = new ValgrindResult(build, parser);
-		ValgrindReport valgrindReport = valgrindResult.getReport();
-		
-		new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
-		
-		ValgrindLogger.log(listener, "Analysing valgrind results");
-				
-		ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot());
-		
-		if ( !sourceGrabber.init( build.getRootDir() ) )
-			return false;
-		
-		if ( valgrindReport.getAllErrors() != null )
-		{
-			for ( ValgrindError error : valgrindReport.getAllErrors() )
+			ValgrindLogger.log(listener, "Files to copy:");
+			for (int i = 0; i < files.length; i++)
 			{
-				if ( error.getStacktrace() != null )
-					sourceGrabber.grabFromStacktrace( error.getStacktrace() );
-				
-				if ( error.getAuxiliaryData() != null )
+				ValgrindLogger.log(listener, files[i]);
+			}
+
+			for (int i = 0; i < files.length; i++)
+			{
+				FilePath fileFrom = new FilePath(baseFileFrom, files[i]);
+				FilePath fileTo = new FilePath(baseFileTo, "valgrind-plugin/valgrind-results/" + files[i]);
+				ValgrindLogger.log(listener, "Copying " + files[i] + " to " + fileTo.getRemote());
+				fileFrom.copyTo(fileTo);
+			}		
+			
+			ValgrindLogger.log(listener, "Analysing valgrind results; configure Jenkins system log (ValgrindLogger) for details");
+			
+			ValgrindParserResult parser = new ValgrindParserResult("valgrind-plugin/valgrind-results/"+valgrindPublisherConfig.getPattern());
+			
+			ValgrindResult valgrindResult = new ValgrindResult(build, parser);
+			ValgrindReport valgrindReport = valgrindResult.getReport();
+			
+			new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
+			
+			ValgrindLogger.log(listener, "Analysing valgrind results");
+					
+			ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot());
+			
+			if ( !sourceGrabber.init( build.getRootDir() ) )
+				return false;
+			
+			if ( valgrindReport.getAllErrors() != null )
+			{
+				for ( ValgrindError error : valgrindReport.getAllErrors() )
 				{
-					for ( ValgrindAuxiliary aux : error.getAuxiliaryData() )
+					if ( error.getStacktrace() != null )
+						sourceGrabber.grabFromStacktrace( error.getStacktrace() );
+					
+					if ( error.getAuxiliaryData() != null )
 					{
-						if ( aux.getStacktrace() != null )
-							sourceGrabber.grabFromStacktrace(aux.getStacktrace());
-					}				
+						for ( ValgrindAuxiliary aux : error.getAuxiliaryData() )
+						{
+							if ( aux.getStacktrace() != null )
+								sourceGrabber.grabFromStacktrace(aux.getStacktrace());
+						}				
+					}
 				}
 			}
-		}
-		
-		//remove workspace path from executable name
-		if ( valgrindReport.getProcesses() != null )
-		{
-			String workspacePath = build.getWorkspace().getRemote() + "/";
-			ValgrindLogger.log(listener, "workspacePath: " + workspacePath);
 			
-			for ( ValgrindProcess p : valgrindReport.getProcesses() )
+			//remove workspace path from executable name
+			if ( valgrindReport.getProcesses() != null )
 			{
-				if ( p.getExecutable().startsWith(workspacePath) )
-					p.setExecutable( p.getExecutable().substring(workspacePath.length()));
+				String workspacePath = build.getWorkspace().getRemote() + "/";
+				ValgrindLogger.log(listener, "workspacePath: " + workspacePath);
 				
-				if ( p.getExecutable().startsWith("./") )
-					p.setExecutable( p.getExecutable().substring(2) );
+				for ( ValgrindProcess p : valgrindReport.getProcesses() )
+				{
+					if ( p.getExecutable().startsWith(workspacePath) )
+						p.setExecutable( p.getExecutable().substring(workspacePath.length()));
+					
+					if ( p.getExecutable().startsWith("./") )
+						p.setExecutable( p.getExecutable().substring(2) );
+				}
 			}
+			
+			valgrindResult.setSourceFiles(sourceGrabber.getLookupMap());
+
+			ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult,
+					valgrindPublisherConfig);
+			build.addAction(buildAction);
+			
+			ValgrindLogger.log(listener, "Ending the valgrind analysis.");
 		}
+
+		return true;			
 		
-		valgrindResult.setSourceFiles(sourceGrabber.getLookupMap());
-
-		ValgrindBuildAction buildAction = new ValgrindBuildAction(build, valgrindResult,
-				valgrindPublisherConfig);
-		build.addAction(buildAction);
-
-		ValgrindLogger.log(listener, "Ending the valgrind analysis.");
-
-		return true;
 	}
 	
 	public ValgrindPublisherConfig getValgrindPublisherConfig()
