@@ -35,7 +35,14 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 			try
 			{
 				ValgrindReport report = new ValgrindSaxParser().parse( new File(basedir, fileName) );
-				valgrindReport.integrate( report );
+				if(report != null && report.isValid())
+				{
+					valgrindReport.integrate( report );										
+				}
+				else
+				{
+					valgrindReport.addParserError(fileName, "no valid data");					
+				}
 			} 
 			catch (Exception e)
 			{

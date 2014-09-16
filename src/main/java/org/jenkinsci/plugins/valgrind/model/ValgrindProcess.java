@@ -20,6 +20,14 @@ public class ValgrindProcess implements Serializable
 	private transient ValgrindProcess parent;
 	private transient List<ValgrindProcess> childs;
 	
+	public boolean isValid()
+	{
+		if(executable == null)
+			return false;
+		
+		return true;
+	}
+	
 	public ValgrindProcess()
 	{
 	}

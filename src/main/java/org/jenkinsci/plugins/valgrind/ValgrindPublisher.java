@@ -177,10 +177,14 @@ public class ValgrindPublisher extends Recorder
 			if ( valgrindReport.getProcesses() != null )
 			{
 				String workspacePath = build.getWorkspace().getRemote() + "/";
-				ValgrindLogger.log(listener, "workspacePath: " + workspacePath);
+				ValgrindLogger.log(listener, "workspacePath: " + workspacePath);			
+				
 				
 				for ( ValgrindProcess p : valgrindReport.getProcesses() )
 				{
+					if(!p.isValid())
+						continue;
+					
 					if ( p.getExecutable().startsWith(workspacePath) )
 						p.setExecutable( p.getExecutable().substring(workspacePath.length()));
 					

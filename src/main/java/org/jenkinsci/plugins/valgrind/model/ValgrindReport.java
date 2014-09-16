@@ -23,6 +23,20 @@ public class ValgrindReport implements Serializable
 	private List<ValgrindProcess> processes;
 	private Map<String, String> parserErrors;
 	
+	public boolean isValid()
+	{
+		if(processes == null || processes.isEmpty())
+			return false;
+		
+		for(ValgrindProcess p : processes)
+		{
+			if(!p.isValid())
+				return false;				
+		}
+		
+		return true;
+	}
+	
 	public void addProcess( ValgrindProcess process )
 	{
 		if ( processes == null )
@@ -144,7 +158,13 @@ public class ValgrindReport implements Serializable
 		List<ValgrindProcess> result = new ArrayList<ValgrindProcess>();
 		
 		if ( processes != null )
-			result.addAll(processes);
+		{
+			for(ValgrindProcess p : processes)
+			{
+				if(p.isValid())
+					result.add(p);
+			}
+		}
 		
 		if ( errors != null )
 		{
@@ -162,7 +182,12 @@ public class ValgrindReport implements Serializable
 
 				lookup.get(error.getExecutable()).addError(error);
 			}	
-			result.addAll(lookup.values());
+			
+			for(ValgrindProcess p : lookup.values())
+			{
+				if(p.isValid())
+					result.add(p);
+			}
 		}		
 		
 		if ( result.isEmpty() )
