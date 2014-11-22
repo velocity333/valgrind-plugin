@@ -118,26 +118,15 @@ public class ValgrindBuilder extends Builder
 			EnvVars env = build.getEnvironment(null);
 			
 			/*
-			 * Create directories
-			 */
-			FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
-			if (!workDir.exists() || !workDir.isDirectory())
-				workDir.mkdirs();
-
-			FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
-			if (!outDir.exists() || !outDir.isDirectory())
-				outDir.mkdirs();
-			
-			/*
 			 * Build program list 
 			 */
-			List<FilePath> includes = Arrays.asList( build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(includePattern)) );
+			List<FilePath> includes = Arrays.asList(build.getWorkspace().list(env.expand(includePattern)));
 			ValgrindLogger.log( listener, "includes files: " + ValgrindUtil.join(includes, ", "));			
 			
 			List<FilePath> excludes = null;			
 			if ( excludePattern != null && !excludePattern.isEmpty() )
 			{
-				excludes = Arrays.asList( build.getWorkspace().child(env.expand(workingDirectory)).list(env.expand(excludePattern)) );			
+				excludes = Arrays.asList(build.getWorkspace().list(env.expand(excludePattern)));
 				ValgrindLogger.log( listener, "excluded files: " + ValgrindUtil.join(excludes, ", "));				
 			}
 			
@@ -152,10 +141,23 @@ public class ValgrindBuilder extends Builder
 			 */
 			for (FilePath file : includes)
 			{		
-				if ( excludes != null && excludes.contains(file) )
-					continue;				
-		
-				env.put("PROGRAM_NAME", file.getName());
+				if ( file == null || (excludes != null && excludes.contains(file)) )
+					continue;
+
+				final String programName = file.getName();
+				env.put("PROGRAM_NAME", programName);
+
+				final String programDir  = fullPath(file.getParent());
+				env.put("PROGRAM_DIR", programDir);
+
+				final FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
+				if (!workDir.exists() || !workDir.isDirectory())
+					workDir.mkdirs();
+
+				FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
+				if (!outDir.exists() || !outDir.isDirectory())
+					outDir.mkdirs();
+
 				final FilePath xmlFile = outDir.child(file.getName() + ".%p" + env.expand(outputFileEnding));
 				final String xmlFilename = xmlFile.getRemote();
 				
@@ -310,6 +312,14 @@ public class ValgrindBuilder extends Builder
 			items.add(level.name(), String.valueOf(level.ordinal()));
 
 		return items;
+	}
+
+	private static String fullPath(FilePath fp)
+	{
+		if(fp == null)
+			return "";
+
+		return fullPath(fp.getParent()) + "/" + fp.getName();
 	}
 
 	@Extension
