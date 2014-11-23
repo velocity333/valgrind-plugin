@@ -77,6 +77,25 @@
       <line>10</line>
     </frame>
   </stack>
+
+  <suppression>
+    <sname>insert_a_suppression_name_here</sname>
+    <skind>Memcheck:Addr1</skind>
+    <sframe> <fun>memcpy@@GLIBC_2.14</fun> </sframe>
+    <sframe> <fun>access_already_freed_memory_memcpy</fun> </sframe>
+    <sframe> <fun>main</fun> </sframe>
+    <rawtext>
+<![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr1
+   fun:memcpy@@GLIBC_2.14
+   fun:access_already_freed_memory_memcpy
+   fun:main
+}
+]]>
+    </rawtext>
+  </suppression>
 </error>
 
 <error>

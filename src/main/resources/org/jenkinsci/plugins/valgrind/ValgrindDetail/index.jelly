@@ -38,7 +38,11 @@
 		      		${aux.description}<br/>
 		      	</j:forEach>		      
 			  </td>
-		    </tr>		    
+		    </tr>
+			<tr>
+				<td class="pane-header" style="width:2em">Suppression</td>
+				<td class="pane">${it.error.suppressionHtml}</td>
+			</tr>
 		    </table>			
 			
 			<h2>Stacktrace</h2>						

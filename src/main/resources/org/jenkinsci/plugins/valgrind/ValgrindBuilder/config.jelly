@@ -75,7 +75,17 @@
 	    description="When enabled, Valgrind will not show any debugging or logging output for the child process resulting from a fork call.">
 		<f:checkbox name="childSilentAfterFork" />
 	  </f:entry>
-	  
+
+	  <f:entry title="Generate suppression information" field="generateSuppressions"
+			   description="When enabled, Valgrind will generate suppression information that can be used to create suppression files to ignore certain errors (valgrind option '--gen-suppressions=all|no').">
+		  <f:checkbox name="generateSuppressions" />
+	  </f:entry>
+
+<!--	  <f:entry title="Use suppression files" field="suppressionFiles"
+			   description="asdsad">
+		  <f:textbox />
+	  </f:entry>-->
+
 	  <f:entry title="Additional Valgrind Options" field="valgrindOptions"
 	    description="This plugin does not expose all valgrind options, so if you want to call valgrind with a special option, you can configure it here.">
 	    <f:textbox />

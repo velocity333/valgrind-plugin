@@ -160,9 +160,31 @@ public class ValgrindSaxParserTest
 		ValgrindStacktraceFrame auxFrame = auxStacktrace.getFrame(0);
 		assertNotNull(auxFrame);
 		assertEquals("main.cpp", auxFrame.getFileName());
-		assertEquals(Integer.valueOf(10), auxFrame.getLineNumber());				
-	}	
-	
+		assertEquals(Integer.valueOf(10), auxFrame.getLineNumber());
+	}
+
+
+	@Test
+	public void suppression() throws ParserConfigurationException, SAXException, IOException
+	{
+		ValgrindReport report = parser.parse(new File("src/test/resources/org/jenkinsci/plugins/valgrind/parser/aux-data.xml"));
+		assertNotNull(report);
+
+		ValgrindError error = report.findError("10418", "0x2");
+		assertNotNull(error);
+
+		final String expectedSuppression =
+        "{\n" +
+		"   <insert_a_suppression_name_here>\n" +
+		"   Memcheck:Addr1\n" +
+		"   fun:memcpy@@GLIBC_2.14\n" +
+		"   fun:access_already_freed_memory_memcpy\n" +
+		"   fun:main\n" +
+		"}";
+
+		assertEquals(expectedSuppression, error.getSuppression());
+	}
+
 	@Test
 	public void auxiliary_noStacktrace() throws ParserConfigurationException, SAXException, IOException
 	{	

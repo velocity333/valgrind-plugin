@@ -33,6 +33,7 @@ public class ValgrindError implements Serializable
 	private Integer					leakedBytes;
 	private Integer					leakedBlocks;
 	private List<ValgrindAuxiliary>	auxiliaryData;
+	private String                  suppression;
 
 	public String toString()
 	{
@@ -141,5 +142,28 @@ public class ValgrindError implements Serializable
 			this.auxiliaryData = new ArrayList<ValgrindAuxiliary>();
 		
 		this.auxiliaryData.add(auxiliaryData);
+	}
+
+	public String getSuppression()
+	{
+		return this.suppression;
+	}
+
+	public void setSuppression(String suppression)
+	{
+		this.suppression = suppression;
+	}
+
+	public String getSuppressionHtml()
+	{
+		if(suppression == null)
+			return "";
+
+		return suppression
+				.replaceAll(" ", "&nbsp;")
+				.replaceAll("\t", "&nbsp;&nbsp;")
+				.replaceAll(">", "&gt;")
+				.replaceAll("<", "&lt;")
+				.replaceAll("\\n", "<br />");
 	}
 }

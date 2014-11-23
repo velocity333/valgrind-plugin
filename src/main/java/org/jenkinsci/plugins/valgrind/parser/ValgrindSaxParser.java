@@ -94,6 +94,9 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") )
 				currentStacktrace = new ValgrindStacktrace();
+
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/suppression/rawtext"))
+				data = new StringBuilder();
 			
 			if ( currentStacktrace != null )
 			{
@@ -243,7 +246,9 @@ public class ValgrindSaxParser implements Serializable
 					}
 				}	
 			}
-			
+
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/suppression/rawtext") && currentError != null && data != null)
+				currentError.setSuppression(data.toString().trim());
 			
 			data = null;
 			path = path.substring(0, path.length() - ( qName.length() + 1 ) );

@@ -72,6 +72,7 @@ public class ValgrindBuilder extends Builder
 	private final boolean ignoreExitCode;
 	private final boolean traceChildren;
 	private final boolean childSilentAfterFork;
+	private final boolean generateSuppressions;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -90,7 +91,8 @@ public class ValgrindBuilder extends Builder
 			boolean trackOrigins,
 			boolean ignoreExitCode,
 			boolean traceChildren,
-			boolean childSilentAfterFork)
+			boolean childSilentAfterFork,
+			boolean generateSuppressions)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -107,6 +109,7 @@ public class ValgrindBuilder extends Builder
 		this.ignoreExitCode = ignoreExitCode;
 		this.traceChildren = traceChildren;
 		this.childSilentAfterFork = childSilentAfterFork;
+		this.generateSuppressions = generateSuppressions;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -175,6 +178,7 @@ public class ValgrindBuilder extends Builder
 	        	call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));
 	        	call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", childSilentAfterFork, VERSION_3_5_0));
 	        	call.addValgrindOption(new ValgrindBooleanOption("trace-children", traceChildren, VERSION_3_5_0));
+				call.addValgrindOption(new ValgrindStringOption("gen-suppressions", generateSuppressions ? "all" : "no"));
 	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
 	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
 	        	
@@ -295,7 +299,12 @@ public class ValgrindBuilder extends Builder
 	public boolean isChildSilentAfterFork()
 	{
 		return childSilentAfterFork;
-	}	
+	}
+
+	public boolean isGenerateSuppressions()
+	{
+		return generateSuppressions;
+	}
 
 	@Override
 	public DescriptorImpl getDescriptor()
