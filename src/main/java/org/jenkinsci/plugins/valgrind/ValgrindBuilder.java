@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class ValgrindBuilder extends Builder
 	private final boolean traceChildren;
 	private final boolean childSilentAfterFork;
 	private final boolean generateSuppressions;
+	private final String  suppressionFiles;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -92,7 +94,8 @@ public class ValgrindBuilder extends Builder
 			boolean ignoreExitCode,
 			boolean traceChildren,
 			boolean childSilentAfterFork,
-			boolean generateSuppressions)
+			boolean generateSuppressions,
+			String  suppressionFiles)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -110,6 +113,7 @@ public class ValgrindBuilder extends Builder
 		this.traceChildren = traceChildren;
 		this.childSilentAfterFork = childSilentAfterFork;
 		this.generateSuppressions = generateSuppressions;
+		this.suppressionFiles = suppressionFiles;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -181,9 +185,16 @@ public class ValgrindBuilder extends Builder
 				call.addValgrindOption(new ValgrindStringOption("gen-suppressions", generateSuppressions ? "all" : "no"));
 	        	call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
 	        	call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
+
+				for(String s : getSuppressionFileList())
+				{
+					call.addValgrindOption(new ValgrindStringOption("suppressions", env.expand(s)));
+				}
 	        	
 	        	if ( valgrindOptions != null )
-	        		call.addCustomValgrindOptions(Commandline.translateCommandline(valgrindOptions));
+				{
+					call.addCustomValgrindOptions(Commandline.translateCommandline(valgrindOptions));
+				}
 				
 	        	ByteArrayOutputStream stdout = new ByteArrayOutputStream();     	
 	        	ByteArrayOutputStream stderr = new ByteArrayOutputStream();
@@ -304,6 +315,34 @@ public class ValgrindBuilder extends Builder
 	public boolean isGenerateSuppressions()
 	{
 		return generateSuppressions;
+	}
+
+	public String getSuppressionFiles()
+	{
+		return this.suppressionFiles;
+	}
+
+	public List<String> getSuppressionFileList()
+	{
+		List<String> files = new ArrayList<String>();
+
+		if(suppressionFiles != null)
+		{
+			for (String s : suppressionFiles.split(" "))
+			{
+				if (s == null)
+					continue;
+
+				s = s.trim();
+
+				if (s.isEmpty())
+					continue;
+
+				files.add(s);
+			}
+		}
+
+		return files;
 	}
 
 	@Override
