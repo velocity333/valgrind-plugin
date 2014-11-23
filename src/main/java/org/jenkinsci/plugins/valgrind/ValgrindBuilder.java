@@ -75,6 +75,7 @@ public class ValgrindBuilder extends Builder
 	private final boolean childSilentAfterFork;
 	private final boolean generateSuppressions;
 	private final String  suppressionFiles;
+	private final boolean removeOldReports;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -95,7 +96,8 @@ public class ValgrindBuilder extends Builder
 			boolean traceChildren,
 			boolean childSilentAfterFork,
 			boolean generateSuppressions,
-			String  suppressionFiles)
+			String  suppressionFiles,
+			boolean removeOldReports)
 	{
 		this.valgrindExecutable = valgrindExecutable.trim();
 		this.workingDirectory = workingDirectory.trim();
@@ -114,6 +116,7 @@ public class ValgrindBuilder extends Builder
 		this.childSilentAfterFork = childSilentAfterFork;
 		this.generateSuppressions = generateSuppressions;
 		this.suppressionFiles = suppressionFiles;
+		this.removeOldReports = removeOldReports;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -123,6 +126,12 @@ public class ValgrindBuilder extends Builder
 		try
 		{
 			EnvVars env = build.getEnvironment(null);
+
+			/*
+			 * Delete old reports
+			 */
+			if(removeOldReports)
+				deleteOldReports(build, listener);
 			
 			/*
 			 * Build program list 
@@ -148,7 +157,7 @@ public class ValgrindBuilder extends Builder
 			 */
 			for (FilePath file : includes)
 			{		
-				if ( file == null || (excludes != null && excludes.contains(file)) )
+				if ( file == null || (excludes != null && excludes.contains(file)) || file.getName().endsWith(outputFileEnding) )
 					continue;
 
 				final String programName = file.getName();
@@ -317,6 +326,11 @@ public class ValgrindBuilder extends Builder
 		return generateSuppressions;
 	}
 
+	public boolean isRemoveOldReports()
+	{
+		return this.removeOldReports;
+	}
+
 	public String getSuppressionFiles()
 	{
 		return this.suppressionFiles;
@@ -368,6 +382,26 @@ public class ValgrindBuilder extends Builder
 			return "";
 
 		return fullPath(fp.getParent()) + "/" + fp.getName();
+	}
+
+	private void deleteOldReports(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException
+	{
+		if(outputFileEnding == null || outputFileEnding.isEmpty())
+			return;
+
+		final String oldReportPattern = "**/*" + outputFileEnding.trim();
+		final FilePath reports[] = build.getWorkspace().list(oldReportPattern);
+
+		for(FilePath p : reports)
+		{
+			if(p.isDirectory())
+				continue;
+
+			if(p.delete())
+				ValgrindLogger.log( listener, "deleted old report file: " + p.toURI());
+			else
+				ValgrindLogger.log( listener, "failed to delete old report file: " + p.toURI());
+		}
 	}
 
 	@Extension

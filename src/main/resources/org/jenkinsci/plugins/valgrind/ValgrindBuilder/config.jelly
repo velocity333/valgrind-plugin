@@ -40,6 +40,11 @@
 
     <f:advanced>
 
+        <f:entry title="Remove old reports" field="removeOldReports"
+                 description="When enabled, the plugin will remove all old report files (all files with a matching file ending) from workspace before running valgrind for that build.">
+            <f:checkbox name="removeOldReports"/>
+        </f:entry>
+
         <f:entry title="Valgrind Executable" field="valgrindExecutable"
                  description="Location of valgrind executable to use. Leave empty to use default valgrind found via PATH">
             <f:textbox/>
