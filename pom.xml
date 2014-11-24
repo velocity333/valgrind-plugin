@@ -7,7 +7,7 @@
     </parent>
 
     <artifactId>valgrind</artifactId>
-    <version>0.24</version>
+    <version>0.25-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Jenkins Valgrind Plug-in</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Valgrind+Plugin</url>
@@ -31,7 +31,7 @@
         <connection>scm:git:ssh://github.com/jenkinsci/valgrind-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/valgrind-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/valgrind-plugin</url>
-      <tag>valgrind-0.24a</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <repositories>
