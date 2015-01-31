@@ -254,8 +254,7 @@ public class ValgrindPublisher extends Recorder
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> jobType)
 		{
-			return FreeStyleProject.class.isAssignableFrom(jobType)
-					|| MatrixProject.class.isAssignableFrom(jobType);
+			return true;
 		}
 
 		@Override
