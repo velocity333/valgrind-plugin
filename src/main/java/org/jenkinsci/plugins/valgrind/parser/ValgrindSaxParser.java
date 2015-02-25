@@ -77,6 +77,9 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
 				data = new StringBuilder();
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/vargv/arg") )
+				data = new StringBuilder();			
+			
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/arg") )
 				data = new StringBuilder();			
 			
@@ -174,6 +177,9 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/arg") && currentProcess != null )
 				currentProcess.addArgument(data.toString());			
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/vargv/arg") && currentProcess != null )
+				currentProcess.addValgrindArgument(data.toString());
+
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/text") )
 				currentError.setDescription( data.toString() );				
 			
