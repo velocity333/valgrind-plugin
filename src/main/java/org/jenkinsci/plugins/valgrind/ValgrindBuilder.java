@@ -58,24 +58,24 @@ public class ValgrindBuilder extends Builder
 	public static final ValgrindVersion VERSION_3_7_0 = ValgrindVersion.createInstance(3, 7, 0);
 	public static final ValgrindVersion VERSION_3_8_0 = ValgrindVersion.createInstance(3, 8, 0);
 	
-	private final String valgrindExecutable;
-	private final String workingDirectory;
-	private final String includePattern;
-	private final String excludePattern;
-	private final String outputDirectory;
-	private final String outputFileEnding;
-	private final boolean showReachable;
-	private final boolean undefinedValueErrors;
-	private final LeakCheckLevel leakCheckLevel;
-	private final String programOptions;
-	private final String valgrindOptions;
-	private final boolean trackOrigins;
-	private final boolean ignoreExitCode;
-	private final boolean traceChildren;
-	private final boolean childSilentAfterFork;
-	private final boolean generateSuppressions;
-	private final String  suppressionFiles;
-	private final boolean removeOldReports;
+	public final String valgrindExecutable;
+	public final String workingDirectory;
+	public final String includePattern;
+	public final String excludePattern;
+	public final String outputDirectory;
+	public final String outputFileEnding;
+	public final boolean showReachable;
+	public final boolean undefinedValueErrors;
+	public final LeakCheckLevel leakCheckLevel;
+	public final String programOptions;
+	public final String valgrindOptions;
+	public final boolean trackOrigins;
+	public final boolean ignoreExitCode;
+	public final boolean traceChildren;
+	public final boolean childSilentAfterFork;
+	public final boolean generateSuppressions;
+	public final String  suppressionFiles;
+	public final boolean removeOldReports;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
@@ -148,96 +148,6 @@ public class ValgrindBuilder extends Builder
 		}
 
 		return true;
-	}
-	
-	public String getValgrindExecutable()
-	{
-		return valgrindExecutable;
-	}	
-
-	public String getWorkingDirectory()
-	{
-		return workingDirectory;
-	}
-
-	public String getIncludePattern()
-	{
-		return includePattern;
-	}
-	
-	public String getExcludePattern()
-	{
-		return excludePattern;
-	}	
-
-	public String getOutputDirectory()
-	{
-		return outputDirectory;
-	}
-
-	public String getOutputFileEnding()
-	{
-		return outputFileEnding;
-	}
-
-	public boolean isShowReachable()
-	{
-		return showReachable;
-	}
-        
-        public boolean isIgnoreExitCode()
-        {
-                return ignoreExitCode;
-        }
-
-	public boolean isUndefinedValueErrors()
-	{
-		return undefinedValueErrors;
-	}
-	
-	public LeakCheckLevel getLeakCheckLevel()
-	{
-		return leakCheckLevel;
-	}
-	
-	public String getProgramOptions()
-	{
-		return programOptions;
-	}
-	
-	public String getValgrindOptions()
-	{
-		return valgrindOptions;
-	}
-	
-	public boolean isTrackOrigins()
-	{
-		return trackOrigins;
-	}
-	
-	public boolean isTraceChildren()
-	{
-		return traceChildren;
-	}
-	
-	public boolean isChildSilentAfterFork()
-	{
-		return childSilentAfterFork;
-	}
-
-	public boolean isGenerateSuppressions()
-	{
-		return generateSuppressions;
-	}
-
-	public boolean isRemoveOldReports()
-	{
-		return this.removeOldReports;
-	}
-
-	public String getSuppressionFiles()
-	{
-		return this.suppressionFiles;
 	}
 
 	public List<String> getSuppressionFileList()
