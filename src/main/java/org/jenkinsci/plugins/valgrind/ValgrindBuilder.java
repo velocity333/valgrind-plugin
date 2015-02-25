@@ -4,9 +4,11 @@ import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.apache.tools.ant.types.Commandline;
@@ -60,12 +63,9 @@ public class ValgrindBuilder extends Builder
 	public final String excludePattern;
 	public final String outputDirectory;
 	public final String outputFileEnding;
-	public final boolean showReachable;
-	public final boolean undefinedValueErrors;
-	public final String leakCheckLevel;
 	public final String programOptions;
+	public final ValgrindTool tool;
 	public final String valgrindOptions;
-	public final boolean trackOrigins;
 	public final boolean ignoreExitCode;
 	public final boolean traceChildren;
 	public final boolean childSilentAfterFork;
@@ -82,12 +82,9 @@ public class ValgrindBuilder extends Builder
 			String excludePattern,
 			String outputDirectory,
 			String outputFileEnding,
-			boolean showReachable,
-			boolean undefinedValueErrors,
-			String leakCheckLevel,
 			String programOptions,
+			ValgrindTool tool,
 			String valgrindOptions,
-			boolean trackOrigins,
 			boolean ignoreExitCode,
 			boolean traceChildren,
 			boolean childSilentAfterFork,
@@ -101,12 +98,9 @@ public class ValgrindBuilder extends Builder
 		this.excludePattern = excludePattern;
 		this.outputDirectory = outputDirectory.trim();
 		this.outputFileEnding = outputFileEnding.trim();
-		this.showReachable = showReachable;
-		this.undefinedValueErrors = undefinedValueErrors;
-		this.leakCheckLevel = leakCheckLevel.trim();
 		this.programOptions = programOptions;
+		this.tool = tool;
 		this.valgrindOptions = valgrindOptions;
-		this.trackOrigins = trackOrigins;
 		this.ignoreExitCode = ignoreExitCode;
 		this.traceChildren = traceChildren;
 		this.childSilentAfterFork = childSilentAfterFork;
@@ -257,12 +251,14 @@ public class ValgrindBuilder extends Builder
 		call.setWorkingDirectory(workDir);
 		call.setProgramName(executable.getRemote());
 		call.addProgramArguments(Commandline.translateCommandline(programOptions));
+		
+		ValgrindToolMemcheck memcheck = (ValgrindToolMemcheck) tool;
 
 		call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
-		call.addValgrindOption(new ValgrindStringOption("leak-check", leakCheckLevel));
-		call.addValgrindOption(new ValgrindBooleanOption("show-reachable", showReachable));
-		call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors, VERSION_3_2_0));
-		call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));
+		call.addValgrindOption(new ValgrindStringOption("leak-check", memcheck.leakCheckLevel));
+		call.addValgrindOption(new ValgrindBooleanOption("show-reachable", memcheck.showReachable));
+		call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", memcheck.undefinedValueErrors, VERSION_3_2_0));
+		call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", memcheck.trackOrigins, memcheck.undefinedValueErrors, VERSION_3_4_0));
 		call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", childSilentAfterFork, VERSION_3_5_0));
 		call.addValgrindOption(new ValgrindBooleanOption("trace-children", traceChildren, VERSION_3_5_0));
 		call.addValgrindOption(new ValgrindStringOption("gen-suppressions", generateSuppressions ? "all" : "no"));
@@ -350,5 +346,52 @@ public class ValgrindBuilder extends Builder
 		{
 			return super.configure(req, formData);
 		}
-	}	
+	}
+	
+	public static class ValgrindTool extends AbstractDescribableImpl<ValgrindTool>
+	{
+		public static class ValgrindToolDescriptor extends Descriptor<ValgrindTool>
+		{
+			String name;
+			
+			public ValgrindToolDescriptor(String name, Class<? extends ValgrindTool> clazz)
+			{
+				super(clazz);
+				this.name = name;
+			}
+			
+			@Override
+			public String getDisplayName() {
+				return name;
+			}
+		}
+		
+		public ValgrindToolDescriptor getDescriptor()
+		{
+			return (ValgrindToolDescriptor) Jenkins.getInstance().getDescriptor(getClass());
+		}
+	}
+	
+	public static class ValgrindToolMemcheck extends ValgrindTool
+	{
+		public final boolean showReachable;
+		public final boolean undefinedValueErrors;
+		public final String leakCheckLevel;
+		public final boolean trackOrigins;
+
+		@DataBoundConstructor
+		public ValgrindToolMemcheck(
+				boolean showReachable,
+				boolean undefinedValueErrors,
+				String leakCheckLevel,
+				boolean trackOrigins)
+		{
+			this.showReachable = showReachable;
+			this.undefinedValueErrors = undefinedValueErrors;
+			this.leakCheckLevel = leakCheckLevel.trim();
+			this.trackOrigins = trackOrigins;
+		}
+
+		@Extension public static final ValgrindToolDescriptor D = new ValgrindToolDescriptor("Memcheck", ValgrindToolMemcheck.class);
+	}
 }
