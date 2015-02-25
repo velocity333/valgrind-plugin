@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.valgrind;
 
+import hudson.DescriptorExtensionList;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -252,13 +253,24 @@ public class ValgrindBuilder extends Builder
 		call.setProgramName(executable.getRemote());
 		call.addProgramArguments(Commandline.translateCommandline(programOptions));
 		
-		ValgrindToolMemcheck memcheck = (ValgrindToolMemcheck) tool;
+		if (tool.getDescriptor() == ValgrindToolMemcheck.D) {
+			ValgrindToolMemcheck memcheck = (ValgrindToolMemcheck) tool;
 
-		call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
-		call.addValgrindOption(new ValgrindStringOption("leak-check", memcheck.leakCheckLevel));
-		call.addValgrindOption(new ValgrindBooleanOption("show-reachable", memcheck.showReachable));
-		call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", memcheck.undefinedValueErrors, VERSION_3_2_0));
-		call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", memcheck.trackOrigins, memcheck.undefinedValueErrors, VERSION_3_4_0));
+			call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
+			call.addValgrindOption(new ValgrindStringOption("leak-check", memcheck.leakCheckLevel));
+			call.addValgrindOption(new ValgrindBooleanOption("show-reachable", memcheck.showReachable));
+			call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", memcheck.undefinedValueErrors, VERSION_3_2_0));
+			call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", memcheck.trackOrigins, memcheck.undefinedValueErrors, VERSION_3_4_0));
+		} else if (tool.getDescriptor() == ValgrindToolHelgrind.D) {
+			ValgrindToolHelgrind helgrind = (ValgrindToolHelgrind) tool;
+			
+			call.addValgrindOption(new ValgrindStringOption("tool", "helgrind"));
+			call.addValgrindOption(new ValgrindStringOption("history-level", helgrind.historyLevel));
+		} else {
+			// This will cause the Valgrind call to fail...
+			call.addValgrindOption(new ValgrindStringOption("tool", "unknown-tool"));
+		}
+		
 		call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", childSilentAfterFork, VERSION_3_5_0));
 		call.addValgrindOption(new ValgrindBooleanOption("trace-children", traceChildren, VERSION_3_5_0));
 		call.addValgrindOption(new ValgrindStringOption("gen-suppressions", generateSuppressions ? "all" : "no"));
@@ -372,6 +384,11 @@ public class ValgrindBuilder extends Builder
 		}
 	}
 	
+	public DescriptorExtensionList<ValgrindTool,ValgrindTool.ValgrindToolDescriptor> getToolDescriptors()
+	{
+		return Jenkins.getInstance().<ValgrindTool,ValgrindTool.ValgrindToolDescriptor>getDescriptorList(ValgrindTool.class);
+	}
+	
 	public static class ValgrindToolMemcheck extends ValgrindTool
 	{
 		public final boolean showReachable;
@@ -393,5 +410,19 @@ public class ValgrindBuilder extends Builder
 		}
 
 		@Extension public static final ValgrindToolDescriptor D = new ValgrindToolDescriptor("Memcheck", ValgrindToolMemcheck.class);
+	}
+	
+	public static class ValgrindToolHelgrind extends ValgrindTool
+	{
+		public final String historyLevel;
+		
+		@DataBoundConstructor
+		public ValgrindToolHelgrind(
+				String historyLevel)
+		{
+			this.historyLevel = historyLevel;
+		}
+		
+		@Extension public static final ValgrindToolDescriptor D = new ValgrindToolDescriptor("Helgrind", ValgrindToolHelgrind.class);
 	}
 }
