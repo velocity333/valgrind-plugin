@@ -74,7 +74,7 @@
         <f:entry title="Leak check level" field="leakCheckLevel"
                  description="When enabled, search for memory leaks when the program finishes. If set to summary, it says how many leaks occurred. If set to full or yes, it also gives details of each individual leak.">
             <select class="setting-input" name="leakCheckLevel">
-                <j:forEach var="level" items="${descriptor.leakCheckLevels}">
+                <j:forEach var="level" items="full,yes,summary,no">
                     <f:option selected="${level==instance.leakCheckLevel}"
                               value="${level}">${level}
                     </f:option>

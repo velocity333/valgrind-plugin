@@ -45,10 +45,6 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class ValgrindBuilder extends Builder
 {
-	public static enum LeakCheckLevel {
-		full, yes, summary, no
-	}
-	
 	public static final ValgrindVersion VERSION_3_1_0 = ValgrindVersion.createInstance(3, 1, 0);
 	public static final ValgrindVersion VERSION_3_2_0 = ValgrindVersion.createInstance(3, 2, 0);
 	public static final ValgrindVersion VERSION_3_3_0 = ValgrindVersion.createInstance(3, 3, 0);
@@ -66,7 +62,7 @@ public class ValgrindBuilder extends Builder
 	public final String outputFileEnding;
 	public final boolean showReachable;
 	public final boolean undefinedValueErrors;
-	public final LeakCheckLevel leakCheckLevel;
+	public final String leakCheckLevel;
 	public final String programOptions;
 	public final String valgrindOptions;
 	public final boolean trackOrigins;
@@ -88,7 +84,7 @@ public class ValgrindBuilder extends Builder
 			String outputFileEnding,
 			boolean showReachable,
 			boolean undefinedValueErrors,
-			LeakCheckLevel leakCheckLevel,
+			String leakCheckLevel,
 			String programOptions,
 			String valgrindOptions,
 			boolean trackOrigins,
@@ -107,7 +103,7 @@ public class ValgrindBuilder extends Builder
 		this.outputFileEnding = outputFileEnding.trim();
 		this.showReachable = showReachable;
 		this.undefinedValueErrors = undefinedValueErrors;
-		this.leakCheckLevel = leakCheckLevel;
+		this.leakCheckLevel = leakCheckLevel.trim();
 		this.programOptions = programOptions;
 		this.valgrindOptions = valgrindOptions;
 		this.trackOrigins = trackOrigins;
@@ -179,17 +175,6 @@ public class ValgrindBuilder extends Builder
 		return (DescriptorImpl) super.getDescriptor();
 	}
 	
-	@SuppressWarnings("unused")
-	private ListBoxModel doFillLeakCheckLevelItems() 
-	{
-		ListBoxModel items = new ListBoxModel();
-		
-		for (LeakCheckLevel level : LeakCheckLevel.values()) 
-			items.add(level.name(), String.valueOf(level.ordinal()));
-
-		return items;
-	}
-
 	private static String fullPath(FilePath fp)
 	{
 		if(fp == null)
@@ -274,7 +259,7 @@ public class ValgrindBuilder extends Builder
 		call.addProgramArguments(Commandline.translateCommandline(programOptions));
 
 		call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
-		call.addValgrindOption(new ValgrindEnumOption<LeakCheckLevel>("leak-check", leakCheckLevel, LeakCheckLevel.full));
+		call.addValgrindOption(new ValgrindStringOption("leak-check", leakCheckLevel));
 		call.addValgrindOption(new ValgrindBooleanOption("show-reachable", showReachable));
 		call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", undefinedValueErrors, VERSION_3_2_0));
 		call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", trackOrigins, undefinedValueErrors, VERSION_3_4_0));
@@ -335,10 +320,6 @@ public class ValgrindBuilder extends Builder
 		public boolean isApplicable(Class<? extends AbstractProject> aClass)
 		{
 			return true;
-		}
-
-		public LeakCheckLevel[] getLeakCheckLevels() {
-			return LeakCheckLevel.values();
 		}
 
 		public FormValidation doCheckIncludePattern(@QueryParameter String includePattern) throws IOException, ServletException
