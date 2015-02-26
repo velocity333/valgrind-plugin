@@ -13,7 +13,6 @@ import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -330,6 +329,11 @@ public class ValgrindBuilder extends Builder
 			return true;
 		}
 
+		public static DescriptorExtensionList<ValgrindTool,ValgrindTool.ValgrindToolDescriptor> getToolDescriptors()
+		{
+			return Jenkins.getInstance().<ValgrindTool,ValgrindTool.ValgrindToolDescriptor>getDescriptorList(ValgrindTool.class);
+		}
+
 		public FormValidation doCheckIncludePattern(@QueryParameter String includePattern) throws IOException, ServletException
 		{
 			if (includePattern.length() == 0)
@@ -382,11 +386,6 @@ public class ValgrindBuilder extends Builder
 		{
 			return (ValgrindToolDescriptor) Jenkins.getInstance().getDescriptor(getClass());
 		}
-	}
-	
-	public DescriptorExtensionList<ValgrindTool,ValgrindTool.ValgrindToolDescriptor> getToolDescriptors()
-	{
-		return Jenkins.getInstance().<ValgrindTool,ValgrindTool.ValgrindToolDescriptor>getDescriptorList(ValgrindTool.class);
 	}
 	
 	public static class ValgrindToolMemcheck extends ValgrindTool
