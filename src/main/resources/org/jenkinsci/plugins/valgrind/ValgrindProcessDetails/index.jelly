@@ -23,8 +23,14 @@
 
 				<table class="pane" id="files">   
 			    <tr>
-			      <td class="pane-header" style="width:2em">Arguments</td>				      
+			      <td class="pane-header" style="width:2em">Valgrind arguments</td>				      
 			      <td class="pane">				      					      		
+					${process.valgrindArgumentsString}
+			      </td>
+			    </tr>
+			    <tr>
+			      <td class="pane-header" style="width:2em">Target arguments</td>
+			      <td class="pane">
 					${process.argumentsString}
 			      </td>
 			    </tr>
