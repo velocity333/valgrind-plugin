@@ -128,6 +128,48 @@
 				   	  		<td>${process.errorList.uninitializedConditionErrorCount}</td>
 				   	  	</tr>
 				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.raceErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Possible Data Race:</td>
+				   	  		<td>${process.errorList.raceErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockUnlockedErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking a not-locked lock:</td>
+				   	  		<td>${process.errorList.unlockUnlockedErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockForeignErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking a lock held by another thread:</td>
+				   	  		<td>${process.errorList.unlockForeignErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockBogusErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking an address which is not a lock:</td>
+				   	  		<td>${process.errorList.unlockBogusErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.pthAPIErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>pthread API error:</td>
+				   	  		<td>${process.errorList.pthAPIErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.LockOrderErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Lock order violation:</td>
+				   	  		<td>${process.errorList.LockOrderErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.miscErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Misc:</td>
+				   	  		<td>${process.errorList.miscErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
 			   	  	</table>
 			   	  </td>
 			   </tr>

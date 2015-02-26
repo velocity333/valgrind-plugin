@@ -102,6 +102,35 @@
 			    <j:set var="errorBytes" value="${process.errorList.stillReachableLeakedBytes}"/>
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>																				
 
+			    <j:set var="errorCount" value="${process.errorList.raceErrorCount}"/>
+			    <j:set var="errorName" value="Possible data races"/>
+			    <j:remove var="errorBytes"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.unlockUnlockedErrorCount}"/>
+			    <j:set var="errorName" value="Unlocking a not-locked lock"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.unlockForeignErrorCount}"/>
+			    <j:set var="errorName" value="Unlocking a lock held by another thread"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.unlockBogusErrorCount}"/>
+			    <j:set var="errorName" value="Unlocking an address which is not a lock"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.pthAPIErrorCount}"/>
+			    <j:set var="errorName" value="pthread API error"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.lockOrderErrorCount}"/>
+			    <j:set var="errorName" value="Lock order violation"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
+			    <j:set var="errorCount" value="${process.errorList.miscErrorCount}"/>
+			    <j:set var="errorName" value="Misc"/>
+				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
+
 			    <tr>
 			      <td class="pane-header" style="width:2em" align="right">total</td>				      
 			      <td class="pane">				      					      		

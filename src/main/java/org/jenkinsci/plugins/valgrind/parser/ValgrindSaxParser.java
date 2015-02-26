@@ -36,6 +36,7 @@ public class ValgrindSaxParser implements Serializable
 		private ValgrindAuxiliary currentAuxiliary;
 		private StringBuilder data;
 		private String path = "";
+		private String currentText = "";
 		
 		@Override
 		public void error(SAXParseException e) throws SAXException
@@ -93,6 +94,9 @@ public class ValgrindSaxParser implements Serializable
 				data = new StringBuilder();				
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/auxwhat") )
+				data = new StringBuilder();			
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat/text") )
 				data = new StringBuilder();			
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") )
@@ -171,6 +175,20 @@ public class ValgrindSaxParser implements Serializable
 				currentAuxiliary.setDescription( data.toString() );
 			}
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat/text"))
+			{
+				currentText = data.toString();
+			}
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat"))
+			{
+				if ( currentAuxiliary != null )
+					currentError.addAuxiliaryData(currentAuxiliary);
+				
+				currentAuxiliary = new ValgrindAuxiliary();
+				currentAuxiliary.setDescription( currentText );
+			}
+
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") && currentProcess != null )
 				currentProcess.setExecutable(data.toString());
 			
