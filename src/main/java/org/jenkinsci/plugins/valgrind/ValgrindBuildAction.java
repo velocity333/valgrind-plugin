@@ -111,6 +111,7 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(buildAction.owner);
 			ValgrindReport report = buildAction.getResult().getReport();
 
+			// Memcheck:
 			dsb.add(report.getErrorList().getInvalidReadErrorCount() + report.getErrorList().getInvalidWriteErrorCount(), "Invalid reads/writes", label);
 			dsb.add(report.getErrorList().getLeakDefinitelyLostErrorCount(), "Leaks (definitely lost)", label);
 			dsb.add(report.getErrorList().getLeakPossiblyLostErrorCount(), "Leaks (possibly lost)", label);
@@ -118,6 +119,13 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			dsb.add(report.getErrorList().getInvalidFreeErrorCount() + report.getErrorList().getMismatchedFreeErrorCount(), "Illegal/mismatched frees", label);
 			dsb.add(report.getErrorList().getOverlapErrorCount(), "Overlaps", label);
 			dsb.add(report.getErrorList().getSyscallParamErrorCount(), "Illegal system calls", label);
+			
+			// Helgrind:
+			dsb.add(report.getErrorList().getRaceErrorCount(), "Data races", label);
+			dsb.add(report.getErrorList().getUnlockUnlockedErrorCount() + report.getErrorList().getUnlockForeignErrorCount() + report.getErrorList().getUnlockBogusErrorCount(), "Unlock issues", label);
+			dsb.add(report.getErrorList().getLockOrderErrorCount(), "Lock order", label);
+			dsb.add(report.getErrorList().getPthAPIErrorCount(), "Pthread API", label);
+			dsb.add(report.getErrorList().getMiscErrorCount(), "Helgrind misc", label);
 		}
 		return dsb;
 	}
