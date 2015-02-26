@@ -18,6 +18,7 @@ public class ValgrindProcess implements Serializable
 	private String pid;
 	private String ppid;
 	private List<ValgrindError> errors;
+	private List<ValgrindThread> threads;
 	
 	private transient ValgrindProcess parent;
 	private transient List<ValgrindProcess> childs;
@@ -144,6 +145,36 @@ public class ValgrindProcess implements Serializable
 	public ValgrindErrorList getErrorList()
 	{
 		return new ValgrindErrorList(errors);
+	}
+	
+	public List<ValgrindThread> getThreads()
+	{
+		return threads;
+	}
+	
+	public void setThreads(List<ValgrindThread> threads)
+	{
+		this.threads = threads;
+	}
+	
+	public void addThread(ValgrindThread thread)
+	{
+		if ( threads == null )
+			threads = new ArrayList<ValgrindThread>();
+		
+		threads.add(thread);
+	}
+	
+	public ValgrindThread findThreadByHthreadid(String hthreadid)
+	{
+		if ( threads == null )
+			return null;
+		
+		for( ValgrindThread thread : threads )
+			if ( thread.getHthreadid().equals(hthreadid) )
+				return thread;
+		
+		return null;
 	}
 	
 	public void setupParentChilds( List<ValgrindProcess> processes )

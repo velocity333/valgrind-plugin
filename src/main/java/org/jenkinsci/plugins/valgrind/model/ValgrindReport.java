@@ -198,4 +198,14 @@ public class ValgrindReport implements Serializable
 		
 		return result;
 	}
+
+	public ValgrindThread findThread(String pid, String hthreadid)
+	{
+		ValgrindProcess process = findProcess(pid);
+		
+		if ( process != null )
+			return process.findThreadByHthreadid(hthreadid);
+
+		return null;
+	}	
 }

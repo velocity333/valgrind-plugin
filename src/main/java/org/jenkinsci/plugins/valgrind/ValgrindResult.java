@@ -11,6 +11,7 @@ import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
 import org.jenkinsci.plugins.valgrind.model.ValgrindError;
 import org.jenkinsci.plugins.valgrind.model.ValgrindProcess;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
+import org.jenkinsci.plugins.valgrind.model.ValgrindThread;
 import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSummary;
@@ -113,13 +114,23 @@ public class ValgrindResult implements Serializable
 			String pid = data.substring(PID_TOKEN.length(), sep);
 			String uniqueId = data.substring( sep + 1 );
 
-			ValgrindError error = report.findError(pid, uniqueId);
-			if ( error == null )
-				return null;		
+			if (uniqueId.startsWith("tid")) {
+				ValgrindThread thread = report.findThread(pid, uniqueId.substring(3));
+				if ( thread == null )
+					return null;
+				
+				ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
 
-			ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
-	 
-			return new ValgrindDetail( owner, report.findProcess(pid), error, sourceFile );			
+				return new ValgrindThreadDetail( owner, report.findProcess(pid), thread, sourceFile );
+			} else {
+				ValgrindError error = report.findError(pid, uniqueId);
+				if ( error == null )
+					return null;		
+	
+				ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
+		 
+				return new ValgrindErrorDetail( owner, report.findProcess(pid), error, sourceFile );
+			}
 		}
 		else
 		{
