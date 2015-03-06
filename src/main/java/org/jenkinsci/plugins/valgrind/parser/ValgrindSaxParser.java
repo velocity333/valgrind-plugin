@@ -346,7 +346,16 @@ public class ValgrindSaxParser implements Serializable
 		
 		Handler handler = new Handler();
 		
-		saxParser.parse(file, handler);
+		try
+		{
+			saxParser.parse(file, handler);
+		}
+		catch (SAXParseException e)
+		{
+			/* We ignore parse exceptions. This is done to allow reading of
+			   incomplete Valgrind reports that don't have the closing
+			   </valgrindoutput> tag. */
+		}
 		
 		return handler.getReport();
 	}
