@@ -129,6 +129,7 @@ public class ValgrindCall
 		starter = starter.stdout(stdout);
 		starter = starter.stderr(stderr);
 		starter = starter.cmds(cmds);
+		starter = starter.envs(env);
 
 		return starter.join();
 	}
