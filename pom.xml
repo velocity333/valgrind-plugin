@@ -32,7 +32,7 @@
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/valgrind-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/valgrind-plugin</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <repositories>
         <repository>
