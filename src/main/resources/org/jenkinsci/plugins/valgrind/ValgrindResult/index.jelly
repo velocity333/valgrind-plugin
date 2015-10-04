@@ -23,13 +23,14 @@
 			   
 			   <table class="pane sortable" id="files">
 			   <tr>
+			      <td class="pane-header" style="width:10%">Tool</td>
 			      <td class="pane-header" style="width:10%">Process</td>
 			      <td class="pane-header" style="width:10%">Parent</td>	    	    
 			      <td class="pane-header">Errors</td>
-			      <td class="pane-header">Bytes Leaked</td>			   	
 			   </tr>
 			   <j:forEach var="process" items="${it.report.processes}">
 			   <tr>
+			      <td class="pane" style="vertical-align:top">${process.tool}</td>
 			   	  <td class="pane" style="vertical-align:top">			   	  	
 			   	  	<a href="pid=${process.pid}">${process.executable} (${process.pid})</a>
 			   	  </td>
@@ -45,61 +46,73 @@
 			   	  	<table cellspacing="0" cellpadding="0">	
 			   	  		<j:if test="${process.errorList.invalidReadErrorCount != 0}">
 				   	  	<tr>
-				   	  		<td>Invalid Read</td>
+				   	  		<td>Invalid Read:</td>
 				   	  		<td>${process.errorList.invalidReadErrorCount}</td>
 				   	  	</tr>
 						</j:if>
 				   	  	<j:if test="${process.errorList.invalidWriteErrorCount != 0}">
 				   	  	<tr>
-				   	  		<td>Invalid Write</td>
+				   	  		<td>Invalid Write:</td>
 				   	  		<td>${process.errorList.invalidWriteErrorCount}</td>
 				   	  	</tr>
 						</j:if>
 				   	  	<j:if test="${process.errorList.overlapErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Overlap</td>
+				   	  		<td>Overlap:</td>
 				   	  		<td>${process.errorList.overlapErrorCount}</td>
 				   	  	</tr>	
 						</j:if>
 				   	  	<j:if test="${process.errorList.leakDefinitelyLostErrorCount != 0}">				   	  	
-				   	  	<tr>
-				   	  		<td>Leak (definitely lost)</td>
+						    <tr>
+				   	  		<td>Leak (definitely lost): </td>
 				   	  		<td>${process.errorList.leakDefinitelyLostErrorCount}</td>
+				   	  	  <j:if test="${process.errorList.definitelyLeakedBytes != 0}">
+					   	  		<td>(${process.errorList.definitelyLeakedBytes} bytes)</td>
+					   	  	</j:if>
 				   	  	</tr>
-						</j:if>
+								</j:if>
 				   	  	<j:if test="${process.errorList.leakPossiblyLostErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Leak (possibly lost)</td>
+				   	  		<td>Leak (possibly lost):</td>
 				   	  		<td>${process.errorList.leakPossiblyLostErrorCount}</td>
+					   	  	<j:if test="${process.errorList.possiblyLeakedBytes != 0}">
+					   	  		<td>(${process.errorList.possiblyLeakedBytes} bytes)</td>
+					   	  	</j:if>
 				   	  	</tr>
-						</j:if>
+								</j:if>
 				   	  	<j:if test="${process.errorList.leakIndirectlyLostErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Leak (indirectly lost)</td>
+				   	  		<td>Leak (indirectly lost):</td>
 				   	  		<td>${process.errorList.leakIndirectlyLostErrorCount}</td>
+					   	  	<j:if test="${process.errorList.indirectlyLeakedBytes != 0}">
+					   	  		<td>(${process.errorList.indirectlyLeakedBytes} bytes)</td>
+					   	  	</j:if>
 				   	  	</tr>
-						</j:if>
+								</j:if>
 				   	  	<j:if test="${process.errorList.leakStillReachableErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Leak (still reachable)</td>
+				   	  		<td>Leak (still reachable):</td>
 				   	  		<td>${process.errorList.leakStillReachableErrorCount}</td>
+					   	  	<j:if test="${process.errorList.stillReachableLeakedBytes != 0}">
+					   	  		<td>(${process.errorList.stillReachableLeakedBytes} bytes)</td>
+					   	  	</j:if>				   	  	
 				   	  	</tr>	
-						</j:if>
+				   	  	</j:if>
 				   	  	<j:if test="${process.errorList.invalidFreeErrorCount != 0}">				   	  				   	  					   	  					   	  	
 				   	  	<tr>
-				   	  		<td>Invalid Free</td>
+				   	  		<td>Invalid Free:</td>
 				   	  		<td>${process.errorList.invalidFreeErrorCount}</td>
 				   	  	</tr>
 				   	  	</j:if>
 				   	  	<j:if test="${process.errorList.mismatchedFreeErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Mismatched Free</td>
+				   	  		<td>Mismatched Free:</td>
 				   	  		<td>${process.errorList.mismatchedFreeErrorCount}</td>
 				   	  	</tr>	
 				   	  	</j:if>
 				   	  	<j:if test="${process.errorList.syscallParamErrorCount != 0}">				   	  	
 				   	  	<tr>
-				   	  		<td>Syscall Param</td>
+				   	  		<td>Syscall Param:</td>
 				   	  		<td>${process.errorList.syscallParamErrorCount}</td>
 				   	  	</tr>
 				   	  	</j:if>
@@ -111,40 +124,54 @@
 				   	  	</j:if>
 				   	  	<j:if test="${process.errorList.uninitializedConditionErrorCount != 0}">
 				   	  	<tr>
-				   	  		<td>Uninitialized Condition</td>
+				   	  		<td>Uninitialized Condition:</td>
 				   	  		<td>${process.errorList.uninitializedConditionErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.raceErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Possible Data Race:</td>
+				   	  		<td>${process.errorList.raceErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockUnlockedErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking a not-locked lock:</td>
+				   	  		<td>${process.errorList.unlockUnlockedErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockForeignErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking a lock held by another thread:</td>
+				   	  		<td>${process.errorList.unlockForeignErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.unlockBogusErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Unlocking an address which is not a lock:</td>
+				   	  		<td>${process.errorList.unlockBogusErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.pthAPIErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>pthread API error:</td>
+				   	  		<td>${process.errorList.pthAPIErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.LockOrderErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Lock order violation:</td>
+				   	  		<td>${process.errorList.LockOrderErrorCount}</td>
+				   	  	</tr>
+				   	  	</j:if>
+				   	  	<j:if test="${process.errorList.miscErrorCount != 0}">
+				   	  	<tr>
+				   	  		<td>Misc:</td>
+				   	  		<td>${process.errorList.miscErrorCount}</td>
 				   	  	</tr>
 				   	  	</j:if>
 			   	  	</table>
 			   	  </td>
-			   	  <td class="pane"  style="vertical-align:top">
-			   	  	<table cellspacing="0" cellpadding="0">
-			   	  	    <j:if test="${process.errorList.definitelyLeakedBytes != 0}">
-				   	  	<tr>
-				   	  		<td>Definitely Lost</td>
-				   	  		<td>${process.errorList.definitelyLeakedBytes}</td>
-				   	  	</tr>
-				   	  	</j:if>
-				   	  	<j:if test="${process.errorList.possiblyLeakedBytes != 0}">
-				   	  	<tr>
-				   	  		<td>Possibly Lost</td>
-				   	  		<td>${process.errorList.possiblyLeakedBytes}</td>
-				   	  	</tr>
-				   	  	</j:if>
-				   	  	<j:if test="${process.errorList.indirectlyLeakedBytes != 0}">
-				   	  	<tr>
-				   	  		<td>Indirectly Lost</td>
-				   	  		<td>${process.errorList.indirectlyLeakedBytes}</td>
-				   	  	</tr>
-				   	  	</j:if>
-				   	  	<j:if test="${process.errorList.stillReachableLeakedBytes != 0}">
-				   	  	<tr>
-				   	  		<td>Still reachable</td>
-				   	  		<td>${process.errorList.stillReachableLeakedBytes}</td>
-				   	  	</tr>
-				   	  	</j:if>				   	  	
-			   	  	</table>
-			   	  </td>			   	  
 			   </tr>
 			   </j:forEach>	
 			   </table>

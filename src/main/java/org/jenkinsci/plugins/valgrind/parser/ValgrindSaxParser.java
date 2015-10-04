@@ -15,6 +15,7 @@ import org.jenkinsci.plugins.valgrind.model.ValgrindProcess;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktrace;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
+import org.jenkinsci.plugins.valgrind.model.ValgrindThread;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -30,12 +31,14 @@ public class ValgrindSaxParser implements Serializable
 	{
 		private ValgrindReport currentReport;
 		private ValgrindProcess currentProcess;
+		private ValgrindThread currentThread;
 		private ValgrindError currentError;
 		private ValgrindStacktrace currentStacktrace;
 		private ValgrindStacktraceFrame currentStacktraceFrame;
 		private ValgrindAuxiliary currentAuxiliary;
 		private StringBuilder data;
 		private String path = "";
+		private String currentText = "";
 		
 		@Override
 		public void error(SAXParseException e) throws SAXException
@@ -55,6 +58,18 @@ public class ValgrindSaxParser implements Serializable
 				currentProcess = new ValgrindProcess();
 				currentReport.addProcess(currentProcess);
 			}
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread") )
+				currentThread = new ValgrindThread();
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread/hthreadid") )
+				data = new StringBuilder();
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread/isrootthread") && currentThread != null )
+				currentThread.setRootThread(true);
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread/stack") )
+				currentStacktrace = new ValgrindStacktrace();
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 				currentError = new ValgrindError();
@@ -77,6 +92,9 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") )
 				data = new StringBuilder();
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/vargv/arg") )
+				data = new StringBuilder();			
+			
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/arg") )
 				data = new StringBuilder();			
 			
@@ -92,6 +110,9 @@ public class ValgrindSaxParser implements Serializable
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/auxwhat") )
 				data = new StringBuilder();			
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat/text") )
+				data = new StringBuilder();			
+			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/stack") )
 				currentStacktrace = new ValgrindStacktrace();
 
@@ -100,22 +121,28 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( currentStacktrace != null )
 			{
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame") )
 					currentStacktraceFrame = new ValgrindStacktraceFrame();
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj")  )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/obj") )
 					data = new StringBuilder();
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/fn") )
 					data = new StringBuilder();
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/dir") )
 					data = new StringBuilder();
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/file") )
 					data = new StringBuilder();
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/line") )
 					data = new StringBuilder();
 			}
 		}
@@ -123,6 +150,25 @@ public class ValgrindSaxParser implements Serializable
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException
 		{			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread") && currentProcess != null )
+			{
+				currentProcess.addThread(currentThread);
+				currentThread = null;
+			}
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread/hthreadid") && currentThread != null )
+				currentThread.setHthreadid( data.toString() );
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/announcethread/stack") && currentThread != null )
+			{
+				if ( currentThread.getStacktrace() == null )
+				{
+					currentThread.setStacktrace( currentStacktrace );
+				}
+				
+				currentStacktrace = null;	
+			}
+			
 			if ( path.equalsIgnoreCase("/valgrindoutput/error") )
 			{
 				if ( currentAuxiliary != null )
@@ -168,12 +214,29 @@ public class ValgrindSaxParser implements Serializable
 				currentAuxiliary.setDescription( data.toString() );
 			}
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat/text"))
+			{
+				currentText = data.toString();
+			}
+			
+			if ( path.equalsIgnoreCase("/valgrindoutput/error/xauxwhat"))
+			{
+				if ( currentAuxiliary != null )
+					currentError.addAuxiliaryData(currentAuxiliary);
+				
+				currentAuxiliary = new ValgrindAuxiliary();
+				currentAuxiliary.setDescription( currentText );
+			}
+
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/exe") && currentProcess != null )
 				currentProcess.setExecutable(data.toString());
 			
 			if ( path.equalsIgnoreCase("/valgrindoutput/args/argv/arg") && currentProcess != null )
 				currentProcess.addArgument(data.toString());			
 			
+			if ( path.equalsIgnoreCase("/valgrindoutput/args/vargv/arg") && currentProcess != null )
+				currentProcess.addValgrindArgument(data.toString());
+
 			if ( path.equalsIgnoreCase("/valgrindoutput/error/xwhat/text") )
 				currentError.setDescription( data.toString() );				
 			
@@ -217,25 +280,31 @@ public class ValgrindSaxParser implements Serializable
 			
 			if ( currentStacktraceFrame != null )
 			{
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame"))
 				{					
 					currentStacktrace.addFrame( currentStacktraceFrame );
 					currentStacktraceFrame = null;
 				}
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj")  )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/obj") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/obj"))
 					currentStacktraceFrame.setObjectName( data.toString() );
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/fn") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/fn"))
 					currentStacktraceFrame.setFunctionName( data.toString() );
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/dir") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/dir"))
 					currentStacktraceFrame.setDirectoryName( data.toString() );
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/file") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/file"))
 					currentStacktraceFrame.setFileName( data.toString() );
 				
-				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") )
+				if ( path.equalsIgnoreCase("/valgrindoutput/error/stack/frame/line") ||
+						path.equalsIgnoreCase("/valgrindoutput/announcethread/stack/frame/line"))
 				{		
 					try
 					{
@@ -277,7 +346,16 @@ public class ValgrindSaxParser implements Serializable
 		
 		Handler handler = new Handler();
 		
-		saxParser.parse(file, handler);
+		try
+		{
+			saxParser.parse(file, handler);
+		}
+		catch (SAXParseException e)
+		{
+			/* We ignore parse exceptions. This is done to allow reading of
+			   incomplete Valgrind reports that don't have the closing
+			   </valgrindoutput> tag. */
+		}
 		
 		return handler.getReport();
 	}

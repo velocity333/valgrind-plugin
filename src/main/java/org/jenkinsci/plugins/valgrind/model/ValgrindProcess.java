@@ -11,11 +11,14 @@ public class ValgrindProcess implements Serializable
 {
 	private static final long	serialVersionUID	= -7073482135992069077L;
 	
+	private String tool;
 	private String executable;
 	private List<String> arguments;
+	private List<String> valgrind_arguments;
 	private String pid;
 	private String ppid;
 	private List<ValgrindError> errors;
+	private List<ValgrindThread> threads;
 	
 	private transient ValgrindProcess parent;
 	private transient List<ValgrindProcess> childs;
@@ -57,6 +60,11 @@ public class ValgrindProcess implements Serializable
 		return arguments;
 	}
 	
+	public List<String> getValgrindArguments()
+	{
+		return valgrind_arguments;
+	}
+	
 	public void setArguments(List<String> arguments)
 	{
 		this.arguments = arguments;
@@ -69,6 +77,20 @@ public class ValgrindProcess implements Serializable
 		
 		arguments.add(arg);
 	}
+	
+	public void addValgrindArgument(String arg)
+	{
+		if ( valgrind_arguments == null )
+			valgrind_arguments = new ArrayList<String>();
+		
+		valgrind_arguments.add(arg);
+		
+		// actually, we only really care about the tool argument
+		if ( arg.substring(0, 7).equals("--tool=")) {
+			tool = arg.substring(7);
+		}
+	}
+		
 	
 	public String getPid()
 	{
@@ -125,6 +147,36 @@ public class ValgrindProcess implements Serializable
 		return new ValgrindErrorList(errors);
 	}
 	
+	public List<ValgrindThread> getThreads()
+	{
+		return threads;
+	}
+	
+	public void setThreads(List<ValgrindThread> threads)
+	{
+		this.threads = threads;
+	}
+	
+	public void addThread(ValgrindThread thread)
+	{
+		if ( threads == null )
+			threads = new ArrayList<ValgrindThread>();
+		
+		threads.add(thread);
+	}
+	
+	public ValgrindThread findThreadByHthreadid(String hthreadid)
+	{
+		if ( threads == null )
+			return null;
+		
+		for( ValgrindThread thread : threads )
+			if ( thread.getHthreadid().equals(hthreadid) )
+				return thread;
+		
+		return null;
+	}
+	
 	public void setupParentChilds( List<ValgrindProcess> processes )
 	{
 		if ( parent != null || childs != null || processes == null )
@@ -145,16 +197,35 @@ public class ValgrindProcess implements Serializable
 		}
 	}
 	
+	String concatArguments(List<String> args)
+	{
+		if ( args == null )
+			return "";
+		
+		String s = "";
+		for ( String a : args )
+		{
+			s += a + "<br>";
+		}
+		return s.trim();
+	}
+	
 	public String getArgumentsString()
 	{
-		String s = "";
-		
-		if ( arguments != null )
-		{
-			for( String a : arguments )
-				s += "\"" + a + "\" ";
+		return concatArguments(arguments);
+	}
+
+	public String getValgrindArgumentsString()
+	{
+		return concatArguments(valgrind_arguments);
+	}
+
+	public String getTool()
+	{
+		if (tool == null) {
+			return "unknown tool";
+		} else {
+			return tool;
 		}
-		
-		return s.trim();
 	}
 }

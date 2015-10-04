@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.valgrind.model;
 
 public enum ValgrindErrorKind
 {
+	// Memcheck:
 	InvalidRead,
 	InvalidWrite,
 	Leak_DefinitelyLost,
@@ -14,4 +15,13 @@ public enum ValgrindErrorKind
 	SyscallParam,
 	InvalidFree,
 	MismatchedFree,
+	
+	// Helgrind:
+	Race,
+	UnlockUnlocked,
+	UnlockForeign,
+	UnlockBogus,
+	PthAPIerror,
+	LockOrder,
+	Misc,
 }

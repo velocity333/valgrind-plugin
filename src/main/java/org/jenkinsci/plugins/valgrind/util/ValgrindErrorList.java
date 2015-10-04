@@ -135,6 +135,70 @@ public class ValgrindErrorList
 		return getErrorsByKind( ValgrindErrorKind.Leak_IndirectlyLost );
 	}
 
+	public int getRaceErrorCount()
+	{
+		return getErrorCountByKind( ValgrindErrorKind.Race );
+	}
+
+	public List<ValgrindError> getRaceErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Race );
+	}
+	
+	public int getUnlockUnlockedErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.UnlockUnlocked );
+	}
+
+	public List<ValgrindError> getUnlockUnlockedErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.UnlockUnlocked );
+	}
+
+	public int getUnlockForeignErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.UnlockForeign );
+	}
+
+	public List<ValgrindError> getUnlockForeignErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.UnlockForeign );
+	}
+	
+	public int getUnlockBogusErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.UnlockBogus );
+	}
+
+	public List<ValgrindError> getUnlockBogusErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.UnlockBogus );
+	}
+	
+	public int getPthAPIErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.PthAPIerror );
+	}
+
+	public List<ValgrindError> getPthAPIErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.PthAPIerror );
+	}
+	
+	public int getLockOrderErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.LockOrder );
+	}
+
+	public List<ValgrindError> getLockOrderErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.LockOrder );
+	}
+	
+	public int getMiscErrorCount(){
+		return getErrorCountByKind( ValgrindErrorKind.Misc );
+	}
+
+	public List<ValgrindError> getMiscErrors()
+	{
+		return getErrorsByKind( ValgrindErrorKind.Misc );
+	}
+	
 	public int getErrorCount()
 	{
 		if ( errors == null )

@@ -93,4 +93,59 @@
     <j:set var="isLeak" value="false"/>
 	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
     
+    <j:set var="threadList" value="${process.threads}"/>
+    <j:set var="threadListName" value="Thread Announcements"/>
+    <j:set var="threadListDesc" value="Threads that were started by the application"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.data-races.errmsgs"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/threadlist.jelly"/>
+
+    <j:set var="errorList" value="${process.errorList.raceErrors}"/>
+    <j:set var="errorListName" value="Possible Data Races"/>
+    <j:set var="errorListDesc" value="Possible data race was detected"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.data-races"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.unlockUnlockedErrors}"/>
+    <j:set var="errorListName" value="Unlocking a not-locked lock"/>
+    <j:set var="errorListDesc" value=""/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.api-checks"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.unlockForeignErrors}"/>
+    <j:set var="errorListName" value="Unlocking a foreign lock"/>
+    <j:set var="errorListDesc" value="Unlocking a lock that is held by another thread"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.api-checks"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.unlockBogusErrors}"/>
+    <j:set var="errorListName" value="Unlocking an bogus lock"/>
+    <j:set var="errorListDesc" value="Unlocking an address which is not known to be a lock"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.api-checks"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.pthAPIErrors}"/>
+    <j:set var="errorListName" value="pthread API error"/>
+    <j:set var="errorListDesc" value="misuse of the pthread API"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.api-checks"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.LockOrderErrors}"/>
+    <j:set var="errorListName" value="Lock order"/>
+    <j:set var="errorListDesc" value="Lock order violation that can possibly lead to deadlocks"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html#hg-manual.lock-orders"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+    
+    <j:set var="errorList" value="${process.errorList.miscErrors}"/>
+    <j:set var="errorListName" value="Misc"/>
+    <j:set var="errorListDesc" value="Miscellaneous other conditions"/>
+    <j:set var="manualLink" value="http://valgrind.org/docs/manual/hg-manual.html"/>
+    <j:set var="isLeak" value="false"/>
+	<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/typederrorlist.jelly"/>
+
 </j:jelly>

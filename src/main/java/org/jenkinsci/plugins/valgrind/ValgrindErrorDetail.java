@@ -11,13 +11,13 @@ import org.jenkinsci.plugins.valgrind.util.ValgrindSourceFile;
  * @author Johannes Ohlemacher
  * 
  */
-public class ValgrindDetail
+public class ValgrindErrorDetail
 {
 	private ValgrindError error;
 	private ValgrindProcess process;
 	final private AbstractBuild<?, ?> owner;
 	
-	public ValgrindDetail( AbstractBuild<?, ?> owner, ValgrindProcess process, ValgrindError error, ValgrindSourceFile valgrindSourceFile )
+	public ValgrindErrorDetail( AbstractBuild<?, ?> owner, ValgrindProcess process, ValgrindError error, ValgrindSourceFile valgrindSourceFile )
 	{
 		this.owner = owner;
 		this.error = error;	
