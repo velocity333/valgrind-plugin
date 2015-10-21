@@ -28,7 +28,7 @@ public class ValgrindGraph extends Graph
 	private final CategoryDataset categoryDataset;
 
 	public static final int DEFAULT_CHART_WIDTH = 500;
-	public static final int DEFAULT_CHART_HEIGHT = 200;
+	public static final int DEFAULT_CHART_HEIGHT = 250;
 
 	public ValgrindGraph(AbstractBuild<?, ?> owner, CategoryDataset categoryDataset, String yLabel,
 			int chartWidth, int chartHeight)
