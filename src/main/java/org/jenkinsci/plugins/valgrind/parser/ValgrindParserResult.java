@@ -11,6 +11,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.valgrind.model.ValgrindReport;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
+import org.jenkinsci.remoting.RoleChecker;
 
 
 public class ValgrindParserResult implements FilePath.FileCallable<ValgrindReport>
@@ -58,5 +59,10 @@ public class ValgrindParserResult implements FilePath.FileCallable<ValgrindRepor
 		FileSet fs = Util.createFileSet(parentPath, this.pattern);
 		DirectoryScanner ds = fs.getDirectoryScanner();
 		return ds.getIncludedFiles();
+	}
+
+	@Override
+	public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
 	}
 }

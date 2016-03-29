@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.tools.ant.DirectoryScanner;
+import org.jenkinsci.remoting.RoleChecker;
 
 public class ValgrindResultsScanner implements FilePath.FileCallable<String[]>
 {
@@ -27,5 +28,10 @@ public class ValgrindResultsScanner implements FilePath.FileCallable<String[]>
 		ds.setCaseSensitive(true);
 		ds.scan();
 		return ds.getIncludedFiles();
+	}
+
+	@Override
+	public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+
 	}
 }

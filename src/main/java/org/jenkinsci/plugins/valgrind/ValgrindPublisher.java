@@ -3,13 +3,11 @@ package org.jenkinsci.plugins.valgrind;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.matrix.MatrixProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.FreeStyleProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -109,10 +107,9 @@ public class ValgrindPublisher extends Recorder
 		{
 			ValgrindLogger.log(listener, "ERROR: no pattern for valgrind xml files configured");
 			return false;
-		}		
-	
-		@SuppressWarnings("deprecation")
-		EnvVars env = build.getEnvironment();
+		}
+
+		EnvVars env = build.getEnvironment(listener);
 		
 		FilePath baseFileFrom = build.getWorkspace();
 		FilePath baseFileTo =  new FilePath(build.getRootDir());
