@@ -1,4 +1,4 @@
-<?jelly escape-by-default='true'?>
+<?jelly escape-by-default='false'?>
 <j:jelly
   xmlns:j="jelly:core" 
   xmlns:st="jelly:stapler" 
@@ -22,21 +22,22 @@
 		    	${process.executable} (process ${process.pid})
 		    	</h2>
 
+                <p>
 				<table class="pane" id="files">   
 			    <tr>
-			      <td class="pane-header" style="width:2em">Valgrind arguments</td>				      
+			      <td class="pane-header" style="vertical-align:top;width:10em">Valgrind arguments</td>
 			      <td class="pane">				      					      		
 					${process.valgrindArgumentsString}
 			      </td>
 			    </tr>
 			    <tr>
-			      <td class="pane-header" style="width:2em">Target arguments</td>
+			      <td class="pane-header" style="vertical-align:top">Target arguments</td>
 			      <td class="pane">
 					${process.argumentsString}
 			      </td>
 			    </tr>
 			    <tr>
-			      <td class="pane-header" style="width:2em">Parent process</td>
+			      <td class="pane-header" style="vertical-align:top">Parent process</td>
 			      <td class="pane">
 				   <j:if test="${process.parent == null}">
 				   		${process.ppid}
@@ -47,7 +48,7 @@
 			      </td>
 			    </tr>
 			    <tr>
-			      <td class="pane-header" style="width:2em">Child processes</td>				      
+			      <td class="pane-header" style="vertical-align:top">Child processes</td>
 			      <td class="pane">				      					      		
 			      		<j:forEach var="child" items="${process.childs}">			    		
 		    				<p style="margin: 0px;"><a href="../pid=${child.pid}">${child.pid} (${child.executable})</a></p>
@@ -55,8 +56,10 @@
 			      </td>
 			    </tr>
 			    </table>
+                </p>
+                <p>
 			    <table class="pane" id="files">
-			    
+
 			    <j:set var="errorCount" value="${process.errorList.uninitializedValueErrorCount}"/>
 			    <j:set var="errorName" value="Uninitialized value errors"/>
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
@@ -139,12 +142,13 @@
 				<st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorcountrow.jelly"/>
 
 			    <tr>
-			      <td class="pane-header" style="width:2em" align="right">total</td>				      
+			      <td class="pane-header" style="text-align:right">total</td>
 			      <td class="pane">				      					      		
 					${process.errorList.errorCount}
 			      </td>
 			    </tr>				    			    				    
 			    </table>
+			    </p>
 			    
 			    <j:set var="url_prefix" value="../"/>
 			    <st:include page="/org/jenkinsci/plugins/valgrind/ValgrindResult/errorlist.jelly"/>

@@ -12,8 +12,8 @@
     
     <j:if test="${errorCount != 0}">
     <tr>
-      <td class="pane-header" style="width:2em">${errorName}</td>				      
-      <td class="pane">				      					      		
+      <td class="pane-header" style="vertical-align:top;width:20em">${errorName}</td>
+      <td class="pane" style="vertical-align:top">
 		${errorCount}
 		<j:if test="${errorBytes != null}">
 		(${errorBytes} bytes)

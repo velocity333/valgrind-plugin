@@ -22,11 +22,11 @@
 				    			   
 			   <j:if test="${it.report.allErrors != null}">
 			   
-			   <table class="pane sortable" id="files">
+			   <table class="pane sortable" id="files" style="vertical-align:top">
 			   <tr>
-			      <td class="pane-header" style="width:10%">Tool</td>
-			      <td class="pane-header" style="width:10%">Process</td>
-			      <td class="pane-header" style="width:10%">Parent</td>	    	    
+			      <td class="pane-header" style="width:8em">Tool</td>
+			      <td class="pane-header">Process</td>
+			      <td class="pane-header" style="width:6em">Parent</td>
 			      <td class="pane-header">Errors</td>
 			   </tr>
 			   <j:forEach var="process" items="${it.report.processes}">
