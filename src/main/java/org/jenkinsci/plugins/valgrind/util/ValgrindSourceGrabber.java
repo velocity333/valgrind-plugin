@@ -24,13 +24,18 @@ public class ValgrindSourceGrabber
 	private File destDirectory;
 	private FilePath basedir;
 	private int index = 0;
+	private final ValgrindSourceResolver sourceResolver;
 	
 	public ValgrindSourceGrabber(BuildListener listener, FilePath basedir)
 	{
+		this(listener, basedir, new ValgrindSourceResolver());
+	}
+	public ValgrindSourceGrabber(BuildListener listener, FilePath basedir, ValgrindSourceResolver sourceResolver)
+	{
 		this.listener = listener;
 		this.basedir = basedir;	
+		this.sourceResolver = sourceResolver;
 	}
-	
 	public boolean init(File localRoot)
 	{
         this.destDirectory = new File(localRoot, ValgrindSourceFile.SOURCE_DIRECTORY);
@@ -57,19 +62,24 @@ public class ValgrindSourceGrabber
 			if ( frame == null )
 				continue;
 			
-			String filePath =  frame.getFilePath();
 			
+			String filePath = frame.getFilePath();
+					
 			if ( filePath == null || filePath.isEmpty() || lookup.containsKey( filePath ) )
-				continue;				
+				continue;
 			
-			FilePath file = new FilePath( basedir, filePath );
+			String resolvedFilePath =  sourceResolver.resolveFilePath(filePath);
+			if (resolvedFilePath == null || resolvedFilePath.isEmpty()){
+				continue;
+			}
+			FilePath file = new FilePath( basedir, resolvedFilePath );
 			
 			index++;				
 			lookup.put( filePath, retrieveSourceFile( file ) );
 		}
 	}
-	
-	public Map<String, String> getLookupMap()
+
+    public Map<String, String> getLookupMap()
 	{
 		return lookup;
 	}

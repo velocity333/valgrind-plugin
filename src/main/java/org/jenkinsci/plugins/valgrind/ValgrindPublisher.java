@@ -28,6 +28,7 @@ import org.jenkinsci.plugins.valgrind.parser.ValgrindParserResult;
 import org.jenkinsci.plugins.valgrind.util.ValgrindEvaluator;
 import org.jenkinsci.plugins.valgrind.util.ValgrindLogger;
 import org.jenkinsci.plugins.valgrind.util.ValgrindSourceGrabber;
+import org.jenkinsci.plugins.valgrind.util.ValgrindSourceResolver;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -49,6 +50,7 @@ public class ValgrindPublisher extends Recorder
 			String unstableThresholdInvalidReadWrite, 
 			String unstableThresholdDefinitelyLost, 
 			String unstableThresholdTotal,
+			String sourceSubstitutionPaths,
 			boolean publishResultsForAbortedBuilds,
 			boolean publishResultsForFailedBuilds,
 			boolean failBuildOnMissingReports,
@@ -62,6 +64,7 @@ public class ValgrindPublisher extends Recorder
 				unstableThresholdInvalidReadWrite, 
 				unstableThresholdDefinitelyLost, 
 				unstableThresholdTotal,
+				sourceSubstitutionPaths,
 				publishResultsForAbortedBuilds,
 				publishResultsForFailedBuilds,
 				failBuildOnMissingReports,
@@ -146,8 +149,16 @@ public class ValgrindPublisher extends Recorder
 			new ValgrindEvaluator(valgrindPublisherConfig, listener).evaluate(valgrindReport, build, env); 
 			
 			ValgrindLogger.log(listener, "Analysing valgrind results");
-					
-			ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot());
+			
+			final EnvVars environment = build.getEnvironment(listener);
+			String resolvedSubstitutionPaths = valgrindPublisherConfig.getSourceSubstitutionPaths();
+			if (environment!=null){
+				resolvedSubstitutionPaths = environment.expand(resolvedSubstitutionPaths);
+			}
+			
+			ValgrindSourceResolver sourceResolver = new ValgrindSourceResolver(resolvedSubstitutionPaths);
+
+			ValgrindSourceGrabber sourceGrabber = new ValgrindSourceGrabber(listener,  build.getModuleRoot(), sourceResolver);
 			
 			if ( !sourceGrabber.init( build.getRootDir() ) )
 				return false;
