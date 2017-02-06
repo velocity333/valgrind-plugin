@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.valgrind;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.FilePath;
 
 import java.io.IOException;
@@ -21,33 +21,32 @@ import org.kohsuke.stapler.StaplerResponse;
 
 
 public class ValgrindResult implements Serializable
-{	
+{
 	private static final long serialVersionUID = -5347879997716170059L;
 	private static final String PID_TOKEN = "pid=";
 
     private ValgrindParserResult parser;
-    private AbstractBuild<?, ?> owner;
+    private Run<?, ?> owner;
     private Map<String, String> sourceFiles;
-     
 
-    public ValgrindResult( AbstractBuild<?, ?> build, ValgrindParserResult parser)
+    public ValgrindResult( Run<?, ?> build, ValgrindParserResult parser)
     {
     	this.owner = build;
         this.parser = parser;
     }
-    
-	public AbstractBuild<?, ?> getOwner()
+
+	public Run<?, ?> getOwner()
 	{
 		return owner;
 	}
-	
+
 	public ValgrindPublisherConfig getConfig()
 	{
-		ValgrindBuildAction action = (ValgrindBuildAction)owner.getAction(ValgrindBuildAction.class);
+		ValgrindBuildAction action = owner.getAction(ValgrindBuildAction.class);
     	if ( action == null )
     		return null;
-    	
-		return action.getConfig();    			
+
+		return action.getConfig();
 	}
 
 	/**
@@ -66,15 +65,15 @@ public class ValgrindResult implements Serializable
 	{
 		return sourceFiles;
 	}
-	
+
 	public void setSourceFiles(Map<String, String> sourceFiles)
 	{
 		this.sourceFiles = sourceFiles;
-	}	
+	}
 
 	/**
 	 * Renders the summary Valgrind report for the build result.
-	 * 
+	 *
 	 * @return the HTML fragment of the summary Valgrind report
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -83,9 +82,9 @@ public class ValgrindResult implements Serializable
 	{
 		return ValgrindSummary.createReportSummary(this);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param link expected to be in format "id=<executable name>,<unique error id>"
 	 * @param request
 	 * @param response
@@ -95,15 +94,15 @@ public class ValgrindResult implements Serializable
 	 */
 	public Object getDynamic(final String l, final StaplerRequest request, final StaplerResponse response)
 			throws IOException, InterruptedException
-	{	
+	{
 		final String[] s = l.split("/");
 		final String data = s[s.length -1];
-		
+
 		if ( !data.startsWith(PID_TOKEN) )
 			return null;
-		
+
 		int sep = data.indexOf(",");
-		
+
 		ValgrindReport report = getReport();
 		if ( sep > PID_TOKEN.length() )
 		{
@@ -114,17 +113,17 @@ public class ValgrindResult implements Serializable
 				ValgrindThread thread = report.findThread(pid, uniqueId.substring(3));
 				if ( thread == null )
 					return null;
-				
+
 				ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
 
 				return new ValgrindThreadDetail( owner, report.findProcess(pid), thread, sourceFile );
 			} else {
 				ValgrindError error = report.findError(pid, uniqueId);
 				if ( error == null )
-					return null;		
-	
+					return null;
+
 				ValgrindSourceFile sourceFile = new ValgrindSourceFile( ValgrindPublisher.DESCRIPTOR.getLinesBefore(), ValgrindPublisher.DESCRIPTOR.getLinesAfter(), sourceFiles, owner );
-		 
+
 				return new ValgrindErrorDetail( owner, report.findProcess(pid), error, sourceFile );
 			}
 		}
@@ -132,8 +131,8 @@ public class ValgrindResult implements Serializable
 		{
 			String pid = data.substring(PID_TOKEN.length());
 			ValgrindProcess process = report.findProcess(pid);
-			
-			return new ValgrindProcessDetails(owner, process);			
+
+			return new ValgrindProcessDetails(owner, process);
 		}
 	}
 

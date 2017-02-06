@@ -1,11 +1,11 @@
 package org.jenkinsci.plugins.valgrind;
 
 import hudson.model.HealthReport;
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
 import hudson.util.Graph;
+import hudson.model.Action;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -17,15 +17,20 @@ import org.jenkinsci.plugins.valgrind.util.AbstractValgrindBuildAction;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import jenkins.tasks.SimpleBuildStep;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class ValgrindBuildAction extends AbstractValgrindBuildAction
+
+public class ValgrindBuildAction extends AbstractValgrindBuildAction implements SimpleBuildStep.LastBuildAction
 {
 	public static final String URL_NAME = "valgrindResult";
-	
+
 	private ValgrindResult result;
 	private ValgrindPublisherConfig config;
 
-	public ValgrindBuildAction(AbstractBuild<?, ?> owner, ValgrindResult result,
+	public ValgrindBuildAction(Run<?, ?> owner, ValgrindResult result,
 			ValgrindPublisherConfig config)
 	{
 		super(owner);
@@ -33,7 +38,7 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 		this.config = config;
 	}
 
-	AbstractBuild<?, ?> getBuild()
+	public Run<?, ?> getBuild()
 	{
 		return this.owner;
 	}
@@ -48,31 +53,37 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 		return config;
 	}
 
+	@Override
 	public String getSearchUrl()
 	{
 		return getUrlName();
 	}
 
+	@Override
 	public Object getTarget()
 	{
 		return result;
 	}
 
+	@Override
 	public HealthReport getBuildHealth()
 	{
 		return new HealthReport();
 	}
 
+	@Override
 	public String getIconFileName()
 	{
 		return "/plugin/valgrind/icons/valgrind-48.png";
 	}
 
+	@Override
 	public String getDisplayName()
 	{
 		return "Valgrind Result";
 	}
 
+	@Override
 	public String getUrlName()
 	{
 		return URL_NAME;
@@ -121,7 +132,7 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			dsb.add(report.getErrorList().getInvalidFreeErrorCount() + report.getErrorList().getMismatchedFreeErrorCount(), "Illegal/mismatched frees", label);
 			dsb.add(report.getErrorList().getOverlapErrorCount(), "Overlaps", label);
 			dsb.add(report.getErrorList().getSyscallParamErrorCount(), "Illegal system calls", label);
-			
+
 			// Helgrind:
 			dsb.add(report.getErrorList().getRaceErrorCount(), "Data races", label);
 			dsb.add(report.getErrorList().getUnlockUnlockedErrorCount() + report.getErrorList().getUnlockForeignErrorCount() + report.getErrorList().getUnlockBogusErrorCount(), "Unlock issues", label);
@@ -130,5 +141,11 @@ public class ValgrindBuildAction extends AbstractValgrindBuildAction
 			dsb.add(report.getErrorList().getMiscErrorCount(), "Helgrind misc", label);
 		}
 		return dsb;
+	}
+	@Override
+	public Collection<? extends Action> getProjectActions() {
+		List<ValgrindProjectAction> projectActions = new ArrayList<>();
+ 		projectActions.add(new ValgrindProjectAction(owner.getParent()));
+		return projectActions;
 	}
 }
