@@ -1,36 +1,19 @@
 package org.jenkinsci.plugins.valgrind;
 
-import hudson.DescriptorExtensionList;
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
-import hudson.util.FormValidation;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
 
-import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
-
 import org.apache.tools.ant.types.Commandline;
 import org.jenkinsci.plugins.valgrind.call.ValgrindBooleanOption;
 import org.jenkinsci.plugins.valgrind.call.ValgrindCall;
-import org.jenkinsci.plugins.valgrind.call.ValgrindEnumOption;
 import org.jenkinsci.plugins.valgrind.call.ValgrindExecutable;
 import org.jenkinsci.plugins.valgrind.call.ValgrindStringOption;
 import org.jenkinsci.plugins.valgrind.call.ValgrindTrackOriginsOption;
@@ -41,12 +24,29 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+import hudson.DescriptorExtensionList;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Builder;
+import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
+import net.sf.json.JSONObject;
+
 /**
- * 
+ *
  * @author Johannes Ohlemacher
- * 
+ *
  */
-public class ValgrindBuilder extends Builder
+public class ValgrindBuilder extends Builder implements SimpleBuildStep
 {
 	public static final ValgrindVersion VERSION_3_1_0 = ValgrindVersion.createInstance(3, 1, 0);
 	public static final ValgrindVersion VERSION_3_2_0 = ValgrindVersion.createInstance(3, 2, 0);
@@ -56,29 +56,29 @@ public class ValgrindBuilder extends Builder
 	public static final ValgrindVersion VERSION_3_6_0 = ValgrindVersion.createInstance(3, 6, 0);
 	public static final ValgrindVersion VERSION_3_7_0 = ValgrindVersion.createInstance(3, 7, 0);
 	public static final ValgrindVersion VERSION_3_8_0 = ValgrindVersion.createInstance(3, 8, 0);
-	
-	public final String valgrindExecutable;
-	public final String workingDirectory;
-	public final String includePattern;
-	public final String excludePattern;
-	public final String outputDirectory;
-	public final String outputFileEnding;
-	public final String programOptions;
-	public final ValgrindTool tool;
-	public final String valgrindOptions;
-	public final boolean ignoreExitCode;
-	public final boolean traceChildren;
-	public final boolean childSilentAfterFork;
-	public final boolean generateSuppressions;
-	public final String  suppressionFiles;
-	public final boolean removeOldReports;
+
+	public String valgrindExecutable;
+	public String workingDirectory;
+	public String includePattern;
+	public String excludePattern;
+	public String outputDirectory;
+	public String outputFileEnding;
+	public String programOptions;
+	public ValgrindTool tool;
+	public String valgrindOptions;
+	public boolean ignoreExitCode;
+	public boolean traceChildren;
+	public boolean childSilentAfterFork;
+	public boolean generateSuppressions;
+	public String  suppressionFiles;
+	public boolean removeOldReports;
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
 	public ValgrindBuilder(String valgrindExecutable,
-			String workingDirectory, 
-			String includePattern, 
+			String workingDirectory,
+			String includePattern,
 			String excludePattern,
 			String outputDirectory,
 			String outputFileEnding,
@@ -108,27 +108,43 @@ public class ValgrindBuilder extends Builder
 		this.suppressionFiles = suppressionFiles;
 		this.removeOldReports = removeOldReports;
 	}
+/*
+	public ValgrindBuilderConfig getValgrindBuilderConfig()
+	{
 
-	@SuppressWarnings("rawtypes")
+		return new valgrindBuilderConfig;
+	}
+
+	public void setValgrindBuilderConfig(ValgrindBuilderConfig valgrindBuilderConfig)
+	{
+		this.valgrindBuilderConfig = valgrindBuilderConfig;
+	}
+*/
 	@Override
-	public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener)
+	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
+			throws InterruptedException, IOException
 	{
 		try
 		{
-			if(removeOldReports)
-				deleteOldReports(build, listener);
-			
-			ValgrindExecutable valgrindExecutable = new ValgrindExecutable(launcher,
-					build.getEnvironment(listener).expand(this.valgrindExecutable));
+			EnvVars env = run.getEnvironment(listener);
+
+			if(this.removeOldReports)
+			{
+				deleteOldReports(workspace, listener);
+			}
+
+			ValgrindExecutable valgrindExecutable = new ValgrindExecutable(launcher, env.expand(this.valgrindExecutable));
 
 			ValgrindLogger.log( listener, "detected valgrind version ("
 					+ valgrindExecutable.getExecutable() + "): "
 					+ valgrindExecutable.getVersion()  );
-			
-			for (FilePath executable : getListOfexecutables(build, listener))
+
+			for (FilePath executable : getListOfExecutables(workspace, env, listener))
 			{
-				if (!callValgrindOnExecutable(build, listener, launcher, valgrindExecutable, executable))
-					return false;
+				if (!callValgrindOnExecutable(workspace, env, listener, launcher, valgrindExecutable, executable))
+				{
+					return;
+				}
 			}
 		}
                 catch (RuntimeException e)
@@ -138,19 +154,16 @@ public class ValgrindBuilder extends Builder
 		catch (Exception e)
 		{
 			ValgrindLogger.log(listener, "ERROR, " + e.getClass().getCanonicalName() + ": " + e.getMessage());
-			return false;
 		}
-
-		return true;
 	}
 
-	public List<String> getSuppressionFileList()
+	private List<String> getSuppressionFileList()
 	{
 		List<String> files = new ArrayList<String>();
 
-		if(suppressionFiles != null)
+		if(this.suppressionFiles != null)
 		{
-			for (String s : suppressionFiles.split(" "))
+			for (String s : this.suppressionFiles.split(" "))
 			{
 				if (s == null)
 					continue;
@@ -172,7 +185,7 @@ public class ValgrindBuilder extends Builder
 	{
 		return (DescriptorImpl) super.getDescriptor();
 	}
-	
+
 	private static String fullPath(FilePath fp)
 	{
 		if(fp == null)
@@ -181,13 +194,13 @@ public class ValgrindBuilder extends Builder
 		return fullPath(fp.getParent()) + "/" + fp.getName();
 	}
 
-	private void deleteOldReports(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException
+	private void deleteOldReports(FilePath workspace, TaskListener listener) throws IOException, InterruptedException
 	{
-		if(outputFileEnding == null || outputFileEnding.isEmpty())
+		if(this.outputFileEnding == null || this.outputFileEnding.isEmpty())
 			return;
 
-		final String oldReportPattern = "**/*" + outputFileEnding.trim();
-		final FilePath reports[] = build.getWorkspace().list(oldReportPattern);
+		final String oldReportPattern = "**/*" + this.outputFileEnding.trim();
+		final FilePath reports[] = workspace.list(oldReportPattern);
 
 		for(FilePath p : reports)
 		{
@@ -195,23 +208,21 @@ public class ValgrindBuilder extends Builder
 				continue;
 
 			if(p.delete())
-				ValgrindLogger.log( listener, "deleted old report file: " + p.toURI());
+				ValgrindLogger.log(listener, "deleted old report file: " + p.toURI());
 			else
-				ValgrindLogger.log( listener, "failed to delete old report file: " + p.toURI());
+				ValgrindLogger.log(listener, "failed to delete old report file: " + p.toURI());
 		}
 	}
 
-	private List<FilePath> getListOfexecutables(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException
+	private List<FilePath> getListOfExecutables(FilePath workspace, EnvVars env, TaskListener listener) throws IOException, InterruptedException
 	{
-		EnvVars env = build.getEnvironment(null);
-
-		List<FilePath> includes = Arrays.asList(build.getWorkspace().list(env.expand(includePattern)));
+		List<FilePath> includes = Arrays.asList(workspace.list(env.expand(this.includePattern)));
 		ValgrindLogger.log( listener, "includes files: " + ValgrindUtil.join(includes, ", "));
 
 		List<FilePath> excludes = null;
-		if ( excludePattern != null && !excludePattern.isEmpty() )
+		if ( this.excludePattern != null && !this.excludePattern.isEmpty() )
 		{
-			excludes = Arrays.asList(build.getWorkspace().list(env.expand(excludePattern)));
+			excludes = Arrays.asList(workspace.list(env.expand(this.excludePattern)));
 			ValgrindLogger.log( listener, "excluded files: " + ValgrindUtil.join(excludes, ", "));
 		}
 
@@ -219,7 +230,7 @@ public class ValgrindBuilder extends Builder
 
 		for (FilePath file : includes)
 		{
-			if (file == null || (excludes != null && excludes.contains(file)) || file.getName().endsWith(outputFileEnding))
+			if (file == null || (excludes != null && excludes.contains(file)) || file.getName().endsWith(this.outputFileEnding))
 				continue;
 
 			files.add(file);
@@ -228,25 +239,23 @@ public class ValgrindBuilder extends Builder
 		return files;
 	}
 
-	private boolean callValgrindOnExecutable(AbstractBuild build, BuildListener listener, Launcher launcher, ValgrindExecutable valgrind, FilePath executable) throws IOException, InterruptedException
+	private boolean callValgrindOnExecutable(FilePath workspace, EnvVars env, TaskListener listener, Launcher launcher, ValgrindExecutable valgrind, FilePath executable) throws IOException, InterruptedException
 	{
-		EnvVars env = build.getEnvironment(null);
-
 		final String programName = executable.getName();
 		env.put("PROGRAM_NAME", programName);
 
 		final String programDir  = fullPath(executable.getParent());
 		env.put("PROGRAM_DIR", programDir);
 
-		final FilePath workDir = build.getWorkspace().child(env.expand(workingDirectory));
+		final FilePath workDir = workspace.child(env.expand(this.workingDirectory));
 		if (!workDir.exists() || !workDir.isDirectory())
 			workDir.mkdirs();
 
-		FilePath outDir = build.getWorkspace().child(env.expand(outputDirectory));
+		FilePath outDir = workspace.child(env.expand(this.outputDirectory));
 		if (!outDir.exists() || !outDir.isDirectory())
 			outDir.mkdirs();
 
-		final FilePath xmlFile = outDir.child(executable.getName() + ".%p" + env.expand(outputFileEnding));
+		final FilePath xmlFile = outDir.child(executable.getName() + ".%p" + env.expand(this.outputFileEnding));
 		final String xmlFilename = xmlFile.getRemote();
 
 		ValgrindCall call = new ValgrindCall();
@@ -254,29 +263,29 @@ public class ValgrindBuilder extends Builder
 		call.setEnv(env);
 		call.setWorkingDirectory(workDir);
 		call.setProgramName(executable.getRemote());
-		call.addProgramArguments(Commandline.translateCommandline(programOptions));
-		
-		if (tool.getDescriptor() == ValgrindToolMemcheck.D) {
-			ValgrindToolMemcheck memcheck = (ValgrindToolMemcheck) tool;
+		call.addProgramArguments(Commandline.translateCommandline(this.programOptions));
+
+		if (this.tool.getDescriptor() == ValgrindToolMemcheck.D) {
+			ValgrindToolMemcheck memcheck = (ValgrindToolMemcheck) this.tool;
 
 			call.addValgrindOption(new ValgrindStringOption("tool", "memcheck"));
 			call.addValgrindOption(new ValgrindStringOption("leak-check", memcheck.leakCheckLevel));
 			call.addValgrindOption(new ValgrindBooleanOption("show-reachable", memcheck.showReachable));
 			call.addValgrindOption(new ValgrindBooleanOption("undef-value-errors", memcheck.undefinedValueErrors, VERSION_3_2_0));
 			call.addValgrindOption(new ValgrindTrackOriginsOption("track-origins", memcheck.trackOrigins, memcheck.undefinedValueErrors, VERSION_3_4_0));
-		} else if (tool.getDescriptor() == ValgrindToolHelgrind.D) {
-			ValgrindToolHelgrind helgrind = (ValgrindToolHelgrind) tool;
-			
+		} else if (this.tool.getDescriptor() == ValgrindToolHelgrind.D) {
+			ValgrindToolHelgrind helgrind = (ValgrindToolHelgrind) this.tool;
+
 			call.addValgrindOption(new ValgrindStringOption("tool", "helgrind"));
 			call.addValgrindOption(new ValgrindStringOption("history-level", helgrind.historyLevel));
 		} else {
 			// This will cause the Valgrind call to fail...
 			call.addValgrindOption(new ValgrindStringOption("tool", "unknown-tool"));
 		}
-		
-		call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", childSilentAfterFork, VERSION_3_5_0));
-		call.addValgrindOption(new ValgrindBooleanOption("trace-children", traceChildren, VERSION_3_5_0));
-		call.addValgrindOption(new ValgrindStringOption("gen-suppressions", generateSuppressions ? "all" : "no"));
+
+		call.addValgrindOption(new ValgrindBooleanOption("child-silent-after-fork", this.childSilentAfterFork, VERSION_3_5_0));
+		call.addValgrindOption(new ValgrindBooleanOption("trace-children", this.traceChildren, VERSION_3_5_0));
+		call.addValgrindOption(new ValgrindStringOption("gen-suppressions", this.generateSuppressions ? "all" : "no"));
 		call.addValgrindOption(new ValgrindStringOption("xml", "yes"));
 		call.addValgrindOption(new ValgrindStringOption("xml-file", xmlFilename, VERSION_3_5_0));
 
@@ -285,9 +294,9 @@ public class ValgrindBuilder extends Builder
 			call.addValgrindOption(new ValgrindStringOption("suppressions", env.expand(s)));
 		}
 
-		if ( valgrindOptions != null )
+		if (this.valgrindOptions != null)
 		{
-			call.addCustomValgrindOptions(Commandline.translateCommandline(valgrindOptions));
+			call.addCustomValgrindOptions(Commandline.translateCommandline(this.valgrindOptions));
 		}
 
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
@@ -314,7 +323,7 @@ public class ValgrindBuilder extends Builder
                                 }
 			}
 
-			if (exitCode != 0 && !ignoreExitCode)
+			if (exitCode != 0 && !this.ignoreExitCode)
 				return false;
 		}
 		finally
@@ -335,6 +344,7 @@ public class ValgrindBuilder extends Builder
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder>
 	{
+		@Override
 		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> aClass)
 		{
@@ -350,20 +360,21 @@ public class ValgrindBuilder extends Builder
 		{
 			if (includePattern.length() == 0)
 				return FormValidation.error("Please set a pattern");
-			
+
 			return FormValidation.ok();
 		}
-		
+
 		public FormValidation doCheckOutputFileEnding(@QueryParameter String value) throws IOException, ServletException
 		{
 			if (value.length() == 0)
 				return FormValidation.error("Please set a file ending for generated xml reports");
 			if (value.charAt(0) != '.' )
 				return FormValidation.warning("File ending does not start with a dot");
-			
-			return FormValidation.ok();
-		}		
 
+			return FormValidation.ok();
+		}
+
+		@Override
 		public String getDisplayName()
 		{
 			return "Run Valgrind";
@@ -375,37 +386,42 @@ public class ValgrindBuilder extends Builder
 			return super.configure(req, formData);
 		}
 	}
-	
-	public static class ValgrindTool extends AbstractDescribableImpl<ValgrindTool>
+
+	public static abstract class ValgrindTool extends AbstractDescribableImpl<ValgrindTool> implements Serializable
 	{
+		private static final long serialVersionUID = 4775855657469295418L;
+
 		public static class ValgrindToolDescriptor extends Descriptor<ValgrindTool>
 		{
-			String name;
-			
+			private String name;
+
 			public ValgrindToolDescriptor(String name, Class<? extends ValgrindTool> clazz)
 			{
 				super(clazz);
 				this.name = name;
 			}
-			
+
 			@Override
 			public String getDisplayName() {
 				return name;
 			}
 		}
-		
+
+		@Override
 		public ValgrindToolDescriptor getDescriptor()
 		{
 			return (ValgrindToolDescriptor) Jenkins.getInstance().getDescriptor(getClass());
 		}
 	}
-	
+
 	public static class ValgrindToolMemcheck extends ValgrindTool
 	{
-		public final boolean showReachable;
-		public final boolean undefinedValueErrors;
-		public final String leakCheckLevel;
-		public final boolean trackOrigins;
+		private static final long serialVersionUID = 5175503606326531712L;
+
+		public boolean showReachable;
+		public boolean undefinedValueErrors;
+		public String leakCheckLevel;
+		public boolean trackOrigins;
 
 		@DataBoundConstructor
 		public ValgrindToolMemcheck(
@@ -422,18 +438,20 @@ public class ValgrindBuilder extends Builder
 
 		@Extension public static final ValgrindToolDescriptor D = new ValgrindToolDescriptor("Memcheck", ValgrindToolMemcheck.class);
 	}
-	
+
 	public static class ValgrindToolHelgrind extends ValgrindTool
 	{
+		private static final long serialVersionUID = 5691098331605204573L;
+
 		public final String historyLevel;
-		
+
 		@DataBoundConstructor
 		public ValgrindToolHelgrind(
 				String historyLevel)
 		{
 			this.historyLevel = historyLevel;
 		}
-		
+
 		@Extension public static final ValgrindToolDescriptor D = new ValgrindToolDescriptor("Helgrind", ValgrindToolHelgrind.class);
 	}
 }

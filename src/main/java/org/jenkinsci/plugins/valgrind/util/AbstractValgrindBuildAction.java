@@ -40,12 +40,5 @@ public abstract class AbstractValgrindBuildAction extends Actionable implements 
         return owner;
     }
 
-    /**
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws InterruptedException
-     */
     public abstract void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException, InterruptedException;
-
 }

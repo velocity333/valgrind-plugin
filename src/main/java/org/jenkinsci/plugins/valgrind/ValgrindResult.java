@@ -92,10 +92,10 @@ public class ValgrindResult implements Serializable
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public Object getDynamic(final String l, final StaplerRequest request, final StaplerResponse response)
+	public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
 			throws IOException, InterruptedException
 	{
-		final String[] s = l.split("/");
+		final String[] s = link.split("/");
 		final String data = s[s.length -1];
 
 		if ( !data.startsWith(PID_TOKEN) )

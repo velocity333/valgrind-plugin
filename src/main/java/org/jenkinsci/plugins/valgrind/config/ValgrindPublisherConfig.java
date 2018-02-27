@@ -7,28 +7,35 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class ValgrindPublisherConfig implements Serializable
 {
 	private static final long serialVersionUID = 1335068144678253494L;
-	
+
 	private String pattern = "*.memcheck";
 	private String failThresholdInvalidReadWrite;
 	private String failThresholdDefinitelyLost;
 	private String failThresholdTotal;
 	private String unstableThresholdInvalidReadWrite;
 	private String unstableThresholdDefinitelyLost;
-	private String unstableThresholdTotal;	
+	private String unstableThresholdTotal;
 	private String sourceSubstitutionPaths;
 	private boolean publishResultsForAbortedBuilds;
 	private boolean publishResultsForFailedBuilds;
 	private boolean failBuildOnMissingReports;
 	private boolean failBuildOnInvalidReports;
 
-	
+	private static String saveTrim(String s)
+	{
+		if (s == null)
+			return "";
+
+		return s.trim();
+	}
+
 	@DataBoundConstructor
-	public ValgrindPublisherConfig( String pattern, 
-			String failThresholdInvalidReadWrite, 
-			String failThresholdDefinitelyLost, 
+	public ValgrindPublisherConfig( String pattern,
+			String failThresholdInvalidReadWrite,
+			String failThresholdDefinitelyLost,
 			String failThresholdTotal,
-			String unstableThresholdInvalidReadWrite, 
-			String unstableThresholdDefinitelyLost, 
+			String unstableThresholdInvalidReadWrite,
+			String unstableThresholdDefinitelyLost,
 			String unstableThresholdTotal,
 			String sourceSubstitutionPaths,
 			boolean publishResultsForAbortedBuilds,
@@ -37,13 +44,13 @@ public class ValgrindPublisherConfig implements Serializable
 			boolean failBuildOnInvalidReports)
 	{
 		this.pattern = pattern.trim();
-		this.failThresholdInvalidReadWrite = failThresholdInvalidReadWrite.trim();
-		this.failThresholdDefinitelyLost = failThresholdDefinitelyLost.trim();
-		this.failThresholdTotal = failThresholdTotal.trim();		
-		this.unstableThresholdInvalidReadWrite = unstableThresholdInvalidReadWrite.trim();
-		this.unstableThresholdDefinitelyLost = unstableThresholdDefinitelyLost.trim();
-		this.unstableThresholdTotal = unstableThresholdTotal.trim();
-		this.sourceSubstitutionPaths = sourceSubstitutionPaths.trim();
+		this.failThresholdInvalidReadWrite = saveTrim(failThresholdInvalidReadWrite);
+		this.failThresholdDefinitelyLost = saveTrim(failThresholdDefinitelyLost);
+		this.failThresholdTotal = saveTrim(failThresholdTotal);
+		this.unstableThresholdInvalidReadWrite = saveTrim(unstableThresholdInvalidReadWrite);
+		this.unstableThresholdDefinitelyLost = saveTrim(unstableThresholdDefinitelyLost);
+		this.unstableThresholdTotal = saveTrim(unstableThresholdTotal);
+		this.sourceSubstitutionPaths = saveTrim(sourceSubstitutionPaths);
 		this.publishResultsForAbortedBuilds = publishResultsForAbortedBuilds;
 		this.publishResultsForFailedBuilds = publishResultsForFailedBuilds;
 		this.failBuildOnMissingReports = failBuildOnMissingReports;
@@ -89,10 +96,10 @@ public class ValgrindPublisherConfig implements Serializable
 		return unstableThresholdTotal;
 	}
 
-	public String  getSourceSubstitutionPaths(){
+	public String getSourceSubstitutionPaths(){
 		return sourceSubstitutionPaths;
 	}
-	
+
 	public boolean isPublishResultsForAbortedBuilds()
 	{
 		return publishResultsForAbortedBuilds;
@@ -102,14 +109,14 @@ public class ValgrindPublisherConfig implements Serializable
 	{
 		return publishResultsForFailedBuilds;
 	}
-	
+
 	public boolean isFailBuildOnMissingReports()
 	{
 		return failBuildOnMissingReports;
 	}
-	
+
 	public boolean isFailBuildOnInvalidReports()
 	{
 		return failBuildOnInvalidReports;
-	}	
+	}
 }

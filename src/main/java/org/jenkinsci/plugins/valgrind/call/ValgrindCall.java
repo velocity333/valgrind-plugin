@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.valgrind.call;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.BuildListener;
+import hudson.model.TaskListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class ValgrindCall
 		}
 	}	
 
-	public int exec(BuildListener listener, Launcher launcher, ByteArrayOutputStream stdout, ByteArrayOutputStream stderr) throws IOException, InterruptedException
+	public int exec(TaskListener listener, Launcher launcher, ByteArrayOutputStream stdout, ByteArrayOutputStream stderr) throws IOException, InterruptedException
 	{
 		if ( valgrindExecutable == null )
 			throw new IllegalStateException("valgrind executable is null");

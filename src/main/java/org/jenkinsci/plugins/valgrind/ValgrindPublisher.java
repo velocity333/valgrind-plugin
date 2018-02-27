@@ -3,8 +3,6 @@ package org.jenkinsci.plugins.valgrind;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
@@ -265,6 +263,11 @@ public class ValgrindPublisher extends Recorder implements SimpleBuildStep
 	public String getUnstableThresholdTotal()
 	{
 		return valgrindPublisherConfig.getUnstableThresholdTotal();
+	}
+
+	public String getSourceSubstitutionPaths()
+	{
+		return valgrindPublisherConfig.getSourceSubstitutionPaths();
 	}
 
 	public boolean isPublishResultsForAbortedBuilds()

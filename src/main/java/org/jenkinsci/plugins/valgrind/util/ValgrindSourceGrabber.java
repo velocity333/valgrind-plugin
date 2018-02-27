@@ -11,7 +11,6 @@ import java.util.Map;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktrace;
 import org.jenkinsci.plugins.valgrind.model.ValgrindStacktraceFrame;
 
-
 /**
  *
  * @author Johannes Ohlemacher
@@ -69,7 +68,8 @@ public class ValgrindSourceGrabber
 				continue;
 
 			String resolvedFilePath =  sourceResolver.resolveFilePath(filePath);
-			if (resolvedFilePath == null || resolvedFilePath.isEmpty()){
+			if (resolvedFilePath == null || resolvedFilePath.isEmpty())
+			{
 				continue;
 			}
 			FilePath file = new FilePath( basedir, resolvedFilePath );
@@ -114,19 +114,19 @@ public class ValgrindSourceGrabber
             FileOutputStream outputStream = new FileOutputStream(masterFile);
             try
             {
-                    file.copyTo(outputStream);
+            	file.copyTo(outputStream);
             }
             finally
             {
-                    outputStream.close();
+            	outputStream.close();
             }
 
 			return fileName;
 		}
-                catch (RuntimeException e)
-                {
-                        throw e;
-                }
+        catch (RuntimeException e)
+        {
+            throw e;
+        }
 		catch (Exception e)
 		{
 			ValgrindLogger.log(listener, "ERROR: failed to retrieve '" + file.getRemote() + "', " + e.getMessage() );

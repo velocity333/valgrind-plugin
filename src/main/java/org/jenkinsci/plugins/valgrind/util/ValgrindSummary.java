@@ -8,7 +8,7 @@ public class ValgrindSummary
 {
 	/**
 	 * Creates an HTML valgrind summary.
-	 * 
+	 *
 	 * @param result
 	 *            the valgrind result object
 	 * @return the HTML fragment representing the valgrind report summary
@@ -24,7 +24,7 @@ public class ValgrindSummary
 		if (errorCount == 0)
 		{
 			summary.append("no errors");
-		} 
+		}
 		else
 		{
 			summary.append("<a href=\"valgrindResult\">");
@@ -36,11 +36,11 @@ public class ValgrindSummary
 
 			summary.append(result.getReport().getErrorList().getDefinitelyLeakedBytes());
 			summary.append(" bytes definitely lost");
-			
+
 			summary.append("</a>");
 		}
 
 		return summary.toString();
 	}
-	
+
 }

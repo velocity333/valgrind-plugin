@@ -39,16 +39,15 @@
         <f:textbox/>
     </f:entry>
 
-		<f:dropdownList name="tool" title="Valgrind Tool">
-				<j:set var="current" value="${instance.tool}"/>
-
-				<j:forEach var="tooldescriptor" items="${descriptor.toolDescriptors}" varStatus="loop">
-					<f:dropdownListBlock title="${tooldescriptor.displayName}" value="${loop.index}"
-							selected="${tooldescriptor==current.descriptor or (current==null and tooldescriptor.displayName=='Memcheck')}"
-							staplerClass="${tooldescriptor.clazz.name}">
-						<st:include page="${tooldescriptor.displayName}.jelly" class="${descriptor.clazz}"/>
-		      </f:dropdownListBlock>
-				</j:forEach>
+	<f:dropdownList name="tool" title="Valgrind Tool">
+        <j:set var="current" value="${instance.tool}"/>
+        <j:forEach var="tooldescriptor" items="${descriptor.toolDescriptors}" varStatus="loop">
+            <f:dropdownListBlock title="${tooldescriptor.displayName}" value="${loop.index}"
+                selected="${tooldescriptor==current.descriptor or (current==null and tooldescriptor.displayName=='Memcheck')}"
+                staplerClass="${tooldescriptor.clazz.name}">
+                <st:include page="${tooldescriptor.displayName}.jelly" class="${descriptor.clazz}"/>
+            </f:dropdownListBlock>
+        </j:forEach>
     </f:dropdownList>
 
     <f:advanced>

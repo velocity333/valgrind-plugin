@@ -30,44 +30,45 @@ import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
  * Publisher for valgrind reports.
  */
 public class ValgrindPublisherStep extends AbstractStepImpl implements Serializable{
+	private static final long serialVersionUID = -1591366582350511839L;
 
-    
+	private ValgrindPublisherConfig valgrindPublisherConfig;
 
-    private ValgrindPublisherConfig valgrindPublisherConfig;
-    
     @DataBoundConstructor
     public ValgrindPublisherStep(String pattern,
-    				String failThresholdInvalidReadWrite, 
-    				String failThresholdDefinitelyLost, 
+    				String failThresholdInvalidReadWrite,
+    				String failThresholdDefinitelyLost,
     				String failThresholdTotal,
-   				String unstableThresholdInvalidReadWrite, 
-    				String unstableThresholdDefinitelyLost, 
+    				String unstableThresholdInvalidReadWrite,
+    				String unstableThresholdDefinitelyLost,
     				String unstableThresholdTotal,
-   				boolean publishResultsForAbortedBuilds,
+    				String sourceSubstitutionPaths,
+    				boolean publishResultsForAbortedBuilds,
     				boolean publishResultsForFailedBuilds,
     				boolean failBuildOnMissingReports,
     				boolean failBuildOnInvalidReports)
 	{
 		valgrindPublisherConfig = new ValgrindPublisherConfig(
-				pattern, 
-				failThresholdInvalidReadWrite, 
-				failThresholdDefinitelyLost, 
+				pattern,
+				failThresholdInvalidReadWrite,
+				failThresholdDefinitelyLost,
 				failThresholdTotal,
-				unstableThresholdInvalidReadWrite, 
-				unstableThresholdDefinitelyLost, 
+				unstableThresholdInvalidReadWrite,
+				unstableThresholdDefinitelyLost,
 				unstableThresholdTotal,
+				sourceSubstitutionPaths,
 				publishResultsForAbortedBuilds,
 				publishResultsForFailedBuilds,
 				failBuildOnMissingReports,
-				failBuildOnInvalidReports);		
-	}	
+				failBuildOnInvalidReports);
+	}
 
     @Extension
     public static final class DescriptorImpl extends AbstractStepDescriptorImpl {
         public DescriptorImpl()
-	{
-	    super(ValgrindPublisherStepExecution.class);
-	}
+		{
+		    super(ValgrindPublisherStepExecution.class);
+		}
 
         @Override
         public String getFunctionName() {
@@ -80,6 +81,7 @@ public class ValgrindPublisherStep extends AbstractStepImpl implements Serializa
             return "Publish valgrind reports";
         }
     }
+
     public ValgrindPublisherConfig getValgrindPublisherConfig()
     {
         return valgrindPublisherConfig;
@@ -88,7 +90,7 @@ public class ValgrindPublisherStep extends AbstractStepImpl implements Serializa
     public void setValgrindPublisherConfig(ValgrindPublisherConfig valgrindPublisherConfig)
     {
         this.valgrindPublisherConfig = valgrindPublisherConfig;
-    }    
+    }
 
     public String getPattern()
     {
@@ -125,6 +127,10 @@ public class ValgrindPublisherStep extends AbstractStepImpl implements Serializa
         return valgrindPublisherConfig.getUnstableThresholdTotal();
     }
 
+	public String getSourceSubstitutionPaths(){
+		return valgrindPublisherConfig.getSourceSubstitutionPaths();
+	}
+
     public boolean isPublishResultsForAbortedBuilds()
     {
         return valgrindPublisherConfig.isPublishResultsForAbortedBuilds();
@@ -134,12 +140,12 @@ public class ValgrindPublisherStep extends AbstractStepImpl implements Serializa
     {
         return valgrindPublisherConfig.isPublishResultsForFailedBuilds();
     }
-    
+
     public boolean isFailBuildOnMissingReports()
     {
         return valgrindPublisherConfig.isFailBuildOnMissingReports();
     }
-    
+
     public boolean isFailBuildOnInvalidReports()
     {
         return valgrindPublisherConfig.isFailBuildOnInvalidReports();

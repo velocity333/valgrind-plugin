@@ -23,18 +23,17 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.valgrind.ValgrindPublisher;
 import org.jenkinsci.plugins.valgrind.config.ValgrindPublisherConfig;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.inject.Inject;
 
 public class ValgrindPublisherStepExecution extends AbstractSynchronousNonBlockingStepExecution<Void> {
-    
- 
-    @StepContextParameter
+	private static final long serialVersionUID = 7438933612398352670L;
+
+	@StepContextParameter
     private transient TaskListener listener;
 
     @StepContextParameter
-    private transient Run build;
+    private transient Run<?, ?> build;
 
     @StepContextParameter
     private transient Launcher launcher;
@@ -44,20 +43,19 @@ public class ValgrindPublisherStepExecution extends AbstractSynchronousNonBlocki
     @Inject
     private ValgrindPublisherStep step;
 
-    
-
     @Override
     protected Void run() throws Exception {
         System.out.println("Running Valgrind publisher step");
 
         ValgrindPublisherConfig valgrindPublisherConfig = step.getValgrindPublisherConfig();
-	ValgrindPublisher publisher = new ValgrindPublisher(valgrindPublisherConfig.getPattern(),
+        ValgrindPublisher publisher = new ValgrindPublisher(valgrindPublisherConfig.getPattern(),
 						valgrindPublisherConfig.getFailThresholdInvalidReadWrite(),
 						valgrindPublisherConfig.getFailThresholdDefinitelyLost(),
 						valgrindPublisherConfig.getFailThresholdTotal(),
 						valgrindPublisherConfig.getUnstableThresholdInvalidReadWrite(),
 						valgrindPublisherConfig.getUnstableThresholdDefinitelyLost(),
 						valgrindPublisherConfig.getUnstableThresholdTotal(),
+						valgrindPublisherConfig.getSourceSubstitutionPaths(),
 						valgrindPublisherConfig.isPublishResultsForAbortedBuilds(),
 						valgrindPublisherConfig.isPublishResultsForFailedBuilds(),
 						valgrindPublisherConfig.isFailBuildOnMissingReports(),
