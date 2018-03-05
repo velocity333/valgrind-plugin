@@ -14,11 +14,13 @@ public class ValgrindProjectAction extends AbstractValgrindProjectAction
 		super(project);
 	}
 
+	@Override
 	public String getDisplayName()
 	{
 		return "Valgrind Results";
 	}
 
+	@Override
 	public String getUrlName()
 	{
 		return ValgrindBuildAction.URL_NAME;
@@ -39,10 +41,10 @@ public class ValgrindProjectAction extends AbstractValgrindProjectAction
 	@Override
 	public Integer getLastResultBuild()
 	{
-		for (Run<?, ?> b = (Run<?, ?>) getJob().getLastBuild(); b != null; b = b.getPreviousBuiltBuild())
+		for (Run<?, ?> b = getJob().getLastBuild(); b != null; b = b.getPreviousBuiltBuild())
 		{
 			ValgrindBuildAction r = b.getAction(ValgrindBuildAction.class);
-			
+
 			if (r != null)
 				return b.getNumber();
 		}
@@ -59,7 +61,7 @@ public class ValgrindProjectAction extends AbstractValgrindProjectAction
 		// Affect previous
 		for (b = b.getPreviousBuild(); b != null; b = b.getPreviousBuild())
 		{
-			if (b.getResult().isWorseOrEqualTo(Result.FAILURE))
+			if (b.getResult() == null || b.getResult().isWorseOrEqualTo(Result.FAILURE))
 				continue;
 
 			ValgrindBuildAction action = b.getAction(ValgrindBuildAction.class);
