@@ -35,16 +35,20 @@ public class ValgrindSourceResolver {
 					.split(",");
 			if (sourcePathSubstitutionArray != null) {
 				for (String sourcePathSubstitution : sourcePathSubstitutionArray) {
-					String[] sourcePathsPair = sourcePathSubstitution.trim()
-							.split(":");
+					sourcePathSubstitution = sourcePathSubstitution.trim();
+					if (sourcePathSubstitution.isEmpty()) {
+						continue;
+					}
+
+					String[] sourcePathsPair = sourcePathSubstitution.split(":");
 					if (sourcePathsPair.length != 2) {
-						logger.warning(String.format("Source path substitution %s is incorrect", sourcePathSubstitution));
+						logger.warning(String.format("Source path substitution '%s' is incorrect", sourcePathSubstitution));
 					} else {
 						SimpleEntry<String, String> sourcePathSubstitutionKVP = new SimpleEntry<String, String>(
 								sourcePathsPair[0].trim(),
 								sourcePathsPair[1].trim());
 						logger.fine(
-								String.format("Adding source path substitution %s:%s",
+								String.format("Adding source path substitution '%s:%s'",
 										sourcePathSubstitutionKVP.getKey(), sourcePathSubstitutionKVP.getValue()));
 						substitutionPathList
 								.add(sourcePathSubstitutionKVP);
