@@ -45,7 +45,7 @@
             <f:dropdownListBlock title="${tooldescriptor.displayName}" value="${loop.index}"
                 selected="${tooldescriptor==current.descriptor or (current==null and tooldescriptor.displayName=='Memcheck')}"
                 staplerClass="${tooldescriptor.clazz.name}">
-                <st:include page="${tooldescriptor.displayName}.jelly" class="${descriptor.clazz}"/>
+                <st:include page="/org/jenkinsci/plugins/valgrind/ValgrindBuilder/${tooldescriptor.displayName}.jelly" class="${descriptor.clazz}"/>
             </f:dropdownListBlock>
         </j:forEach>
     </f:dropdownList>
